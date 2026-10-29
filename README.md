@@ -105,7 +105,7 @@ git clone https://github.com/Mamdouhelzein/sherlock-logs.git
 cd sherlock-logs
 ```
 
-The repository is private, so cloning requires account access. Use **Node.js 22.12+ (24 recommended)** and **Python 3.12+ (3.13 recommended)**.
+The repository is public. Use **Node.js 22.12+ (24 recommended)** and **Python 3.12+ (3.13 recommended)**.
 
 ### Start the API — terminal 1
 
@@ -135,7 +135,7 @@ npm ci
 npm run dev
 ```
 
-Open [the workspace](http://127.0.0.1:5173). It should show **API reachable** after the request completes. Use **Check again** to refresh; the connection status reflects the last manual check, not a continuous monitor.
+Open [the workspace](http://127.0.0.1:5173). It should show **API reachable** after the request completes. Use **Check again** to refresh; the connection status reflects the last manual check, not a continuous monitor. Use the navigation search button or **Ctrl/Cmd + K** to jump between pages. Decorative radar motion can be paused with **Ambient effects**, and reduced-motion preferences are respected. The radar is an architecture illustration, not login telemetry.
 
 - [Liveness](http://127.0.0.1:8000/healthz): process status, not database/model readiness.
 - [System status](http://127.0.0.1:8000/api/v1/system): version, check time, uptime, and explicitly unconfigured integrations.

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import {
@@ -16,10 +17,13 @@ import {
   ScanEye,
   Server,
   ShieldCheck,
+  Sparkles,
   Terminal,
   WifiOff,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
+import { CommandMenu } from "./components/CommandMenu";
+import { SignalVisual } from "./components/SignalVisual";
 import { fetchSystem, getApiOrigin } from "./lib/api";
 
 const repository = "https://github.com/Mamdouhelzein/sherlock-logs";
@@ -77,10 +81,19 @@ function SectionHeading({ number, title }: { number: string; title: string }) {
 }
 
 export default function App() {
+  const [effectsEnabled, setEffectsEnabled] = useState(() =>
+    typeof window.matchMedia === "function"
+      ? !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false,
+  );
   const location = useLocation();
   const currentPage =
     navigation.find((item) => item.to === location.pathname)?.label ??
     "Page not found";
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    document.title = `Sherlock Logs — ${currentPage}`;
+  }, [location.pathname, currentPage]);
   const query = useQuery({
     queryKey: ["system"],
     queryFn: ({ signal }) => fetchSystem(signal),
@@ -99,7 +112,7 @@ export default function App() {
   }
 
   return (
-    <div className="workspace">
+    <div className={`workspace ${effectsEnabled ? "effects-enabled" : ""}`}>
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>
@@ -110,7 +123,7 @@ export default function App() {
           </span>
           <span>
             Sherlock<span className="brand-light"> Logs</span>
-            <small>THE INVESTIGATION WORKSPACE</small>
+            <small>SIGNAL INTELLIGENCE</small>
           </span>
         </Link>
         <div className="workspace-selector">
@@ -160,10 +173,23 @@ export default function App() {
             <ChevronRight size={14} aria-hidden="true" />
             <span>{currentPage}</span>
           </div>
-          <span className="environment">
-            <span />
-            Local development
-          </span>
+          <div className="topbar-actions">
+            <CommandMenu items={navigation} />
+            <button
+              className="effects-toggle"
+              aria-label="Ambient effects"
+              aria-pressed={effectsEnabled}
+              onClick={() => setEffectsEnabled((enabled) => !enabled)}
+              title="Toggle decorative animation"
+            >
+              <Sparkles size={16} aria-hidden="true" />
+              <span>Effects {effectsEnabled ? "on" : "off"}</span>
+            </button>
+            <span className="environment">
+              <span />
+              Local development
+            </span>
+          </div>
         </header>
         <main id="main-content" tabIndex={-1}>
           <Routes>
@@ -177,7 +203,7 @@ export default function App() {
                     APPLICATION FOUNDATION
                   </div>
                   <div className="hero">
-                    <div>
+                    <div className="hero-copy">
                       <h1>
                         Every investigation
                         <br />
@@ -189,12 +215,26 @@ export default function App() {
                         <br className="desktop-break" /> then build the
                         intelligence behind it.
                       </p>
+                      <div className="hero-actions">
+                        <Button asChild>
+                          <a href="#connection-overview">
+                            Inspect connection
+                            <ArrowRight size={16} aria-hidden="true" />
+                          </a>
+                        </Button>
+                        <Button variant="ghost" asChild>
+                          <Link to="/architecture">
+                            View architecture
+                            <ArrowUpRight size={16} aria-hidden="true" />
+                          </Link>
+                        </Button>
+                      </div>
+                      <div className="hero-signature mono">
+                        <span />
+                        OBSERVE THE PATTERN. FOLLOW THE EVIDENCE.
+                      </div>
                     </div>
-                    <div className="hero-seal" aria-hidden="true">
-                      <div className="seal-orbit" />
-                      <ScanEye size={66} strokeWidth={1} />
-                      <span className="mono">OBSERVE. UNDERSTAND.</span>
-                    </div>
+                    <SignalVisual />
                   </div>
 
                   <div className="foundation-banner">
@@ -204,15 +244,19 @@ export default function App() {
                     <div>
                       <strong>The foundation is in place.</strong>
                       <span>
-                        React interface. FastAPI service. One connected
-                        workspace.
+                        React workspace and FastAPI service are built. Identity
+                        & access is next.
                       </span>
                     </div>
                     <Status tone="green">Step 02</Status>
                   </div>
 
                   <div className="overview-grid">
-                    <section className="connection-section">
+                    <section
+                      className="connection-section"
+                      id="connection-overview"
+                      tabIndex={-1}
+                    >
                       <SectionHeading number="01" title="Connection overview" />
                       <div className="panel connection-panel">
                         <div className="panel-top">
@@ -387,7 +431,11 @@ export default function App() {
                             "Isolation Forest will learn unusual patterns from historical login behavior.",
                         },
                       ].map(({ id, name, icon: Icon, tag, description }) => (
-                        <article className="panel integration-card" key={id}>
+                        <article
+                          className="panel integration-card"
+                          data-integration={id}
+                          key={id}
+                        >
                           <div className="integration-top">
                             <Icon
                               size={23}
@@ -403,6 +451,14 @@ export default function App() {
                             )?.detail ?? description}
                           </p>
                           <Status>{tag}</Status>
+                          <Link
+                            className="integration-plan"
+                            to="/architecture"
+                            aria-label={`Integration plan for ${name}`}
+                          >
+                            Integration plan
+                            <ArrowUpRight size={14} aria-hidden="true" />
+                          </Link>
                         </article>
                       ))}
                     </div>

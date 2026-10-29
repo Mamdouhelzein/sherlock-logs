@@ -18,7 +18,9 @@ Open http://127.0.0.1:5173. Start the API using the root README instructions. No
 - `src/App.tsx`: overview, architecture, setup, and not-found views.
 - `src/lib/api.ts`: runtime API contract validation, timeout, and origin validation.
 - `src/components/ui/button.tsx`: reusable accessible button/link styling.
-- `src/styles.css`: shared dark green visual tokens and responsive layouts.
+- `src/components/CommandMenu.tsx`: keyboard navigation search with a native modal dialog.
+- `src/components/SignalVisual.tsx`: explicitly illustrative radar with motion controls.
+- `src/styles.css`: charcoal surfaces with blue, violet, amber, and semantic status accents; responsive layouts and reduced-motion support.
 - `src/test/`: test setup and synthetic API fixtures.
 - `e2e/`: real-API browser integration tests.
 
