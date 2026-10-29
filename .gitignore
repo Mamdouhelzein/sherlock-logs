@@ -1,0 +1,33 @@
+# Local credentials
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Frontend
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+
+# Generated data and model artifacts
+data/generated/
+artifacts/
+*.joblib
+*.pkl
+
+# Local services and logs
+.supabase/
+supabase/.temp/
+*.log
+.DS_Store
