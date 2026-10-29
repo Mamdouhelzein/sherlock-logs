@@ -1,6 +1,12 @@
 # Architecture
 
-Status: proposed design; implementation has not started.
+Status: the React workspace and FastAPI system endpoints are implemented. Authentication, data storage, ingestion, worker, and detection components below describe upcoming work.
+
+## Implemented foundation
+
+React calls `GET /api/v1/system` directly with an explicit API origin, a five-second timeout, runtime response validation, and manual retry. The overview reflects the last completed check. `GET /healthz` reports process liveness only. No login events are collected or stored. The architecture and setup pages remain accessible when the API is unavailable.
+
+FastAPI validates environment settings, restricts CORS to configured origins, disables developer docs in production mode, and sends non-cacheable responses. CORS is a browser access policy, not authentication. Current endpoints contain public development status only. A `production` setting does not make this scaffold a complete production security system.
 
 ## Components
 

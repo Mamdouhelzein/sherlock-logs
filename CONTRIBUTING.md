@@ -1,6 +1,6 @@
 # Contributing
 
-Sherlock Logs is at the repository-foundation stage. See ROADMAP.md for planned implementation work.
+Sherlock Logs has a runnable application foundation. See ROADMAP.md for upcoming authentication and detection work.
 
 ## Workflow
 
@@ -18,4 +18,6 @@ Use TypeScript for frontend code and Python for backend and ML code. Keep featur
 
 Tests should verify authorization, chronological features, ingestion validation, and meaningful application behavior. Include source data configuration and random seeds with experiments. Evaluate on held-out data and report failed hypotheses as well as improvements.
 
-Dependency manifests, formatter configuration, and exact check commands will arrive with the implementation. No automated tests or CI pipeline are claimed by this initial scaffold.
+See README.md for installation and check commands. Run backend pytest/Ruff checks and frontend lint, tests, and build before pushing. Use `npm exec prettier -- --write src` inside `frontend` to format UI source. CI runs these checks plus browser integration and container smoke tests.
+
+Runtime backend packages are pinned with hashes in `backend/requirements.lock`; development packages are pinned in `backend/requirements-dev.lock`. Frontend packages use `frontend/package-lock.json`. When changing backend dependencies, update pyproject.toml and regenerate the locks with pip-compile (runtime first, then development with `--constraint requirements.lock --extra dev --strip-extras`). Do not edit generated version pins without resolving and checking the resulting environment.

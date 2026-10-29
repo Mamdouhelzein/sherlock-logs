@@ -1,13 +1,13 @@
 # Implementation roadmap
 
-All milestones below are planned. This repository currently contains the documentation foundation.
+The repository and runnable application foundations are complete. Authentication and subsequent detection milestones remain planned.
 
 ## 1. Runnable foundation
 
-- [ ] Scaffold React/TypeScript with Vite and FastAPI.
-- [ ] Add compatible dependency manifests and lockfiles.
-- [ ] Add health checks and environment validation.
-- [ ] Add local services and documented startup commands.
+- [x] Scaffold React/TypeScript with Vite and FastAPI.
+- [x] Add compatible dependency manifests and lockfiles.
+- [x] Add health checks and environment validation.
+- [x] Add local services and documented startup commands.
 
 Done when a new developer can start the frontend and API from the documented instructions.
 
