@@ -31,7 +31,9 @@ it("recovers from API failure through a manual retry", async () => {
   renderWorkspace();
   expect(await screen.findByText("API unavailable")).toBeInTheDocument();
   expect(
-    screen.getByText("No login telemetry is collected yet.", { exact: false }),
+    screen.getByText("Event collection coverage is verified separately.", {
+      exact: false,
+    }),
   ).toBeInTheDocument();
   await userEvent.click(screen.getByRole("button", { name: "Check again" }));
   expect(await screen.findByText("API reachable")).toBeInTheDocument();

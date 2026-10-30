@@ -87,6 +87,8 @@ The API reads the current role on every protected request, so revocation does no
 
 ## Tests and limits
 
+Step 4 adds a second, private telemetry migration. Apply it after the identity migration and follow the [telemetry guide](../docs/TELEMETRY.md) for separate server roles, read-only audit access, collection, and retention. Event setup is optional for identity. No failed-login publisher has been connected or verified yet.
+
 CI runs the migration and [identity authorization checks](tests/identity.sql) on disposable PostgreSQL 17 with a minimal Auth fixture. It checks profile isolation, denied client inserts/deletes, self-promotion rejection, metadata forgery, trusted promotion, and revocation. [tests/bootstrap.sql](tests/bootstrap.sql) is **CI-only**, not a Supabase migration. A clean hosted-project verification is still required for actual Supabase Auth, redirect configuration, emails, and project-specific grants.
 
 Backend tests mock Auth/Data API responses to check invalid tokens, outages, unconfirmed accounts, role checks, and revocation. Browser tests use the real Supabase JS client against mocked provider responses for sign-in, PKCE, recovery, persistence, and sign-out. No test credentials grant access in a running deployment.

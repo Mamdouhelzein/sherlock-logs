@@ -7,6 +7,12 @@ create table auth.users (
   email text,
   raw_user_meta_data jsonb not null default '{}'
 );
+create table auth.audit_log_entries (
+  id uuid primary key,
+  created_at timestamptz,
+  payload json,
+  ip_address varchar(64) not null default ''
+);
 create function auth.uid() returns uuid language sql stable as $$
   select (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')::uuid;
 $$;

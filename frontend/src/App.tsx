@@ -52,8 +52,13 @@ const roadmap = [
     state: "Connect project",
   },
   {
+    title: "Trusted telemetry",
+    description: "Private events, signed ingestion, and audit collection.",
+    state: "Connect source",
+  },
+  {
     title: "Behavioral detection",
-    description: "Trusted events, features, and ML evaluation.",
+    description: "Historical features and ML evaluation.",
     state: "Planned",
   },
 ];
@@ -172,7 +177,7 @@ export default function App() {
             Project repository
             <ArrowUpRight size={15} aria-hidden="true" />
           </a>
-          <span className="mono">IDENTITY & ACCESS · STEP 03</span>
+          <span className="mono">TRUSTED TELEMETRY · STEP 04</span>
         </div>
       </aside>
 
@@ -210,7 +215,7 @@ export default function App() {
                   <div className="page-label">
                     <span className="mono">CASE FILE 001</span>
                     <span className="label-divider" />
-                    IDENTITY & ACCESS
+                    TRUSTED TELEMETRY
                   </div>
                   <div className="hero">
                     <div className="hero-copy">
@@ -252,13 +257,13 @@ export default function App() {
                       <Check size={18} aria-hidden="true" />
                     </span>
                     <div>
-                      <strong>The access desk is ready.</strong>
+                      <strong>The evidence pipeline is built.</strong>
                       <span>
-                        Sign-in, private profiles, and permission checks are
-                        built. Connect Supabase to activate them.
+                        Private event storage and trusted ingestion are ready
+                        for database setup and source verification.
                       </span>
                     </div>
-                    <Status tone="amber">Step 03</Status>
+                    <Status tone="amber">Step 04</Status>
                   </div>
 
                   <div className="overview-grid">
@@ -368,8 +373,8 @@ export default function App() {
                         )}
                       </div>
                       <p className="section-footnote">
-                        A manual check of the service. No login telemetry is
-                        collected yet.
+                        A manual service check. Event collection coverage is
+                        verified separately.
                       </p>
                     </section>
                     <section className="roadmap-section">
@@ -430,7 +435,7 @@ export default function App() {
                           icon: Database,
                           tag: "Not configured",
                           description:
-                            "PostgreSQL will preserve trusted login events and investigation records.",
+                            "Private event storage and audit collection are built. Connect the database and verify your source.",
                         },
                         {
                           id: "detector",
@@ -453,7 +458,7 @@ export default function App() {
                               aria-hidden="true"
                             />
                             <span className="mono">
-                              {id === "authentication"
+                              {id !== "detector"
                                 ? "INTEGRATION BUILT"
                                 : "UPCOMING"}
                             </span>
@@ -564,8 +569,8 @@ function Architecture() {
           {
             icon: Database,
             title: "Trusted event pipeline",
-            text: "Server-side authentication events, historical features, and durable processing.",
-            state: "Planned",
+            text: "Private storage, signed ingestion, audit collection, and retention. Hosted coverage still needs verification.",
+            state: "Setup required",
           },
           {
             icon: BrainCircuit,
@@ -594,9 +599,10 @@ function Architecture() {
           <p>
             ML scoring will support investigation. Authentication protections
             will operate independently, and the browser will never be trusted to
-            declare its own login outcomes. Authentication integration is built;
-            a Supabase project is required to use it. Event ingestion and the
-            trained model are planned.
+            declare its own login outcomes. Identity and event integration are
+            built; project setup and live coverage checks remain. The audit
+            collector covers successful logins; a failed-login publisher still
+            needs connecting. Model training comes later.
           </p>
         </div>
       </div>

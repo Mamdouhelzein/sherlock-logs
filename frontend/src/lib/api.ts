@@ -4,7 +4,7 @@ const systemSchema = z.object({
   service: z.literal("sherlock-logs-api"),
   version: z.string().min(1),
   status: z.literal("ok"),
-  stage: z.enum(["foundation", "identity"]),
+  stage: z.enum(["foundation", "identity", "telemetry"]),
   checked_at: z.iso.datetime(),
   uptime_seconds: z.number().int().nonnegative(),
   integrations: z

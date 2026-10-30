@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 from sherlock_api import __version__
 from sherlock_api.auth import router as identity_router
 from sherlock_api.config import Settings
+from sherlock_api.telemetry.api import router as telemetry_router
 
 
 class HealthResponse(BaseModel):
@@ -33,7 +34,7 @@ class SystemResponse(BaseModel):
     service: Literal["sherlock-logs-api"] = "sherlock-logs-api"
     version: str = __version__
     status: Literal["ok"] = "ok"
-    stage: Literal["identity"] = "identity"
+    stage: Literal["telemetry"] = "telemetry"
     checked_at: datetime
     uptime_seconds: int = Field(ge=0)
     integrations: list[Integration]
@@ -67,6 +68,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_headers=["Content-Type", "Authorization"],
     )
     application.include_router(identity_router)
+    application.include_router(telemetry_router)
 
     @application.middleware("http")
     async def response_headers(request: Request, call_next):
@@ -99,8 +101,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 Integration(
                     id="database",
                     name="PostgreSQL",
-                    status="not_configured",
-                    detail="No login events or investigation records are stored yet.",
+                    status="configured" if config.events_configured else "not_configured",
+                    detail=(
+                        "Event database settings are present; collection coverage is not verified."
+                        if config.events_configured
+                        else "Event storage and collection are built. Database setup is required."
+                    ),
                 ),
                 Integration(
                     id="detector",

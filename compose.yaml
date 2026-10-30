@@ -11,6 +11,9 @@ services:
       ALLOWED_ORIGINS: "http://127.0.0.1:5173,http://localhost:5173"
       SUPABASE_URL: ${SUPABASE_URL:-}
       SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY:-}
+      DATABASE_URL: ${DATABASE_URL:-}
+      INGESTION_SIGNING_KEY: ${INGESTION_SIGNING_KEY:-}
+      EVENT_RETENTION_DAYS: ${EVENT_RETENTION_DAYS:-30}
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=2)"]
       interval: 10s

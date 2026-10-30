@@ -6,9 +6,9 @@ An ML-powered website security monitoring project that learns login behavior, fl
 
 ## Status
 
-Step 3: identity and access integration. React now includes registration, login, email confirmation, password recovery, private profiles, sign-out, and administrator checks. FastAPI verifies sessions through Supabase Auth and reads current roles from a restricted database helper. A SQL migration supplies profile isolation and trusted role assignments.
+Step 4: trusted telemetry infrastructure. Private PostgreSQL event storage, validated service-signed ingestion, duplicate/conflict handling, administrator-only reads, a Supabase audit collector, and retention cleanup are implemented. Identity integration includes registration, login, confirmation/recovery, private profiles, and server-enforced administrator access.
 
-A hosted Supabase project still needs to be created and configured using the [setup guide](supabase/README.md). Until then, public pages work and account forms explain the missing configuration. Event collection, security detection, and model training remain planned; the interface does not display fabricated activity or results.
+A hosted Supabase project still needs to be created and configured using the [setup guide](supabase/README.md). Public pages work without it; account forms explain missing configuration. The audit collector supports successful `login` rows; real failed-login coverage needs a verified server publisher. See [telemetry coverage and setup](docs/TELEMETRY.md). ML training and investigation dashboards remain planned; no fabricated activity is shown.
 
 ## Project guide
 
@@ -20,6 +20,7 @@ A hosted Supabase project still needs to be created and configured using the [se
 - [Backend](backend/README.md): API configuration, endpoints, and checks.
 - [ML](ml/README.md): training and evaluation protocol.
 - [Supabase](supabase/README.md): project creation, migration, email setup, and administrator assignment.
+- [Telemetry](docs/TELEMETRY.md): trusted event sources, coverage gaps, service signatures, collector, and retention.
 
 ## Repository layout
 
@@ -83,7 +84,8 @@ Anomaly scores are not probabilities of account compromise. Synthetic benchmarks
 - [x] Scaffold frontend, API, and local development services.
 - [x] Implement Supabase Auth integration, database migrations, and access policies.
 - [ ] Provision Supabase and verify hosted sign-in, recovery, and rate limits.
-- [ ] Verify authentication event coverage and implement trusted ingestion.
+- [x] Implement private event storage, signed ingestion, deduplication, and the audit collector.
+- [ ] Verify hosted event coverage and connect a trusted failed-login publisher.
 - [ ] Build synthetic normal activity and local attack scenarios.
 - [ ] Implement historical features and security-rule baselines.
 - [ ] Train, validate, and evaluate the anomaly detector.
@@ -93,7 +95,7 @@ Anomaly scores are not probabilities of account compromise. Synthetic benchmarks
 
 ## Security boundaries
 
-Authentication controls operate independently of ML. Protected API routes validate the bearer token with Supabase, then read the caller's current role from SQL. Browser guards are navigation conveniences; API authorization and RLS enforce access. The first detection release will generate investigation alerts rather than automatically blocking accounts. Event ingestion is not implemented.
+Authentication controls operate independently of telemetry and ML. Protected API reads validate the bearer token with Supabase and read the caller's current role from SQL. Ingestion instead requires a separate server-held signing key; browser/user/admin tokens cannot author events. Browser guards are navigation conveniences; API authorization, private schemas, grants, and RLS enforce access. The first detection release will generate investigation alerts rather than automatically blocking accounts.
 
 Privileged Supabase credentials stay on the server. Database access policies and API authorization enforce administrator access. Passwords, access tokens, and raw session secrets must never enter event logs. Simulators run only against controlled development environments, and model artifacts must come from trusted training runs.
 
@@ -182,7 +184,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Tests cover real browser-to-API connectivity and desktop/mobile navigation. Account tests use the real Supabase client with mocked provider responses, including PKCE confirmation/recovery, persistence, sign-out, and denied admin access. They use a separate frontend on port 5174. CI also checks SQL authorization on disposable PostgreSQL and builds/smoke-tests Compose services. Hosted email and rate-limit verification remains a separate setup step. Windows users can use browser checks through WSL or CI.
+Tests cover real browser-to-API connectivity and desktop/mobile navigation. Account tests use the real Supabase client with mocked provider responses, including PKCE confirmation/recovery, persistence, sign-out, and denied admin access. They use a separate frontend on port 5174. CI checks SQL authorization and transactional telemetry behavior on disposable PostgreSQL: concurrent retries, conflicts/rollback, pagination, late source records, and retention. It also builds/smoke-tests Compose services. Hosted authentication and event coverage remain separate verification steps. Windows users can use browser checks through WSL or CI.
 
 ### Troubleshooting
 

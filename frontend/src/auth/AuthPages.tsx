@@ -535,7 +535,8 @@ function AccountPage({ identity }: { identity: Identity }) {
           </p>
           <Link to="/admin">Check administrator access →</Link>
           <p className="section-footnote">
-            Login telemetry and ML detection are upcoming milestones.
+            Event infrastructure is built; hosted collection needs setup and
+            verification. ML detection comes later.
           </p>
         </section>
       </div>
@@ -573,8 +574,9 @@ function AdminPage({ identity, token }: { identity: Identity; token: string }) {
         <ShieldCheck size={26} aria-hidden="true" />
         <p>
           The API has authorized this account as an administrator. Event
-          ingestion, detection, and investigation tools will be added in later
-          milestones.
+          ingestion and the restricted event API are built; connect the event
+          database and verify its source coverage. Detection and investigation
+          tools come later.
         </p>
       </div>
       <Link to="/account">Return to your account</Link>

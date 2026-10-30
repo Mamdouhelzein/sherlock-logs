@@ -66,6 +66,14 @@ pip-tools==7.6.2
     # via sherlock-logs-api (pyproject.toml)
 pluggy==1.7.0
     # via pytest
+psycopg==3.3.6
+    # via
+    #   -c requirements.lock
+    #   sherlock-logs-api (pyproject.toml)
+psycopg-binary==3.3.6
+    # via
+    #   -c requirements.lock
+    #   psycopg
 pydantic==2.14.2
     # via
     #   -c requirements.lock

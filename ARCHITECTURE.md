@@ -1,12 +1,12 @@
 # Architecture
 
-Status: React, FastAPI, Supabase authentication integration, private profiles, and administrator authorization are implemented. Configure a Supabase project and apply the migration to enable real sign-in. Telemetry ingestion, the worker, and detection remain planned.
+Status: React, FastAPI, identity integration, private profiles, administrator authorization, private event storage, signed ingestion, and an audit collector are implemented. Hosted Supabase setup and live coverage verification are pending. The audit adapter covers successful `login` events; a failed-login publisher still needs connecting. The worker and detection remain planned.
 
 ## Implemented foundation
 
-React calls `GET /api/v1/system` directly with an explicit API origin, a five-second timeout, runtime response validation, and manual retry. The overview reflects the last completed check. `GET /healthz` reports process liveness only. No login events are collected or stored. The architecture and setup pages remain accessible when the API is unavailable.
+React calls `GET /api/v1/system` directly with an explicit API origin, a five-second timeout, runtime response validation, and manual retry. The overview reflects the last completed check. `GET /healthz` reports process liveness only. Event infrastructure remains inactive until database/source settings and migrations are applied. Architecture and setup pages remain accessible when the API is unavailable.
 
-FastAPI validates environment settings, restricts CORS to configured origins, disables developer docs in production mode, and sends non-cacheable responses. CORS is a browser access policy, not authentication. Current endpoints contain public development status only. A `production` setting does not make this scaffold a complete production security system.
+FastAPI validates environment settings, restricts CORS, disables developer docs in production, and sends non-cacheable responses. System status is public; account/admin reads and internal service ingestion have separate authorization. CORS is not authentication. A `production` setting alone does not establish production readiness.
 
 ## Components
 
@@ -41,7 +41,7 @@ If required events are unavailable, document the gap and choose a controlled bac
 
 ## Planned entities
 
-- `security_events`: event ID, observed/received timestamps, nullable account ID, hashed attempted-account key, source, optional browser context, outcome, processing state.
+- Implemented `private.security_events`: separate source/internal IDs, observed/received timestamps, nullable account ID/HMAC account key, source, optional IP/user agent, outcome, pending state, and a canonical digest for conflicting retries.
 - `feature_snapshots`: event ID, feature schema version, historical feature values.
 - `model_versions`: artifact reference, training ranges, threshold, package versions, validation metrics, activation state.
 - `detection_results`: event ID, model version, raw score, decision, triggered rules.
@@ -49,6 +49,16 @@ If required events are unavailable, document the gap and choose a controlled bac
 - `audit_entries`: administrator status changes and model activation actions.
 
 Use UTC, stable event ordering, account/time and source/time indexes, and unique constraints for deduplication. Scenario labels belong in evaluation-only data.
+
+## Implemented event boundary
+
+The audit collector reads a limited set of Auth audit columns through a separate read-only database login. It maps `login` rows to successes and ignores other actions; missing fields stay null. It rescans the retention window to catch late commits and deduplicates on `(source, source_event_id)`.
+
+The optional `POST /api/v1/internal/events` accepts bounded JSON batches signed with HMAC-SHA256 over timestamp plus exact body bytes. It does not accept browser bearer authorization. The server binds the source, rejects unknown fields, validates timestamps and context, and never reflects rejected payloads. Reused IDs with different facts roll back the whole batch. Transient storage failures let a publisher retry unchanged IDs. A real failed-login publisher remains unconnected; the signed interface alone does not establish failed-attempt coverage.
+
+`GET /api/v1/admin/events` verifies the current admin role before reading through the server connection. Direct browser SQL/Data API access is denied even for an administrator's normal user token. Events are immutable to the ingestion role. Dedicated NOLOGIN groups separate ingestion, reading, audit-source access, and retention privileges. Connections and signing keys remain server-only. The event store does not participate in sign-in or session refresh.
+
+Retention defaults to 30 days by observation time. Expired records are hidden from API reads and rejected at ingestion; an explicitly scheduled maintenance command physically deletes them in bounded transactions. No schedule is installed automatically. See [telemetry setup and coverage](docs/TELEMETRY.md).
 
 ## Access boundaries
 
