@@ -6,9 +6,9 @@ An ML-powered website security monitoring project that learns login behavior, fl
 
 ## Status
 
-Step 2: runnable application foundation. A React workspace connects to FastAPI and displays real connection status, recovery guidance, architecture, and local startup instructions. Backend, frontend, browser integration, and container checks are configured in GitHub Actions.
+Step 3: identity and access integration. React now includes registration, login, email confirmation, password recovery, private profiles, sign-out, and administrator checks. FastAPI verifies sessions through Supabase Auth and reads current roles from a restricted database helper. A SQL migration supplies profile isolation and trusted role assignments.
 
-Authentication, event collection, storage, security detection, and model training are not implemented yet. The interface does not display fabricated login activity or detection results. No Supabase credentials are required to run this release.
+A hosted Supabase project still needs to be created and configured using the [setup guide](supabase/README.md). Until then, public pages work and account forms explain the missing configuration. Event collection, security detection, and model training remain planned; the interface does not display fabricated activity or results.
 
 ## Project guide
 
@@ -19,7 +19,7 @@ Authentication, event collection, storage, security detection, and model trainin
 - [Frontend](frontend/README.md): React setup, UI structure, and checks.
 - [Backend](backend/README.md): API configuration, endpoints, and checks.
 - [ML](ml/README.md): training and evaluation protocol.
-- [Supabase](supabase/README.md): schema and access-policy plan.
+- [Supabase](supabase/README.md): project creation, migration, email setup, and administrator assignment.
 
 ## Repository layout
 
@@ -51,7 +51,7 @@ sherlock-logs/
 
 ## Planned capabilities
 
-- Registration, login, and protected account pages.
+- Registration, login, and protected account pages (integration built; Supabase setup required).
 - Trusted collection of authentication events.
 - Historical features for failed-login bursts, source activity, browser familiarity, and unusual login timing.
 - Rule-based detection compared against an Isolation Forest model.
@@ -81,7 +81,8 @@ Anomaly scores are not probabilities of account compromise. Synthetic benchmarks
 ## Roadmap
 
 - [x] Scaffold frontend, API, and local development services.
-- [ ] Configure Supabase Auth, database migrations, and access policies.
+- [x] Implement Supabase Auth integration, database migrations, and access policies.
+- [ ] Provision Supabase and verify hosted sign-in, recovery, and rate limits.
 - [ ] Verify authentication event coverage and implement trusted ingestion.
 - [ ] Build synthetic normal activity and local attack scenarios.
 - [ ] Implement historical features and security-rule baselines.
@@ -92,7 +93,7 @@ Anomaly scores are not probabilities of account compromise. Synthetic benchmarks
 
 ## Security boundaries
 
-Planned authentication and rate-limiting controls will operate independently of ML. The first detection release will generate investigation alerts rather than automatically blocking accounts. The current foundation release has no authentication or event ingestion routes and is intended for local development.
+Authentication controls operate independently of ML. Protected API routes validate the bearer token with Supabase, then read the caller's current role from SQL. Browser guards are navigation conveniences; API authorization and RLS enforce access. The first detection release will generate investigation alerts rather than automatically blocking accounts. Event ingestion is not implemented.
 
 Privileged Supabase credentials stay on the server. Database access policies and API authorization enforce administrator access. Passwords, access tokens, and raw session secrets must never enter event logs. Simulators run only against controlled development environments, and model artifacts must come from trusted training runs.
 
@@ -138,10 +139,14 @@ npm run dev
 Open [the workspace](http://127.0.0.1:5173). It should show **API reachable** after the request completes. Use **Check again** to refresh; the connection status reflects the last manual check, not a continuous monitor. Use the navigation search button or **Ctrl/Cmd + K** to jump between pages. Decorative radar motion can be paused with **Ambient effects**, and reduced-motion preferences are respected. The radar is an architecture illustration, not login telemetry.
 
 - [Liveness](http://127.0.0.1:8000/healthz): process status, not database/model readiness.
-- [System status](http://127.0.0.1:8000/api/v1/system): version, check time, uptime, and explicitly unconfigured integrations.
+- [System status](http://127.0.0.1:8000/api/v1/system): version, check time, uptime, and integration configuration (not a live readiness probe).
 - [Interactive API docs](http://127.0.0.1:8000/docs): available in development/test environments.
 
 Optional: copy `.env.example` to `.env` in the root and change the API origin or allowed frontend origins. Both Vite and the backend load the root file. Vite exposes only `VITE_` values to the browser. API URLs must be HTTP(S) origins with no credentials, path, or query. Restart services after configuration changes. The Vite dev server uses a strict port so a port change cannot silently invalidate CORS settings.
+
+### Enable accounts
+
+Follow the [Supabase setup guide](supabase/README.md): create a development project, apply the migration, configure email redirects, and add its URL/publishable key to the root `.env`. Restart both services, then open [sign-in](http://127.0.0.1:5173/login) or [registration](http://127.0.0.1:5173/register). No service-role key is needed. Administrator roles are assigned only through trusted SQL.
 
 ### Docker alternative
 
@@ -177,14 +182,14 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Tests cover real browser-to-API connectivity, desktop/mobile navigation and deep links, plus unavailable-API recovery. CI also builds and smoke-tests the Compose services. Windows users can use the browser checks through WSL or CI; unit tests and manual startup work natively.
+Tests cover real browser-to-API connectivity and desktop/mobile navigation. Account tests use the real Supabase client with mocked provider responses, including PKCE confirmation/recovery, persistence, sign-out, and denied admin access. They use a separate frontend on port 5174. CI also checks SQL authorization on disposable PostgreSQL and builds/smoke-tests Compose services. Hosted email and rate-limit verification remains a separate setup step. Windows users can use browser checks through WSL or CI.
 
 ### Troubleshooting
 
 - **API unavailable:** start terminal 1, open `/healthz`, check `VITE_API_BASE_URL` and `ALLOWED_ORIGINS`, then select **Check again**.
 - **Port already in use:** stop the conflicting process, or update the frontend/API ports and corresponding environment configuration together.
 - **Imports fail:** run the editable install command after installing the locked dependencies; do not use a globally installed uvicorn.
-- **Supabase/ML marked unconfigured:** expected for this milestone. Setting future credential placeholders does not activate integrations.
+- **Supabase not configured:** follow the project setup guide; both services need the same project URL and publishable key. Apply the migration and restart both services. ML remains untrained.
 
 ## License
 

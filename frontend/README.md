@@ -11,11 +11,13 @@ npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:5173. Start the API using the root README instructions. No Supabase account is required yet.
+Open http://127.0.0.1:5173. Start the API using the root README instructions. Public pages work without Supabase; account functionality requires the [Supabase setup](../supabase/README.md).
 
 ## Structure
 
 - `src/App.tsx`: overview, architecture, setup, and not-found views.
+- `src/auth/`: session provider, sign-in/registration/recovery, protected profiles, and administrator views.
+- `src/lib/supabase.ts`: public configuration validation and the official PKCE-enabled Supabase client.
 - `src/lib/api.ts`: runtime API contract validation, timeout, and origin validation.
 - `src/components/ui/button.tsx`: reusable accessible button/link styling.
 - `src/components/CommandMenu.tsx`: keyboard navigation search with a native modal dialog.
@@ -39,4 +41,8 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The development server uses a strict port. Production static hosting must serve index.html for client routes; nginx.conf provides this fallback in the local Compose build. Authentication and administrator routes are future work; current pages contain development status only.
+Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in the root `.env` to enable account pages. Only publishable keys are accepted. The same project must be configured in the API. Missing settings disable account forms with setup guidance; there is no development authentication bypass.
+
+Routes include `/login`, `/register`, `/auth/callback`, `/forgot-password`, `/reset-password`, `/account`, and `/admin`. The official client handles PKCE code exchange and session refresh. Browser sessions are only UI state; protected content requires server-verified identity and authorization. Private queries are scoped to the user and cleared on sign-out.
+
+The development server uses a strict port. Production static hosting must serve index.html for client routes; nginx.conf provides this fallback. Browser authentication tests use a second Vite server on port 5174 with test-only public configuration and mocked provider HTTP responses; they do not verify hosted email or project rate limits.

@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { expect, it, vi } from "vitest";
 import App from "./App";
+import { AuthProvider } from "./auth/AuthProvider";
 import { systemFixture } from "./test/fixture";
 
 function renderWorkspace(path = "/") {
@@ -13,7 +14,9 @@ function renderWorkspace(path = "/") {
   return render(
     <QueryClientProvider client={client}>
       <MemoryRouter initialEntries={[path]}>
-        <App />
+        <AuthProvider client={null}>
+          <App />
+        </AuthProvider>
       </MemoryRouter>
     </QueryClientProvider>,
   );

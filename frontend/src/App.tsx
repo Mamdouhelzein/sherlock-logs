@@ -24,11 +24,13 @@ import {
 import { Button } from "./components/ui/button";
 import { CommandMenu } from "./components/CommandMenu";
 import { SignalVisual } from "./components/SignalVisual";
+import { AuthCallback, AuthPage, ProtectedPage } from "./auth/AuthPages";
 import { fetchSystem, getApiOrigin } from "./lib/api";
 
 const repository = "https://github.com/Mamdouhelzein/sherlock-logs";
 const navigation = [
   { to: "/", label: "Overview", icon: LayoutDashboard },
+  { to: "/account", label: "Your account", icon: Fingerprint },
   { to: "/architecture", label: "System architecture", icon: GitBranch },
   { to: "/setup", label: "Local setup", icon: Terminal },
 ];
@@ -42,12 +44,12 @@ const roadmap = [
   {
     title: "Application foundation",
     description: "React workspace connected to FastAPI.",
-    state: "Current",
+    state: "Complete",
   },
   {
     title: "Identity & access",
     description: "Supabase authentication and access policies.",
-    state: "Up next",
+    state: "Connect project",
   },
   {
     title: "Behavioral detection",
@@ -89,6 +91,14 @@ export default function App() {
   const location = useLocation();
   const currentPage =
     navigation.find((item) => item.to === location.pathname)?.label ??
+    {
+      "/login": "Sign in",
+      "/register": "Create account",
+      "/forgot-password": "Account recovery",
+      "/reset-password": "New password",
+      "/auth/callback": "Confirm sign-in",
+      "/admin": "Administrator access",
+    }[location.pathname] ??
     "Page not found";
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -162,7 +172,7 @@ export default function App() {
             Project repository
             <ArrowUpRight size={15} aria-hidden="true" />
           </a>
-          <span className="mono">FOUNDATION RELEASE · 0.1.0</span>
+          <span className="mono">IDENTITY & ACCESS · STEP 03</span>
         </div>
       </aside>
 
@@ -200,7 +210,7 @@ export default function App() {
                   <div className="page-label">
                     <span className="mono">CASE FILE 001</span>
                     <span className="label-divider" />
-                    APPLICATION FOUNDATION
+                    IDENTITY & ACCESS
                   </div>
                   <div className="hero">
                     <div className="hero-copy">
@@ -217,10 +227,10 @@ export default function App() {
                       </p>
                       <div className="hero-actions">
                         <Button asChild>
-                          <a href="#connection-overview">
-                            Inspect connection
+                          <Link to="/login">
+                            Open sign-in
                             <ArrowRight size={16} aria-hidden="true" />
-                          </a>
+                          </Link>
                         </Button>
                         <Button variant="ghost" asChild>
                           <Link to="/architecture">
@@ -242,13 +252,13 @@ export default function App() {
                       <Check size={18} aria-hidden="true" />
                     </span>
                     <div>
-                      <strong>The foundation is in place.</strong>
+                      <strong>The access desk is ready.</strong>
                       <span>
-                        React workspace and FastAPI service are built. Identity
-                        & access is next.
+                        Sign-in, private profiles, and permission checks are
+                        built. Connect Supabase to activate them.
                       </span>
                     </div>
-                    <Status tone="green">Step 02</Status>
+                    <Status tone="amber">Step 03</Status>
                   </div>
 
                   <div className="overview-grid">
@@ -412,7 +422,7 @@ export default function App() {
                           icon: Fingerprint,
                           tag: "Not configured",
                           description:
-                            "Supabase authentication will establish who can access the workspace.",
+                            "Sign-in and permission checks are built. Connect a Supabase project to enable them.",
                         },
                         {
                           id: "database",
@@ -442,7 +452,11 @@ export default function App() {
                               strokeWidth={1.5}
                               aria-hidden="true"
                             />
-                            <span className="mono">UPCOMING</span>
+                            <span className="mono">
+                              {id === "authentication"
+                                ? "INTEGRATION BUILT"
+                                : "UPCOMING"}
+                            </span>
                           </div>
                           <h3>{name}</h3>
                           <p>
@@ -450,7 +464,13 @@ export default function App() {
                               (item) => item.id === id,
                             )?.detail ?? description}
                           </p>
-                          <Status>{tag}</Status>
+                          <Status>
+                            {current?.snapshot.integrations.find(
+                              (item) => item.id === id,
+                            )?.status === "configured"
+                              ? "Settings present"
+                              : tag}
+                          </Status>
                           <Link
                             className="integration-plan"
                             to="/architecture"
@@ -468,6 +488,25 @@ export default function App() {
             />
             <Route path="/architecture" element={<Architecture />} />
             <Route path="/setup" element={<Setup docsUrl={docsUrl} />} />
+            <Route
+              path="/login"
+              element={<AuthPage key="login" mode="login" />}
+            />
+            <Route
+              path="/register"
+              element={<AuthPage key="register" mode="register" />}
+            />
+            <Route
+              path="/forgot-password"
+              element={<AuthPage key="forgot" mode="forgot" />}
+            />
+            <Route
+              path="/reset-password"
+              element={<AuthPage key="reset" mode="reset" />}
+            />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/account" element={<ProtectedPage />} />
+            <Route path="/admin" element={<ProtectedPage admin />} />
             <Route
               path="*"
               element={
@@ -555,8 +594,9 @@ function Architecture() {
           <p>
             ML scoring will support investigation. Authentication protections
             will operate independently, and the browser will never be trusted to
-            declare its own login outcomes. This release has no authentication,
-            event ingestion, or trained model.
+            declare its own login outcomes. Authentication integration is built;
+            a Supabase project is required to use it. Event ingestion and the
+            trained model are planned.
           </p>
         </div>
       </div>
@@ -580,10 +620,26 @@ function Setup({ docsUrl }: { docsUrl: string | null }) {
       <div className="page-label mono">DEVELOPER FIELD NOTES</div>
       <h1>Start the investigation.</h1>
       <p className="document-lead">
-        Use Node.js 22.12+ and Python 3.12+. No Supabase account, database, or
-        paid API is required for this milestone.
+        Use Node.js 22.12+ and Python 3.12+. The public workspace runs without
+        Supabase. Create a Supabase project to enable account sign-in.
       </p>
       <div className="setup-grid">
+        <section className="panel setup-card">
+          <span className="step-number mono">IDENTITY & ACCESS</span>
+          <h2>Connect Supabase</h2>
+          <p>
+            Create your development project, apply the identity SQL migration,
+            then add the project URL and publishable key to the root{" "}
+            <code>.env</code> file. Restart both services.
+          </p>
+          <a
+            href={`${repository}/blob/main/supabase/README.md`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Follow the complete Supabase setup guide ↗
+          </a>
+        </section>
         <section className="panel setup-card">
           <span className="step-number mono">
             TERMINAL 01 · FROM REPOSITORY ROOT

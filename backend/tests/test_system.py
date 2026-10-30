@@ -19,7 +19,7 @@ def test_liveness_does_not_claim_future_services_are_ready(client):
     assert response.json()["status"] == "ok"
     assert response.headers["cache-control"] == "no-store"
     snapshot = client.get("/api/v1/system").json()
-    assert snapshot["stage"] == "foundation"
+    assert snapshot["stage"] == "identity"
     assert snapshot["uptime_seconds"] >= 0
     assert snapshot["checked_at"].endswith("Z")
     assert {item["status"] for item in snapshot["integrations"]} == {

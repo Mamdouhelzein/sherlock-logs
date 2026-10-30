@@ -1,6 +1,6 @@
 # Implementation roadmap
 
-The repository and runnable application foundations are complete. Authentication and subsequent detection milestones remain planned.
+The repository and runnable foundations are complete. Identity integration is built; hosted Supabase setup and verification are pending. Detection milestones remain planned.
 
 ## 1. Runnable foundation
 
@@ -13,10 +13,12 @@ Done when a new developer can start the frontend and API from the documented ins
 
 ## 2. Authentication and data access
 
-- [ ] Configure Supabase Auth and protected routes.
-- [ ] Define migrations, grants, RLS, and server-controlled administrator roles.
-- [ ] Verify ordinary users cannot access investigation records or elevate privileges.
-- [ ] Verify authentication protection and rate-limit behavior.
+- [x] Implement registration, login, PKCE confirmation/recovery, logout, and protected routes.
+- [x] Define profile migrations, column grants, RLS, and server-controlled roles.
+- [x] Add API/SQL checks for profile isolation, forged metadata, self-promotion, and revocation.
+- [ ] Create the hosted project, apply migrations, and configure email redirects/delivery.
+- [ ] Verify hosted sign-in, recovery, two-account isolation, roles, and rate-limit behavior.
+- [ ] Apply equivalent access boundaries to investigation records when those tables exist.
 
 Done when sign-in works and authorization checks pass independently of the ML service.
 

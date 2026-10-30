@@ -1,6 +1,6 @@
 # Backend
 
-FastAPI application foundation. No authentication, database connection, telemetry ingestion, or detection worker is active yet.
+FastAPI system endpoints and Supabase identity verification. Authentication requires a configured project and the identity SQL migration; ingestion and the detection worker remain planned.
 
 ## Run
 
@@ -13,8 +13,10 @@ Follow the repository-root README to create `backend/.venv`, install the develop
 | GET | `/healthz` | Process liveness and service version |
 | GET | `/api/v1/system` | Current check timestamp, uptime, version, and unconfigured integrations |
 | GET | `/docs` | Interactive API documentation in development/test |
+| GET | `/api/v1/me` | Verified confirmed-account identity and current database role |
+| GET | `/api/v1/admin/status` | Requires a verified account with a current admin assignment |
 
-A healthy process does not establish database or model readiness. Current status endpoints expose no authentication data and require no credentials. CORS is not authorization. Protected endpoints and JWT verification will be implemented with authentication.
+A healthy process does not establish database or model readiness. Status endpoints are public; account/admin endpoints require bearer authentication. CORS is not authorization. The server validates tokens through Supabase Auth, then reads roles from SQL using the same user token. Metadata never grants admin. Auth/Data API failures deny access. See the [Supabase setup guide](../supabase/README.md).
 
 ## Configuration
 
@@ -22,6 +24,7 @@ Settings read environment variables and the optional repository-root `.env`:
 
 - `ENVIRONMENT`: development (default), test, or production.
 - `ALLOWED_ORIGINS`: explicit comma-separated HTTP(S) origins. Defaults include localhost and 127.0.0.1 on port 5173. Paths, wildcard origins, and embedded credentials are rejected.
+- `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`: configure both or neither. Only publishable keys are accepted. HTTPS is required except for local development. The application does not need a secret key or database password.
 
 Production mode requires HTTPS origins and disables developer documentation. Public deployment also needs the later security controls and deployment work; changing this flag alone is insufficient. Responses are non-cacheable and use a nosniff header.
 

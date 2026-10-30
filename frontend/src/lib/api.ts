@@ -4,7 +4,7 @@ const systemSchema = z.object({
   service: z.literal("sherlock-logs-api"),
   version: z.string().min(1),
   status: z.literal("ok"),
-  stage: z.literal("foundation"),
+  stage: z.enum(["foundation", "identity"]),
   checked_at: z.iso.datetime(),
   uptime_seconds: z.number().int().nonnegative(),
   integrations: z
@@ -12,7 +12,7 @@ const systemSchema = z.object({
       z.object({
         id: z.enum(["authentication", "database", "detector"]),
         name: z.string(),
-        status: z.enum(["not_configured", "not_trained"]),
+        status: z.enum(["not_configured", "configured", "not_trained"]),
         detail: z.string(),
       }),
     )
@@ -25,6 +25,53 @@ const systemSchema = z.object({
 
 export type SystemSnapshot = z.infer<typeof systemSchema>;
 export type SystemCheck = { snapshot: SystemSnapshot; latencyMs: number };
+
+const identitySchema = z.object({
+  id: z.uuid(),
+  email: z.email(),
+  role: z.enum(["member", "admin"]),
+});
+export type Identity = z.infer<typeof identitySchema>;
+
+export class AccessError extends Error {
+  status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
+
+export async function authenticatedRequest(
+  path: "/me" | "/admin/status",
+  token: string,
+  signal?: AbortSignal,
+) {
+  const response = await fetch(`${getApiOrigin()}/api/v1${path}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    credentials: "omit",
+    cache: "no-store",
+    signal: signal
+      ? AbortSignal.any([signal, AbortSignal.timeout(12_000)])
+      : AbortSignal.timeout(12_000),
+  });
+  if (!response.ok)
+    throw new AccessError(
+      response.status,
+      response.status === 401
+        ? "Your session is no longer valid. Sign in again."
+        : response.status === 403
+          ? "Administrator access is required."
+          : "Identity verification is unavailable. Check the API settings and Supabase migration, then try again.",
+    );
+  return response.json();
+}
+
+export async function fetchIdentity(
+  token: string,
+  signal?: AbortSignal,
+): Promise<Identity> {
+  return identitySchema.parse(await authenticatedRequest("/me", token, signal));
+}
 
 export function getApiOrigin(
   raw = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000",

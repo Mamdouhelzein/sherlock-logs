@@ -1,6 +1,6 @@
 # Architecture
 
-Status: the React workspace and FastAPI system endpoints are implemented. Authentication, data storage, ingestion, worker, and detection components below describe upcoming work.
+Status: React, FastAPI, Supabase authentication integration, private profiles, and administrator authorization are implemented. Configure a Supabase project and apply the migration to enable real sign-in. Telemetry ingestion, the worker, and detection remain planned.
 
 ## Implemented foundation
 
@@ -54,7 +54,11 @@ Use UTC, stable event ordering, account/time and source/time indexes, and unique
 
 The browser receives a publishable Supabase key only. Enable explicit database grants and Row Level Security for exposed tables. Users may view permitted account data; investigator access must be enforced by server-managed roles and database/API policy. Users cannot assign themselves administrator privileges or write authoritative events, scores, or models.
 
-FastAPI validates token signature, issuer, audience, and expiry before applying operation-specific authorization. Privileged credentials remain server-side. Treat caller-provided source headers and device identifiers as untrusted; trust forwarding headers only from configured proxies.
+FastAPI sends the bearer token to the fixed project's Supabase Auth `/auth/v1/user` endpoint for validation, rejects unconfirmed/anonymous accounts, then reads the caller's current database role through an authenticated-only RPC. It does not trust locally decoded claims, user metadata, or stale JWT role metadata. Both requests use the same token; transport failures deny access. `GET /api/v1/me` requires a confirmed account; `GET /api/v1/admin/status` additionally requires an admin assignment. Both are non-cacheable. No privileged API key is required.
+
+Profiles have owner-scoped SELECT/UPDATE RLS and column-level update grants; browser users cannot insert or delete profiles or reassign their IDs. A trusted trigger creates profiles. Administrator assignments live in an unexposed private schema with no client grants. Role changes apply on the next API request. Direct API and Data API calls retain the same restrictions as the interface.
+
+The SPA uses PKCE email callbacks and browser-persisted, auto-refreshed sessions. Tokens travel in Authorization headers and never enter event logs. Hosted email delivery and rate-limit behavior require verification after project creation. Treat caller-provided source headers and device identifiers as untrusted; trust forwarding headers only from configured proxies.
 
 ## Deferred extensions
 
