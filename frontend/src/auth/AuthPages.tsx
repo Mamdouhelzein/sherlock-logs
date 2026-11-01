@@ -18,6 +18,7 @@ import {
   type Identity,
 } from "../lib/api";
 import { useAuth } from "./AuthProvider";
+import { emailRequestFailure } from "./errors";
 
 export function AuthSetupNotice() {
   const { error } = useAuth();
@@ -73,7 +74,8 @@ function PasswordField({ minimum = 1 }: { minimum?: number }) {
       </div>
       {minimum > 1 && (
         <small id="password-help">
-          Use 12–128 characters. A long, unique passphrase works well.
+          Use 8–128 characters. Spaces are welcome; a longer passphrase works
+          well.
         </small>
       )}
     </div>
@@ -150,12 +152,15 @@ export function AuthPage({ mode }: { mode: Mode }) {
         });
         if (result.error)
           throw new Error(
-            "Unable to create your account. Check the password requirements or try again shortly.",
+            emailRequestFailure(
+              result.error,
+              "Unable to create your account. Check the password requirements or try again shortly.",
+            ),
           );
         if (result.data.session) navigate("/account", { replace: true });
         else
           setNotice(
-            "Check your inbox for a confirmation link. If this address already has an account, sign in or reset its password. Open the link in this browser.",
+            "Check your inbox for a confirmation link. Open the newest link in this browser. Avoid submitting registration again while waiting; that can interrupt an earlier link. If you already followed a confirmation link or have an account, try signing in.",
           );
       } else if (mode === "forgot") {
         const result = await client.auth.resetPasswordForEmail(email, {
@@ -163,7 +168,10 @@ export function AuthPage({ mode }: { mode: Mode }) {
         });
         if (result.error)
           throw new Error(
-            "The recovery request could not be sent. Please wait and try again.",
+            emailRequestFailure(
+              result.error,
+              "The recovery request could not be sent. Please wait and try again.",
+            ),
           );
         setNotice(
           "If an account exists for this email, a recovery link is on its way. Open it in this browser.",
@@ -256,7 +264,7 @@ export function AuthPage({ mode }: { mode: Mode }) {
               </div>
             )}
             {mode !== "forgot" && (
-              <PasswordField minimum={mode === "login" ? 1 : 12} />
+              <PasswordField minimum={mode === "login" ? 1 : 8} />
             )}
             {error && (
               <p className="form-error" role="alert">
@@ -317,6 +325,11 @@ export function AuthCallback() {
       <p role="alert">
         {error ??
           "The link may have expired, already been used, or been opened in a different browser."}
+      </p>
+      <p>
+        Your email may already be confirmed even if this browser could not
+        finish signing you in. Try signing in with your email and password
+        first. For a new link, use the browser where you requested it.
       </p>
       <Link to="/login">Return to sign-in</Link>
     </div>

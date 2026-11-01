@@ -143,9 +143,7 @@ test("registers, confirms a PKCE link, and rejects an expired callback", async (
   await page.goto("/register");
   await page.getByLabel("Display name").fill("Detective");
   await page.getByLabel("Email address").fill(user.email);
-  await page
-    .getByLabel("Password", { exact: true })
-    .fill("long-test-passphrase");
+  await page.getByLabel("Password", { exact: true }).fill("two word");
   await page
     .getByRole("button", { name: "Create account", exact: true })
     .click();
@@ -165,7 +163,58 @@ test("registers, confirms a PKCE link, and rejects an expired callback", async (
   await expect(
     page.getByRole("heading", { name: "This link needs another look." }),
   ).toBeVisible();
+  await expect(
+    page.getByText(/Your email may already be confirmed/),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Return to sign-in" }).click();
+  await expect(page).toHaveURL(/\/login$/);
 });
+
+for (const mode of ["register", "forgot-password"] as const) {
+  test(`explains email delivery limits on ${mode}`, async ({ page }) => {
+    await mockProvider(page);
+    await page.route("**/auth/v1/signup**", (route) =>
+      route.fulfill({
+        status: 429,
+        headers: {
+          "X-Supabase-Api-Version": "2024-01-01",
+          "Access-Control-Expose-Headers": "X-Supabase-Api-Version",
+        },
+        json: {
+          code: "over_email_send_rate_limit",
+          msg: "email rate limit exceeded",
+        },
+      }),
+    );
+    await page.route("**/auth/v1/recover**", (route) =>
+      route.fulfill({
+        status: 429,
+        json: {
+          error_code: "over_email_send_rate_limit",
+          msg: "email rate limit exceeded",
+        },
+      }),
+    );
+    await page.goto(`/${mode}`);
+    await page.getByLabel("Email address").fill(user.email);
+    if (mode === "register") {
+      await page.getByLabel("Display name").fill("Detective");
+      await page
+        .getByLabel("Password", { exact: true })
+        .fill("long-test-passphrase");
+    }
+    await page
+      .getByRole("button", {
+        name: mode === "register" ? "Create account" : "Send recovery link",
+        exact: true,
+      })
+      .click();
+    await expect(page.getByRole("alert")).toContainText(
+      "Email delivery limit reached",
+    );
+    await expect(page.getByRole("alert")).toContainText("try signing in");
+  });
+}
 
 test("requests recovery and updates the password after a PKCE recovery link", async ({
   page,
@@ -176,15 +225,13 @@ test("requests recovery and updates the password after a PKCE recovery link", as
   await page.getByRole("button", { name: "Send recovery link" }).click();
   await expect(page.getByText(/If an account exists/)).toBeVisible();
   await page.goto("/reset-password?code=recovery-fixture");
-  await page
-    .getByLabel("Password", { exact: true })
-    .fill("replacement-passphrase");
+  await page.getByLabel("Password", { exact: true }).fill("two word");
   const update = page.waitForRequest(
     (request) =>
       request.url().endsWith("/auth/v1/user") && request.method() === "PUT",
   );
   await page.getByRole("button", { name: "Update password" }).click();
-  expect((await update).postDataJSON().password).toBe("replacement-passphrase");
+  expect((await update).postDataJSON().password).toBe("two word");
   await expect(page.getByText(/Password updated/)).toBeVisible();
   expect(
     await page.evaluate(

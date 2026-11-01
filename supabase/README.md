@@ -31,7 +31,7 @@ In Authentication settings:
 3. Add these exact allowed redirect URLs:
    - `http://127.0.0.1:5173/auth/callback`
    - `http://127.0.0.1:5173/reset-password`
-4. Set minimum password length to at least 12, matching the account creation form. Review the project's authentication rate limits and email delivery restrictions. For sending beyond provider development restrictions, configure your own SMTP provider.
+4. Set minimum password length to 8, matching the account creation and reset forms. Allow spaces and do not require a mix of uppercase letters, numbers, or symbols. Longer unique passphrases are encouraged. The form accepts up to 128 characters; sign-in accepts existing passwords without enforcing new-password rules. Review the project's authentication rate limits and email delivery restrictions. For sending beyond provider development restrictions, configure your own SMTP provider.
 
 Use one hostname consistently. If using `localhost`, add its corresponding Site URL/redirects and start requests there. Production requires your actual HTTPS origin and exact callback URLs.
 
