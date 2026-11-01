@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import {
@@ -13,6 +13,8 @@ import {
   Fingerprint,
   GitBranch,
   LayoutDashboard,
+  Pause,
+  Play,
   RefreshCw,
   ScanEye,
   Server,
@@ -89,6 +91,11 @@ function SectionHeading({ title }: { title: string }) {
 }
 
 export default function App() {
+  const [motionEnabled, setMotionEnabled] = useState(() =>
+    typeof window.matchMedia === "function"
+      ? !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false,
+  );
   const location = useLocation();
   const currentPage =
     navigation.find((item) => item.to === location.pathname)?.label ??
@@ -125,7 +132,7 @@ export default function App() {
     current?.snapshot.integrations.find((item) => item.id === id);
 
   return (
-    <div className="workspace">
+    <div className={`workspace ${motionEnabled ? "motion-enabled" : ""}`}>
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>
@@ -193,6 +200,29 @@ export default function App() {
           </div>
           <div className="topbar-actions">
             <CommandMenu items={navigation} />
+            <button
+              type="button"
+              className="motion-toggle"
+              aria-label={
+                motionEnabled
+                  ? "Pause decorative motion"
+                  : "Play decorative motion"
+              }
+              aria-pressed={motionEnabled}
+              onClick={() => setMotionEnabled((enabled) => !enabled)}
+              title={
+                motionEnabled
+                  ? "Pause decorative motion"
+                  : "Play decorative motion"
+              }
+            >
+              {motionEnabled ? (
+                <Pause size={15} aria-hidden="true" />
+              ) : (
+                <Play size={15} aria-hidden="true" />
+              )}
+              <span>Motion {motionEnabled ? "on" : "off"}</span>
+            </button>
             <span className="environment">
               <span />
               Local development
@@ -200,298 +230,300 @@ export default function App() {
           </div>
         </header>
         <main id="main-content" tabIndex={-1}>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <>
-                  <div className="hero">
-                    <div className="hero-copy">
-                      <h1>
-                        A closer look
-                        <br />
-                        at every sign-in.
-                      </h1>
-                      <p>
-                        Collect trusted login events, review the context, and
-                        investigate what needs attention.
-                      </p>
-                      <div className="hero-actions">
-                        <Button asChild>
-                          <Link to="/login">
-                            Open sign-in
-                            <ArrowRight size={17} aria-hidden="true" />
-                          </Link>
-                        </Button>
-                        <Link className="text-link" to="/architecture">
-                          How it works
-                        </Link>
-                      </div>
-                    </div>
-                    <SignalVisual />
-                  </div>
-                  <div className="foundation-banner">
-                    <span className="banner-icon">
-                      <Check size={17} aria-hidden="true" />
-                    </span>
-                    <strong>Event pipeline built</strong>
-                    <span>
-                      Live coverage checks are in progress. Model training comes
-                      next.
-                    </span>
-                  </div>
-                  <div className="overview-grid">
-                    <section
-                      className="connection-section"
-                      id="connection-overview"
-                      tabIndex={-1}
-                    >
-                      <SectionHeading title="Connection overview" />
-                      <div className="panel connection-panel">
-                        <div className="panel-top">
-                          <span className="icon-tile">
-                            <Server size={22} aria-hidden="true" />
-                          </span>
-                          <Status
-                            tone={
-                              current
-                                ? "green"
-                                : query.isError
-                                  ? "amber"
-                                  : "neutral"
-                            }
-                          >
-                            {connectionLabel}
-                          </Status>
-                        </div>
-                        <div aria-live="polite" aria-atomic="true">
-                          <h3>
-                            {query.isPending
-                              ? "Checking the service…"
-                              : query.isError
-                                ? "Connection needs attention."
-                                : "The service is responding."}
-                          </h3>
-                          <p className="connection-description">
-                            {query.isPending
-                              ? "Requesting the latest service status."
-                              : query.isError
-                                ? query.error.message
-                                : "Your workspace can reach the API. Authentication, collection, and detection are checked separately."}
-                          </p>
-                        </div>
-                        <dl className="connection-details">
-                          <div>
-                            <dt>Service</dt>
-                            <dd className="mono">sherlock-logs-api</dd>
-                          </div>
-                          <div>
-                            <dt>Response time</dt>
-                            <dd className="mono">
-                              {current ? `${current.latencyMs} ms` : "—"}
-                            </dd>
-                          </div>
-                          <div>
-                            <dt>Release</dt>
-                            <dd className="mono">
-                              {current ? `v${current.snapshot.version}` : "—"}
-                            </dd>
-                          </div>
-                          <div>
-                            <dt>Last checked</dt>
-                            <dd className="mono">
-                              {current
-                                ? new Date(
-                                    current.snapshot.checked_at,
-                                  ).toLocaleTimeString([], {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    second: "2-digit",
-                                  })
-                                : "—"}
-                            </dd>
-                          </div>
-                        </dl>
-                        <div className="connection-actions">
-                          <Button
-                            variant="outline"
-                            onClick={() => void query.refetch()}
-                            disabled={query.isFetching}
-                          >
-                            <RefreshCw
-                              size={15}
-                              className={query.isFetching ? "spin" : ""}
-                              aria-hidden="true"
-                            />
-                            {query.isFetching ? "Checking…" : "Check again"}
+          <div className="route-view" key={location.pathname}>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <>
+                    <div className="hero">
+                      <div className="hero-copy">
+                        <h1>
+                          A closer look
+                          <br />
+                          at every sign-in.
+                        </h1>
+                        <p>
+                          Collect trusted login events, review the context, and
+                          investigate what needs attention.
+                        </p>
+                        <div className="hero-actions">
+                          <Button asChild>
+                            <Link to="/login">
+                              Open sign-in
+                              <ArrowRight size={17} aria-hidden="true" />
+                            </Link>
                           </Button>
-                          {docsUrl && (
-                            <a
-                              className="text-link"
-                              href={docsUrl}
-                              target="_blank"
-                              rel="noreferrer"
+                          <Link className="text-link" to="/architecture">
+                            How it works
+                          </Link>
+                        </div>
+                      </div>
+                      <SignalVisual />
+                    </div>
+                    <div className="foundation-banner">
+                      <span className="banner-icon">
+                        <Check size={17} aria-hidden="true" />
+                      </span>
+                      <strong>Event pipeline built</strong>
+                      <span>
+                        Live coverage checks are in progress. Model training
+                        comes next.
+                      </span>
+                    </div>
+                    <div className="overview-grid">
+                      <section
+                        className="connection-section"
+                        id="connection-overview"
+                        tabIndex={-1}
+                      >
+                        <SectionHeading title="Connection overview" />
+                        <div className="panel connection-panel">
+                          <div className="panel-top">
+                            <span className="icon-tile">
+                              <Server size={22} aria-hidden="true" />
+                            </span>
+                            <Status
+                              tone={
+                                current
+                                  ? "green"
+                                  : query.isError
+                                    ? "amber"
+                                    : "neutral"
+                              }
                             >
-                              API docs
-                              <ArrowUpRight size={15} aria-hidden="true" />
-                            </a>
+                              {connectionLabel}
+                            </Status>
+                          </div>
+                          <div aria-live="polite" aria-atomic="true">
+                            <h3>
+                              {query.isPending
+                                ? "Checking the service…"
+                                : query.isError
+                                  ? "Connection needs attention."
+                                  : "The service is responding."}
+                            </h3>
+                            <p className="connection-description">
+                              {query.isPending
+                                ? "Requesting the latest service status."
+                                : query.isError
+                                  ? query.error.message
+                                  : "Your workspace can reach the API. Authentication, collection, and detection are checked separately."}
+                            </p>
+                          </div>
+                          <dl className="connection-details">
+                            <div>
+                              <dt>Service</dt>
+                              <dd className="mono">sherlock-logs-api</dd>
+                            </div>
+                            <div>
+                              <dt>Response time</dt>
+                              <dd className="mono">
+                                {current ? `${current.latencyMs} ms` : "—"}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt>Release</dt>
+                              <dd className="mono">
+                                {current ? `v${current.snapshot.version}` : "—"}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt>Last checked</dt>
+                              <dd className="mono">
+                                {current
+                                  ? new Date(
+                                      current.snapshot.checked_at,
+                                    ).toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      second: "2-digit",
+                                    })
+                                  : "—"}
+                              </dd>
+                            </div>
+                          </dl>
+                          <div className="connection-actions">
+                            <Button
+                              variant="outline"
+                              onClick={() => void query.refetch()}
+                              disabled={query.isFetching}
+                            >
+                              <RefreshCw
+                                size={15}
+                                className={query.isFetching ? "spin" : ""}
+                                aria-hidden="true"
+                              />
+                              {query.isFetching ? "Checking…" : "Check again"}
+                            </Button>
+                            {docsUrl && (
+                              <a
+                                className="text-link"
+                                href={docsUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                API docs
+                                <ArrowUpRight size={15} aria-hidden="true" />
+                              </a>
+                            )}
+                          </div>
+                          {query.isError && (
+                            <Link to="/setup" className="recovery-link">
+                              <WifiOff size={15} aria-hidden="true" />
+                              Open the startup guide
+                            </Link>
                           )}
                         </div>
-                        {query.isError && (
-                          <Link to="/setup" className="recovery-link">
-                            <WifiOff size={15} aria-hidden="true" />
-                            Open the startup guide
-                          </Link>
-                        )}
-                      </div>
-                      <p className="section-footnote">
-                        Event collection coverage is verified separately.
-                      </p>
-                    </section>
-                    <section className="roadmap-section">
-                      <SectionHeading title="Build progress" />
-                      <div className="roadmap-panel">
-                        {roadmap.map((item, index) => {
-                          const state =
-                            integration(item.id)?.status === "configured"
-                              ? item.id === "authentication"
-                                ? "Verify sign-in"
-                                : "Verify source"
-                              : item.state;
-                          return (
-                            <div
-                              className={`roadmap-item ${state === "Complete" ? "roadmap-complete" : ""}`}
-                              key={item.title}
-                            >
-                              <span className="roadmap-index">
-                                {state === "Complete" ? (
-                                  <Check size={14} aria-hidden="true" />
-                                ) : (
-                                  index + 1
-                                )}
-                              </span>
-                              <div>
-                                <div className="roadmap-title">
-                                  <h3>{item.title}</h3>
-                                  <span>{state}</span>
+                        <p className="section-footnote">
+                          Event collection coverage is verified separately.
+                        </p>
+                      </section>
+                      <section className="roadmap-section">
+                        <SectionHeading title="Build progress" />
+                        <div className="roadmap-panel">
+                          {roadmap.map((item, index) => {
+                            const state =
+                              integration(item.id)?.status === "configured"
+                                ? item.id === "authentication"
+                                  ? "Verify sign-in"
+                                  : "Verify source"
+                                : item.state;
+                            return (
+                              <div
+                                className={`roadmap-item ${state === "Complete" ? "roadmap-complete" : ""}`}
+                                key={item.title}
+                              >
+                                <span className="roadmap-index">
+                                  {state === "Complete" ? (
+                                    <Check size={14} aria-hidden="true" />
+                                  ) : (
+                                    index + 1
+                                  )}
+                                </span>
+                                <div>
+                                  <div className="roadmap-title">
+                                    <h3>{item.title}</h3>
+                                    <span>{state}</span>
+                                  </div>
+                                  <p>{item.description}</p>
                                 </div>
-                                <p>{item.description}</p>
                               </div>
+                            );
+                          })}
+                          <a
+                            className="roadmap-link"
+                            href={`${repository}/blob/main/ROADMAP.md`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Full project roadmap
+                            <ArrowUpRight size={15} aria-hidden="true" />
+                          </a>
+                        </div>
+                      </section>
+                    </div>
+                    <section className="integrations-section">
+                      <SectionHeading title="Connected systems" />
+                      <div className="integration-grid">
+                        {[
+                          {
+                            id: "authentication",
+                            name: "Identity & access",
+                            icon: Fingerprint,
+                            tag: "Not configured",
+                            description:
+                              "Connect a Supabase project to enable account sign-in.",
+                          },
+                          {
+                            id: "database",
+                            name: "Event storage",
+                            icon: Database,
+                            tag: "Not configured",
+                            description:
+                              "Connect private event storage and verify the source.",
+                          },
+                          {
+                            id: "detector",
+                            name: "Behavioral intelligence",
+                            icon: BrainCircuit,
+                            tag: "Not trained",
+                            description:
+                              "Historical features and anomaly detection are planned.",
+                          },
+                        ].map(({ id, name, icon: Icon, tag, description }) => (
+                          <article
+                            className="integration-card"
+                            data-integration={id}
+                            key={id}
+                          >
+                            <div className="integration-icon">
+                              <Icon
+                                size={23}
+                                strokeWidth={1.6}
+                                aria-hidden="true"
+                              />
                             </div>
-                          );
-                        })}
-                        <a
-                          className="roadmap-link"
-                          href={`${repository}/blob/main/ROADMAP.md`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          Full project roadmap
-                          <ArrowUpRight size={15} aria-hidden="true" />
-                        </a>
+                            <div className="integration-copy">
+                              <h3>{name}</h3>
+                              <p>{integration(id)?.detail ?? description}</p>
+                            </div>
+                            <Status>
+                              {integration(id)?.status === "configured"
+                                ? "Settings present"
+                                : tag}
+                            </Status>
+                            <Link
+                              className="integration-plan"
+                              to="/architecture"
+                              aria-label={`Integration plan for ${name}`}
+                            >
+                              <ArrowUpRight size={18} aria-hidden="true" />
+                              <span className="sr-only">Integration plan</span>
+                            </Link>
+                          </article>
+                        ))}
                       </div>
                     </section>
+                  </>
+                }
+              />
+              <Route path="/architecture" element={<Architecture />} />
+              <Route path="/setup" element={<Setup docsUrl={docsUrl} />} />
+              <Route
+                path="/login"
+                element={<AuthPage key="login" mode="login" />}
+              />
+              <Route
+                path="/register"
+                element={<AuthPage key="register" mode="register" />}
+              />
+              <Route
+                path="/forgot-password"
+                element={<AuthPage key="forgot" mode="forgot" />}
+              />
+              <Route
+                path="/reset-password"
+                element={<AuthPage key="reset" mode="reset" />}
+              />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/account" element={<ProtectedPage />} />
+              <Route path="/admin" element={<ProtectedPage admin />} />
+              <Route
+                path="*"
+                element={
+                  <div className="document-page">
+                    <span className="page-label">Page not found</span>
+                    <h1>This case file is missing.</h1>
+                    <p>The page does not exist in this workspace.</p>
+                    <Button asChild>
+                      <Link to="/">Return to overview</Link>
+                    </Button>
                   </div>
-                  <section className="integrations-section">
-                    <SectionHeading title="Connected systems" />
-                    <div className="integration-grid">
-                      {[
-                        {
-                          id: "authentication",
-                          name: "Identity & access",
-                          icon: Fingerprint,
-                          tag: "Not configured",
-                          description:
-                            "Connect a Supabase project to enable account sign-in.",
-                        },
-                        {
-                          id: "database",
-                          name: "Event storage",
-                          icon: Database,
-                          tag: "Not configured",
-                          description:
-                            "Connect private event storage and verify the source.",
-                        },
-                        {
-                          id: "detector",
-                          name: "Behavioral intelligence",
-                          icon: BrainCircuit,
-                          tag: "Not trained",
-                          description:
-                            "Historical features and anomaly detection are planned.",
-                        },
-                      ].map(({ id, name, icon: Icon, tag, description }) => (
-                        <article
-                          className="integration-card"
-                          data-integration={id}
-                          key={id}
-                        >
-                          <div className="integration-icon">
-                            <Icon
-                              size={23}
-                              strokeWidth={1.6}
-                              aria-hidden="true"
-                            />
-                          </div>
-                          <div className="integration-copy">
-                            <h3>{name}</h3>
-                            <p>{integration(id)?.detail ?? description}</p>
-                          </div>
-                          <Status>
-                            {integration(id)?.status === "configured"
-                              ? "Settings present"
-                              : tag}
-                          </Status>
-                          <Link
-                            className="integration-plan"
-                            to="/architecture"
-                            aria-label={`Integration plan for ${name}`}
-                          >
-                            <ArrowUpRight size={18} aria-hidden="true" />
-                            <span className="sr-only">Integration plan</span>
-                          </Link>
-                        </article>
-                      ))}
-                    </div>
-                  </section>
-                </>
-              }
-            />
-            <Route path="/architecture" element={<Architecture />} />
-            <Route path="/setup" element={<Setup docsUrl={docsUrl} />} />
-            <Route
-              path="/login"
-              element={<AuthPage key="login" mode="login" />}
-            />
-            <Route
-              path="/register"
-              element={<AuthPage key="register" mode="register" />}
-            />
-            <Route
-              path="/forgot-password"
-              element={<AuthPage key="forgot" mode="forgot" />}
-            />
-            <Route
-              path="/reset-password"
-              element={<AuthPage key="reset" mode="reset" />}
-            />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/account" element={<ProtectedPage />} />
-            <Route path="/admin" element={<ProtectedPage admin />} />
-            <Route
-              path="*"
-              element={
-                <div className="document-page">
-                  <span className="page-label">Page not found</span>
-                  <h1>This case file is missing.</h1>
-                  <p>The page does not exist in this workspace.</p>
-                  <Button asChild>
-                    <Link to="/">Return to overview</Link>
-                  </Button>
-                </div>
-              }
-            />
-          </Routes>
+                }
+              />
+            </Routes>
+          </div>
           <footer className="footer">
             <span>
               <ScanEye size={17} aria-hidden="true" />

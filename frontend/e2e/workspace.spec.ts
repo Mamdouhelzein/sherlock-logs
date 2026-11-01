@@ -59,6 +59,14 @@ test("supports keyboard search with reduced motion enabled", async ({
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+  await expect(
+    page.getByRole("button", { name: "Play decorative motion" }),
+  ).toHaveAttribute("aria-pressed", "false");
+  expect(
+    await page
+      .locator(".trail-scan")
+      .evaluate((element) => getComputedStyle(element).animationName),
+  ).toBe("none");
   await page.keyboard.press("Control+k");
   await expect(
     page.getByRole("dialog", { name: "Jump to a page" }),
@@ -71,4 +79,24 @@ test("supports keyboard search with reduced motion enabled", async ({
   await expect(
     page.getByRole("button", { name: "Open navigation search" }),
   ).toBeVisible();
+});
+
+test("lets people pause and resume the animated workflow", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  const scan = page.locator(".trail-scan");
+  expect(
+    await scan.evaluate((element) => getComputedStyle(element).animationName),
+  ).toBe("record-scan");
+  await page.getByRole("button", { name: "Pause decorative motion" }).click();
+  await expect(
+    page.getByRole("button", { name: "Play decorative motion" }),
+  ).toHaveAttribute("aria-pressed", "false");
+  expect(
+    await scan.evaluate((element) => getComputedStyle(element).animationName),
+  ).toBe("none");
+  await page.getByRole("button", { name: "Play decorative motion" }).click();
+  expect(
+    await scan.evaluate((element) => getComputedStyle(element).animationName),
+  ).toBe("record-scan");
 });

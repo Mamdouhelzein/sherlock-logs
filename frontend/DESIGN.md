@@ -1,5 +1,15 @@
 # Sherlock Logs visual direction
 
+## Motion revision
+
+The user found the restrained version too plain and explicitly requested a cooler animated interface. The current direction is a night workstation: graphite `#10141F`, raised ink `#1A2131`, pale type `#E8EDF8`, electric blue `#90B3FF`, violet `#C2A1FB`, and amber `#F1C580`. IBM Plex and the asymmetric layout stay.
+
+Compare a focused animated evidence scene with a page-wide moving particle field. Choose the evidence scene: a scan passes over an illustrative authentication record, a packet follows its connector, and the private record responds. This gives the motion a security-specific sequence. Add a pointer-responsive perspective to that scene, short page arrivals, and hover feedback on actual controls. Keep the surrounding information stable.
+
+The animation is explicitly a workflow illustration. A header control pauses decorative motion, operating-system reduced-motion preferences take precedence, and touch users receive a flat scene. The graphic remains visible in a compact form on mobile. Authentication, status measurements, and model readiness retain their real semantics.
+
+The earlier light palette and static diagram below record the first study; this revision supersedes those aesthetic choices following user feedback.
+
 Use the requested Anthropic frontend-design skill to make a practical security investigation workspace with a distinct visual identity. Keep the existing React, FastAPI, Supabase, and permission boundaries.
 
 ## Plan

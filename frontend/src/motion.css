@@ -1,0 +1,358 @@
+/* The evidence scene is illustrative. All continuous motion can be paused. */
+:root {
+  --motion-quick: 180ms;
+  --motion-arrive: 560ms;
+  --motion-cycle: 6s;
+  --motion-ease: cubic-bezier(0.22, 0.68, 0, 1);
+}
+.motion-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #445577;
+  border-radius: 7px;
+  background: #1a2338;
+  color: #cbdcff;
+  font-size: 12px;
+  white-space: nowrap;
+  transition:
+    background var(--motion-quick),
+    border-color var(--motion-quick);
+}
+.motion-toggle:hover {
+  background: #2a3652;
+  border-color: #8faef0;
+}
+.motion-toggle[aria-pressed="true"] {
+  border-color: #72639a;
+  color: #dcc5ff;
+}
+.topbar {
+  backdrop-filter: blur(16px);
+}
+.hero {
+  perspective: 1200px;
+}
+.hero .signal-visual {
+  isolation: isolate;
+  border: 1px solid #58618f;
+  background:
+    radial-gradient(ellipse at 90% 0%, #67508e5c, transparent 60%), #182138;
+  box-shadow:
+    0 24px 75px #04081250,
+    0 0 55px #6d5fc014;
+  transition:
+    transform 500ms var(--motion-ease),
+    border-color 300ms;
+}
+.signal-visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--pointer-x, 65%) var(--pointer-y, 25%),
+    #a8bdff22,
+    transparent 45%
+  );
+  opacity: 0.45;
+  transition: opacity 400ms;
+}
+.signal-visual > :not(.trail-topology) {
+  position: relative;
+  z-index: 1;
+}
+.signal-visual .trail-topology {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  fill: #172138;
+  stroke: #829beb;
+  stroke-width: 1;
+  opacity: 0.52;
+  pointer-events: none;
+}
+.topology-wire {
+  fill: none;
+  opacity: 0.55;
+}
+.topology-flow {
+  fill: none;
+  stroke: #c5b5ff;
+  stroke-width: 2;
+  stroke-dasharray: 12 240;
+}
+.trail-record {
+  overflow: hidden;
+  border: 1px solid #667ca5;
+  box-shadow: 0 14px 35px #070e2240;
+}
+.signal-visual .trail-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 65%,
+    #91b9ff16 97%,
+    #a5c5ff75 100%
+  );
+}
+.trail-record > :not(.trail-scan) {
+  position: relative;
+  z-index: 1;
+}
+.trail-record .record-heading > svg {
+  color: #b2caff;
+}
+.trail-connector {
+  border-left-color: #7697d1;
+}
+.trail-connector > span {
+  width: 6px;
+  height: 6px;
+  box-shadow: 0 0 13px #8db7ff;
+}
+.trail-store {
+  position: relative;
+  background: #302b49;
+  border-color: #8270aa;
+}
+.trail-store::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid #c7adff;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+}
+.motion-enabled .route-view {
+  animation: scene-arrive var(--motion-arrive) var(--motion-ease) both;
+}
+.motion-enabled .topology-flow {
+  animation: trace-flow var(--motion-cycle) linear infinite;
+}
+.motion-enabled .trail-scan {
+  animation: record-scan var(--motion-cycle) ease-in-out infinite;
+}
+.motion-enabled .trail-record {
+  animation: record-float var(--motion-cycle) ease-in-out infinite;
+}
+.motion-enabled .trail-connector > span {
+  animation: packet-flow var(--motion-cycle) ease-in-out infinite;
+}
+.motion-enabled .trail-store::after {
+  animation: record-ack var(--motion-cycle) ease-in-out infinite;
+}
+a.bg-accent,
+button.bg-accent {
+  box-shadow: 0 5px 20px #749bff18;
+  transition:
+    transform var(--motion-quick),
+    box-shadow var(--motion-quick),
+    background var(--motion-quick);
+}
+a.bg-accent:hover,
+button.bg-accent:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 9px 26px #749bff32;
+}
+a.bg-accent:active,
+button.bg-accent:active {
+  transform: translateY(0);
+}
+.main-nav a {
+  transition:
+    transform var(--motion-quick),
+    background var(--motion-quick),
+    color var(--motion-quick);
+}
+.main-nav a:hover {
+  transform: translateX(3px);
+}
+.main-nav a.active {
+  box-shadow: inset 2px 0 #9dbbff;
+  background: #2c3d60;
+}
+.integration-plan {
+  transition:
+    transform var(--motion-quick),
+    background var(--motion-quick);
+}
+.integration-plan:hover {
+  transform: translate(2px, -2px);
+}
+.auth-card {
+  transition:
+    border-color 250ms,
+    box-shadow 250ms;
+}
+.auth-card:focus-within {
+  border-color: #718cb7;
+  box-shadow: 0 12px 45px #05091725;
+}
+.form-field input {
+  transition:
+    border-color var(--motion-quick),
+    background var(--motion-quick);
+}
+.form-field input:focus {
+  border-color: #adc8ff;
+  background: #1e2940;
+}
+@keyframes scene-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(13px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes trace-flow {
+  to {
+    stroke-dashoffset: -504;
+  }
+}
+@keyframes record-scan {
+  0%,
+  8% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  43% {
+    transform: translateY(200%);
+    opacity: 1;
+  }
+  48%,
+  100% {
+    transform: translateY(200%);
+    opacity: 0;
+  }
+}
+@keyframes record-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  35%,
+  55% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes packet-flow {
+  0%,
+  43% {
+    transform: translateY(-24px);
+    opacity: 0;
+  }
+  46% {
+    opacity: 1;
+  }
+  61% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  65%,
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+@keyframes record-ack {
+  0%,
+  58%,
+  88%,
+  100% {
+    opacity: 0;
+  }
+  67%,
+  75% {
+    opacity: 1;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .motion-enabled .hero .signal-visual:hover {
+    transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    border-color: #b6a4ed;
+  }
+  .motion-enabled .signal-visual:hover::before {
+    opacity: 1;
+  }
+}
+@media (max-width: 1050px) {
+  .hero .signal-visual {
+    max-width: 620px;
+  }
+  .hero {
+    gap: 30px;
+  }
+}
+@media (max-width: 720px) {
+  .motion-toggle {
+    width: 44px;
+    padding: 0;
+  }
+  .motion-toggle > span {
+    display: none;
+  }
+  .topbar-actions {
+    gap: 8px;
+  }
+  .hero .signal-visual {
+    padding: 20px;
+    max-width: 440px;
+  }
+  .trail-record {
+    padding: 13px;
+  }
+  .trail-record dl {
+    font-size: 11px;
+  }
+  .trail-store {
+    padding: 12px;
+  }
+  .hero {
+    gap: 25px;
+  }
+  .hero-copy {
+    padding-bottom: 0;
+  }
+  .main-nav a:hover {
+    transform: none;
+  }
+}
+@media (max-width: 420px) {
+  .breadcrumb .breadcrumb-muted,
+  .breadcrumb > svg {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .motion-enabled .hero .signal-visual:hover,
+  a.bg-accent:hover,
+  button.bg-accent:hover {
+    transform: none;
+  }
+}

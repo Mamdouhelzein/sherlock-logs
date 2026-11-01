@@ -139,7 +139,7 @@ npm ci
 npm run dev
 ```
 
-Open [the workspace](http://127.0.0.1:5173). It should show **API reachable** after the request completes. Use **Check again** to refresh; the connection status reflects the last manual check, not a continuous monitor. Use the navigation search button or **Ctrl/Cmd + K** to jump between pages. The evidence-trail diagram illustrates collection and does not show live activity. Reduced-motion preferences are respected.
+Open [the workspace](http://127.0.0.1:5173). It should show **API reachable** after the request completes. Use **Check again** to refresh; the connection status reflects the last manual check, not a continuous monitor. Use the navigation search button or **Ctrl/Cmd + K** to jump between pages. The animated evidence trail illustrates collection and does not show live activity. Use the header's motion control to pause it; reduced-motion preferences are respected.
 
 - [Liveness](http://127.0.0.1:8000/healthz): process status, not database/model readiness.
 - [System status](http://127.0.0.1:8000/api/v1/system): version, check time, uptime, and integration configuration (not a live readiness probe).
