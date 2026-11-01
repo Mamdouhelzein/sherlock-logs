@@ -54,14 +54,11 @@ test("searches workspace navigation and restores focus on dismissal", async ({
   await expect(trigger).toBeFocused();
 });
 
-test("supports keyboard search and reduced decorative motion", async ({
+test("supports keyboard search with reduced motion enabled", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(
-    page.getByRole("button", { name: "Ambient effects" }),
-  ).toHaveAttribute("aria-pressed", "false");
   await page.keyboard.press("Control+k");
   await expect(
     page.getByRole("dialog", { name: "Jump to a page" }),

@@ -1,40 +1,55 @@
-import { BrainCircuit, Fingerprint, ScanEye, Server } from "lucide-react";
+import { Database, Fingerprint, LockKeyhole, ScanEye } from "lucide-react";
 
 export function SignalVisual() {
   return (
-    <figure className="signal-visual">
-      <div className="signal-stage" aria-hidden="true">
-        <span className="signal-axis axis-horizontal" />
-        <span className="signal-axis axis-vertical" />
-        <div className="radar-ring ring-outer" />
-        <div className="radar-ring ring-middle" />
-        <div className="radar-ring ring-inner" />
-        <div className="radar-sweep" />
-        <div className="signal-core">
-          <ScanEye size={44} strokeWidth={1.1} />
-          <span>SHERLOCK</span>
-        </div>
-        <div className="signal-node node-identity">
-          <Fingerprint size={18} />
-          <span>IDENTITY</span>
-        </div>
-        <div className="signal-node node-api">
-          <Server size={18} />
-          <span>EVENTS</span>
-        </div>
-        <div className="signal-node node-model">
-          <BrainCircuit size={18} />
-          <span>INTELLIGENCE</span>
-        </div>
-        <span className="signal-coordinate coordinate-top mono">OBSERVE</span>
-        <span className="signal-coordinate coordinate-bottom mono">
-          UNDERSTAND
-        </span>
+    <figure
+      className="signal-visual"
+      aria-label="Authentication event collection workflow"
+    >
+      <div className="trail-heading">
+        <span>The evidence trail</span>
+        <ScanEye size={24} strokeWidth={1.4} aria-hidden="true" />
       </div>
-      <figcaption>
+      <div className="trail-record">
+        <div className="record-heading">
+          <Fingerprint size={22} strokeWidth={1.4} aria-hidden="true" />
+          <strong>Authentication event</strong>
+          <span>Source</span>
+        </div>
+        <dl>
+          <div>
+            <dt>Outcome</dt>
+            <dd>Provider-verified</dd>
+          </div>
+          <div>
+            <dt>Time</dt>
+            <dd>Source timestamp</dd>
+          </div>
+          <div>
+            <dt>Context</dt>
+            <dd>When available</dd>
+          </div>
+        </dl>
+      </div>
+      <div className="trail-connector" aria-hidden="true">
         <span />
-        Architecture illustration · detection is planned
-      </figcaption>
+      </div>
+      <div className="trail-store">
+        <Database size={22} strokeWidth={1.5} aria-hidden="true" />
+        <div>
+          <strong>Private event record</strong>
+          <span>Stored with restricted access</span>
+        </div>
+        <LockKeyhole size={17} aria-hidden="true" />
+      </div>
+      <div className="trail-next">
+        <span className="trail-next-dot" aria-hidden="true" />
+        <div>
+          <strong>Behavioral review</strong>
+          <span>Model training is the next stage.</span>
+        </div>
+      </div>
+      <figcaption>Collection workflow, not a live event.</figcaption>
     </figure>
   );
 }

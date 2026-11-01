@@ -85,22 +85,24 @@ function PasswordField({ minimum = 1 }: { minimum?: number }) {
 type Mode = "login" | "register" | "forgot" | "reset";
 const copy = {
   login: {
-    title: "Welcome back, detective.",
-    description: "Sign in to your private workspace and pick up the case.",
+    title: "Sign in to Sherlock Logs.",
+    description:
+      "Sign in to view your account and continue your investigation.",
     action: "Sign in",
   },
   register: {
-    title: "Your first case starts here.",
-    description: "Create your account. Your profile is private by default.",
+    title: "Create your account.",
+    description:
+      "Create your Sherlock Logs account. Your profile is private by default.",
     action: "Create account",
   },
   forgot: {
-    title: "Lost your way in?",
+    title: "Back to your account.",
     description: "We’ll send a secure recovery link to your email.",
     action: "Send recovery link",
   },
   reset: {
-    title: "A fresh key to the case.",
+    title: "Choose a new password.",
     description: "Choose a new password for your account.",
     action: "Update password",
   },
@@ -198,7 +200,6 @@ export function AuthPage({ mode }: { mode: Mode }) {
   return (
     <div className="auth-layout">
       <section className="auth-intro">
-        <div className="page-label mono">IDENTITY & ACCESS · STEP 03</div>
         <span className="auth-emblem">
           <Fingerprint size={38} strokeWidth={1.3} aria-hidden="true" />
         </span>
@@ -207,17 +208,16 @@ export function AuthPage({ mode }: { mode: Mode }) {
         <div className="auth-promise">
           <ShieldCheck size={19} aria-hidden="true" />
           <span>
-            Private profiles. Explicit permissions.
+            Private profiles.
             <br />
-            Evidence starts with trusted identity.
+            Access that stays under control.
           </span>
         </div>
       </section>
       <section className="panel auth-card" aria-label={action}>
-        <span className="mono auth-card-label">THE ACCESS DESK</span>
         <h2>
           {mode === "register"
-            ? "Create your account"
+            ? "Account details"
             : mode === "login"
               ? "Account sign-in"
               : "Account recovery"}
@@ -492,7 +492,7 @@ function AccountPage({ identity }: { identity: Identity }) {
   }
   return (
     <div className="document-page account-page">
-      <div className="page-label mono">YOUR PRIVATE CASE FILE</div>
+      <div className="page-label">Your account</div>
       <h1>Identity, verified.</h1>
       <p className="document-lead">
         Your session and permissions have been checked by the API.
@@ -546,7 +546,7 @@ function AccountPage({ identity }: { identity: Identity }) {
             assigned in the database, and checked on every protected API
             request.
           </p>
-          <Link to="/admin">Check administrator access →</Link>
+          <Link to="/admin">Check administrator access</Link>
           <p className="section-footnote">
             Event infrastructure is built; hosted collection needs setup and
             verification. ML detection comes later.
@@ -581,7 +581,7 @@ function AdminPage({ identity, token }: { identity: Identity; token: string }) {
     );
   return (
     <div className="document-page">
-      <div className="page-label mono">RESTRICTED ACCESS</div>
+      <div className="page-label">Administrator access</div>
       <h1>Administrator access confirmed.</h1>
       <div className="boundary-note">
         <ShieldCheck size={26} aria-hidden="true" />

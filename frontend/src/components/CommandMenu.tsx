@@ -72,7 +72,7 @@ export function CommandMenu({ items }: { items: Destination[] }) {
           </div>
         </form>
         <div className="command-results">
-          <span className="command-caption mono">WORKSPACE PAGES</span>
+          <span className="command-caption">Workspace pages</span>
           <ul>
             {matches.map(({ to, label, icon: Icon }) => (
               <li key={to}>

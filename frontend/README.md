@@ -21,8 +21,10 @@ Open http://127.0.0.1:5173. Start the API using the root README instructions. Pu
 - `src/lib/api.ts`: runtime API contract validation, timeout, and origin validation.
 - `src/components/ui/button.tsx`: reusable accessible button/link styling.
 - `src/components/CommandMenu.tsx`: keyboard navigation search with a native modal dialog.
-- `src/components/SignalVisual.tsx`: explicitly illustrative radar with motion controls.
-- `src/styles.css`: charcoal surfaces with blue, violet, amber, and semantic status accents; responsive layouts and reduced-motion support.
+- `src/components/SignalVisual.tsx`: a labeled event-collection workflow, separate from live activity.
+- `src/styles.css`: cool gray surfaces, ink navigation, cobalt actions, and violet/amber context colors; responsive layouts and reduced-motion support.
+- `public/fonts/`: self-hosted IBM Plex Sans with its SIL Open Font License. No third-party font request runs in the browser.
+- `DESIGN.md`: visual direction, layout studies, and the design review.
 - `src/test/`: test setup and synthetic API fixtures.
 - `e2e/`: real-API browser integration tests.
 

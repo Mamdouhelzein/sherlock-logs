@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import {
@@ -17,7 +17,6 @@ import {
   ScanEye,
   Server,
   ShieldCheck,
-  Sparkles,
   Terminal,
   WifiOff,
 } from "lucide-react";
@@ -34,32 +33,36 @@ const navigation = [
   { to: "/architecture", label: "System architecture", icon: GitBranch },
   { to: "/setup", label: "Local setup", icon: Terminal },
 ];
-
 const roadmap = [
   {
     title: "Repository foundation",
-    description: "Architecture, scope, and project structure.",
+    description: "Architecture and project structure.",
     state: "Complete",
+    id: "",
   },
   {
     title: "Application foundation",
-    description: "React workspace connected to FastAPI.",
+    description: "React workspace and FastAPI service.",
     state: "Complete",
+    id: "",
   },
   {
     title: "Identity & access",
-    description: "Supabase authentication and access policies.",
+    description: "Account sign-in and permission checks.",
     state: "Connect project",
+    id: "authentication",
   },
   {
     title: "Trusted telemetry",
-    description: "Private events, signed ingestion, and audit collection.",
+    description: "Private records from a trusted source.",
     state: "Connect source",
+    id: "database",
   },
   {
     title: "Behavioral detection",
-    description: "Historical features and ML evaluation.",
+    description: "Historical features and model evaluation.",
     state: "Planned",
+    id: "detector",
   },
 ];
 
@@ -72,27 +75,20 @@ function Status({
 }) {
   return (
     <span className={`status status-${tone}`}>
-      <span className="status-dot" />
+      <span className="status-dot" aria-hidden="true" />
       {children}
     </span>
   );
 }
-
-function SectionHeading({ number, title }: { number: string; title: string }) {
+function SectionHeading({ title }: { title: string }) {
   return (
     <div className="section-heading">
-      <span className="mono">{number}</span>
       <h2>{title}</h2>
     </div>
   );
 }
 
 export default function App() {
-  const [effectsEnabled, setEffectsEnabled] = useState(() =>
-    typeof window.matchMedia === "function"
-      ? !window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      : false,
-  );
   const location = useLocation();
   const currentPage =
     navigation.find((item) => item.to === location.pathname)?.label ??
@@ -123,37 +119,44 @@ export default function App() {
   try {
     docsUrl = `${getApiOrigin()}/docs`;
   } catch {
-    /* Configuration errors appear in the status panel. */
+    /* Shown in the service check. */
   }
+  const integration = (id: string) =>
+    current?.snapshot.integrations.find((item) => item.id === id);
 
   return (
-    <div className={`workspace ${effectsEnabled ? "effects-enabled" : ""}`}>
+    <div className="workspace">
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>
       <aside className="sidebar" aria-label="Workspace navigation">
         <Link className="brand" to="/" aria-label="Sherlock Logs overview">
           <span className="brand-mark">
-            <ScanEye size={24} aria-hidden="true" />
+            <ScanEye size={27} strokeWidth={1.5} aria-hidden="true" />
           </span>
           <span>
-            Sherlock<span className="brand-light"> Logs</span>
-            <small>SIGNAL INTELLIGENCE</small>
+            Sherlock Logs<small>Security workspace</small>
           </span>
         </Link>
-        <div className="workspace-selector">
+        <div className="workspace-context">
           <span className="workspace-avatar">SL</span>
           <div>
-            Local workspace<small>Development environment</small>
+            Development<small>Personal workspace</small>
           </div>
-          <span className="mono workspace-version">v0.1</span>
         </div>
-        <span className="nav-caption">WORKSPACE</span>
         <nav className="main-nav">
           {navigation.map(({ to, label, icon: Icon }) => (
-            <NavLink key={to} to={to} end={to === "/"}>
-              <Icon size={18} aria-hidden="true" />
-              <span>{label}</span>
+            <NavLink key={to} to={to} end={to === "/"} aria-label={label}>
+              <Icon size={19} strokeWidth={1.7} aria-hidden="true" />
+              <span>
+                {label === "System architecture"
+                  ? "Architecture"
+                  : label === "Your account"
+                    ? "Account"
+                    : label === "Local setup"
+                      ? "Setup"
+                      : label}
+              </span>
               <ChevronRight
                 size={15}
                 className="nav-chevron"
@@ -163,13 +166,12 @@ export default function App() {
           ))}
         </nav>
         <div className="sidebar-note">
-          <ShieldCheck size={20} aria-hidden="true" />
-          <p>
-            A clearer view of
-            <br />
-            <strong>unusual behavior.</strong>
-          </p>
-          <span>Built to investigate, one signal at a time.</span>
+          <ShieldCheck size={22} strokeWidth={1.5} aria-hidden="true" />
+          <p>Private by default.</p>
+          <span>
+            Your profile is yours. Administrative tools require separate
+            permission.
+          </span>
         </div>
         <div className="sidebar-bottom">
           <a href={repository} target="_blank" rel="noreferrer">
@@ -177,29 +179,20 @@ export default function App() {
             Project repository
             <ArrowUpRight size={15} aria-hidden="true" />
           </a>
-          <span className="mono">TRUSTED TELEMETRY · STEP 04</span>
+          <span>
+            Development preview <span className="version">v0.1</span>
+          </span>
         </div>
       </aside>
-
       <div className="workspace-body">
         <header className="topbar">
-          <div>
+          <div className="breadcrumb">
             <span className="breadcrumb-muted">Workspace</span>
             <ChevronRight size={14} aria-hidden="true" />
             <span>{currentPage}</span>
           </div>
           <div className="topbar-actions">
             <CommandMenu items={navigation} />
-            <button
-              className="effects-toggle"
-              aria-label="Ambient effects"
-              aria-pressed={effectsEnabled}
-              onClick={() => setEffectsEnabled((enabled) => !enabled)}
-              title="Toggle decorative animation"
-            >
-              <Sparkles size={16} aria-hidden="true" />
-              <span>Effects {effectsEnabled ? "on" : "off"}</span>
-            </button>
             <span className="environment">
               <span />
               Local development
@@ -212,71 +205,52 @@ export default function App() {
               path="/"
               element={
                 <>
-                  <div className="page-label">
-                    <span className="mono">CASE FILE 001</span>
-                    <span className="label-divider" />
-                    TRUSTED TELEMETRY
-                  </div>
                   <div className="hero">
                     <div className="hero-copy">
                       <h1>
-                        Every investigation
+                        A closer look
                         <br />
-                        starts with a <em>signal.</em>
+                        at every sign-in.
                       </h1>
                       <p>
-                        Your security workspace is taking shape. Establish the
-                        connection,
-                        <br className="desktop-break" /> then build the
-                        intelligence behind it.
+                        Collect trusted login events, review the context, and
+                        investigate what needs attention.
                       </p>
                       <div className="hero-actions">
                         <Button asChild>
                           <Link to="/login">
                             Open sign-in
-                            <ArrowRight size={16} aria-hidden="true" />
+                            <ArrowRight size={17} aria-hidden="true" />
                           </Link>
                         </Button>
-                        <Button variant="ghost" asChild>
-                          <Link to="/architecture">
-                            View architecture
-                            <ArrowUpRight size={16} aria-hidden="true" />
-                          </Link>
-                        </Button>
-                      </div>
-                      <div className="hero-signature mono">
-                        <span />
-                        OBSERVE THE PATTERN. FOLLOW THE EVIDENCE.
+                        <Link className="text-link" to="/architecture">
+                          How it works
+                        </Link>
                       </div>
                     </div>
                     <SignalVisual />
                   </div>
-
                   <div className="foundation-banner">
                     <span className="banner-icon">
-                      <Check size={18} aria-hidden="true" />
+                      <Check size={17} aria-hidden="true" />
                     </span>
-                    <div>
-                      <strong>The evidence pipeline is built.</strong>
-                      <span>
-                        Private event storage and trusted ingestion are ready
-                        for database setup and source verification.
-                      </span>
-                    </div>
-                    <Status tone="amber">Step 04</Status>
+                    <strong>Event pipeline built</strong>
+                    <span>
+                      Live coverage checks are in progress. Model training comes
+                      next.
+                    </span>
                   </div>
-
                   <div className="overview-grid">
                     <section
                       className="connection-section"
                       id="connection-overview"
                       tabIndex={-1}
                     >
-                      <SectionHeading number="01" title="Connection overview" />
+                      <SectionHeading title="Connection overview" />
                       <div className="panel connection-panel">
                         <div className="panel-top">
                           <span className="icon-tile">
-                            <Server size={21} aria-hidden="true" />
+                            <Server size={22} aria-hidden="true" />
                           </span>
                           <Status
                             tone={
@@ -293,39 +267,39 @@ export default function App() {
                         <div aria-live="polite" aria-atomic="true">
                           <h3>
                             {query.isPending
-                              ? "Looking for a signal…"
+                              ? "Checking the service…"
                               : query.isError
                                 ? "Connection needs attention."
-                                : "A connection, confirmed."}
+                                : "The service is responding."}
                           </h3>
                           <p className="connection-description">
                             {query.isPending
-                              ? "Contacting the backend for its current system status."
+                              ? "Requesting the latest service status."
                               : query.isError
                                 ? query.error.message
-                                : "The workspace can reach your FastAPI service. This confirms the application connection, not readiness of future integrations."}
+                                : "Your workspace can reach the API. Authentication, collection, and detection are checked separately."}
                           </p>
                         </div>
-                        <div className="connection-details">
+                        <dl className="connection-details">
                           <div>
-                            <span>Service</span>
-                            <strong className="mono">sherlock-logs-api</strong>
+                            <dt>Service</dt>
+                            <dd className="mono">sherlock-logs-api</dd>
                           </div>
                           <div>
-                            <span>Response time</span>
-                            <strong className="mono">
+                            <dt>Response time</dt>
+                            <dd className="mono">
                               {current ? `${current.latencyMs} ms` : "—"}
-                            </strong>
+                            </dd>
                           </div>
                           <div>
-                            <span>Release</span>
-                            <strong className="mono">
+                            <dt>Release</dt>
+                            <dd className="mono">
                               {current ? `v${current.snapshot.version}` : "—"}
-                            </strong>
+                            </dd>
                           </div>
                           <div>
-                            <span>Last checked</span>
-                            <strong className="mono">
+                            <dt>Last checked</dt>
+                            <dd className="mono">
                               {current
                                 ? new Date(
                                     current.snapshot.checked_at,
@@ -335,9 +309,9 @@ export default function App() {
                                     second: "2-digit",
                                   })
                                 : "—"}
-                            </strong>
+                            </dd>
                           </div>
-                        </div>
+                        </dl>
                         <div className="connection-actions">
                           <Button
                             variant="outline"
@@ -352,73 +326,74 @@ export default function App() {
                             {query.isFetching ? "Checking…" : "Check again"}
                           </Button>
                           {docsUrl && (
-                            <Button variant="ghost" asChild>
-                              <a
-                                href={docsUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                API docs
-                                <ArrowUpRight size={15} aria-hidden="true" />
-                              </a>
-                            </Button>
+                            <a
+                              className="text-link"
+                              href={docsUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              API docs
+                              <ArrowUpRight size={15} aria-hidden="true" />
+                            </a>
                           )}
                         </div>
                         {query.isError && (
                           <Link to="/setup" className="recovery-link">
-                            <WifiOff size={14} aria-hidden="true" />
+                            <WifiOff size={15} aria-hidden="true" />
                             Open the startup guide
-                            <ArrowRight size={14} aria-hidden="true" />
                           </Link>
                         )}
                       </div>
                       <p className="section-footnote">
-                        A manual service check. Event collection coverage is
-                        verified separately.
+                        Event collection coverage is verified separately.
                       </p>
                     </section>
                     <section className="roadmap-section">
-                      <SectionHeading number="02" title="The path ahead" />
-                      <div className="panel roadmap-panel">
-                        {roadmap.map((item, index) => (
-                          <div
-                            key={item.title}
-                            className={`roadmap-item roadmap-${item.state.toLowerCase().replace(" ", "-")}`}
-                          >
-                            <span className="roadmap-index mono">
-                              {item.state === "Complete" ? (
-                                <Check size={15} aria-hidden="true" />
-                              ) : (
-                                `0${index + 1}`
-                              )}
-                            </span>
-                            <div>
-                              <div className="roadmap-title">
-                                <h3>{item.title}</h3>
-                                <span>{item.state}</span>
+                      <SectionHeading title="Build progress" />
+                      <div className="roadmap-panel">
+                        {roadmap.map((item, index) => {
+                          const state =
+                            integration(item.id)?.status === "configured"
+                              ? item.id === "authentication"
+                                ? "Verify sign-in"
+                                : "Verify source"
+                              : item.state;
+                          return (
+                            <div
+                              className={`roadmap-item ${state === "Complete" ? "roadmap-complete" : ""}`}
+                              key={item.title}
+                            >
+                              <span className="roadmap-index">
+                                {state === "Complete" ? (
+                                  <Check size={14} aria-hidden="true" />
+                                ) : (
+                                  index + 1
+                                )}
+                              </span>
+                              <div>
+                                <div className="roadmap-title">
+                                  <h3>{item.title}</h3>
+                                  <span>{state}</span>
+                                </div>
+                                <p>{item.description}</p>
                               </div>
-                              <p>{item.description}</p>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                         <a
                           className="roadmap-link"
                           href={`${repository}/blob/main/ROADMAP.md`}
                           target="_blank"
                           rel="noreferrer"
                         >
-                          Explore the full roadmap
-                          <ArrowUpRight size={16} aria-hidden="true" />
+                          Full project roadmap
+                          <ArrowUpRight size={15} aria-hidden="true" />
                         </a>
                       </div>
                     </section>
                   </div>
-
                   <section className="integrations-section">
-                    <SectionHeading
-                      number="03"
-                      title="Intelligence takes a foundation"
-                    />
+                    <SectionHeading title="Connected systems" />
                     <div className="integration-grid">
                       {[
                         {
@@ -427,7 +402,7 @@ export default function App() {
                           icon: Fingerprint,
                           tag: "Not configured",
                           description:
-                            "Sign-in and permission checks are built. Connect a Supabase project to enable them.",
+                            "Connect a Supabase project to enable account sign-in.",
                         },
                         {
                           id: "database",
@@ -435,7 +410,7 @@ export default function App() {
                           icon: Database,
                           tag: "Not configured",
                           description:
-                            "Private event storage and audit collection are built. Connect the database and verify your source.",
+                            "Connect private event storage and verify the source.",
                         },
                         {
                           id: "detector",
@@ -443,36 +418,27 @@ export default function App() {
                           icon: BrainCircuit,
                           tag: "Not trained",
                           description:
-                            "Isolation Forest will learn unusual patterns from historical login behavior.",
+                            "Historical features and anomaly detection are planned.",
                         },
                       ].map(({ id, name, icon: Icon, tag, description }) => (
                         <article
-                          className="panel integration-card"
+                          className="integration-card"
                           data-integration={id}
                           key={id}
                         >
-                          <div className="integration-top">
+                          <div className="integration-icon">
                             <Icon
                               size={23}
-                              strokeWidth={1.5}
+                              strokeWidth={1.6}
                               aria-hidden="true"
                             />
-                            <span className="mono">
-                              {id !== "detector"
-                                ? "INTEGRATION BUILT"
-                                : "UPCOMING"}
-                            </span>
                           </div>
-                          <h3>{name}</h3>
-                          <p>
-                            {current?.snapshot.integrations.find(
-                              (item) => item.id === id,
-                            )?.detail ?? description}
-                          </p>
+                          <div className="integration-copy">
+                            <h3>{name}</h3>
+                            <p>{integration(id)?.detail ?? description}</p>
+                          </div>
                           <Status>
-                            {current?.snapshot.integrations.find(
-                              (item) => item.id === id,
-                            )?.status === "configured"
+                            {integration(id)?.status === "configured"
                               ? "Settings present"
                               : tag}
                           </Status>
@@ -481,8 +447,8 @@ export default function App() {
                             to="/architecture"
                             aria-label={`Integration plan for ${name}`}
                           >
-                            Integration plan
-                            <ArrowUpRight size={14} aria-hidden="true" />
+                            <ArrowUpRight size={18} aria-hidden="true" />
+                            <span className="sr-only">Integration plan</span>
                           </Link>
                         </article>
                       ))}
@@ -516,14 +482,11 @@ export default function App() {
               path="*"
               element={
                 <div className="document-page">
-                  <span className="page-label">404 · UNKNOWN PATH</span>
+                  <span className="page-label">Page not found</span>
                   <h1>This case file is missing.</h1>
                   <p>The page does not exist in this workspace.</p>
                   <Button asChild>
-                    <Link to="/">
-                      Return to overview
-                      <ArrowRight size={16} aria-hidden="true" />
-                    </Link>
+                    <Link to="/">Return to overview</Link>
                   </Button>
                 </div>
               }
@@ -531,11 +494,14 @@ export default function App() {
           </Routes>
           <footer className="footer">
             <span>
-              <ScanEye size={16} aria-hidden="true" />
-              Sherlock Logs <span className="footer-divider">/</span> The case
-              of the suspicious sign-in.
+              <ScanEye size={17} aria-hidden="true" />
+              Sherlock Logs
             </span>
-            <span>Built with curiosity. Backed by evidence.</span>
+            <span>The case of the suspicious sign-in.</span>
+            <a href={repository} target="_blank" rel="noreferrer">
+              Source code
+              <ArrowUpRight size={13} aria-hidden="true" />
+            </a>
           </footer>
         </main>
       </div>
@@ -546,7 +512,7 @@ export default function App() {
 function Architecture() {
   return (
     <div className="document-page">
-      <div className="page-label mono">SYSTEM BLUEPRINT</div>
+      <div className="page-label mono">System architecture</div>
       <h1>Follow the signal.</h1>
       <p className="document-lead">
         The website handles identity. Sherlock Logs will turn trusted activity
@@ -623,7 +589,7 @@ function Architecture() {
 function Setup({ docsUrl }: { docsUrl: string | null }) {
   return (
     <div className="document-page">
-      <div className="page-label mono">DEVELOPER FIELD NOTES</div>
+      <div className="page-label mono">Local development</div>
       <h1>Start the investigation.</h1>
       <p className="document-lead">
         Use Node.js 22.12+ and Python 3.12+. The public workspace runs without
@@ -631,7 +597,7 @@ function Setup({ docsUrl }: { docsUrl: string | null }) {
       </p>
       <div className="setup-grid">
         <section className="panel setup-card">
-          <span className="step-number mono">IDENTITY & ACCESS</span>
+          <span className="step-number mono">Identity & access</span>
           <h2>Connect Supabase</h2>
           <p>
             Create your development project, apply the identity SQL migration,
@@ -647,9 +613,7 @@ function Setup({ docsUrl }: { docsUrl: string | null }) {
           </a>
         </section>
         <section className="panel setup-card">
-          <span className="step-number mono">
-            TERMINAL 01 · FROM REPOSITORY ROOT
-          </span>
+          <span className="step-number mono">Terminal 1 / Repository root</span>
           <h2>Start the backend</h2>
           <pre>
             <code>
@@ -665,9 +629,7 @@ function Setup({ docsUrl }: { docsUrl: string | null }) {
           </p>
         </section>
         <section className="panel setup-card">
-          <span className="step-number mono">
-            TERMINAL 02 · FROM REPOSITORY ROOT
-          </span>
+          <span className="step-number mono">Terminal 2 / Repository root</span>
           <h2>Start the frontend</h2>
           <pre>
             <code>{"cd frontend\nnpm ci\nnpm run dev"}</code>
