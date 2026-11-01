@@ -13,6 +13,7 @@ create table auth.audit_log_entries (
   payload json,
   ip_address varchar(64) not null default ''
 );
+alter table auth.audit_log_entries enable row level security;
 create function auth.uid() returns uuid language sql stable as $$
   select (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')::uuid;
 $$;

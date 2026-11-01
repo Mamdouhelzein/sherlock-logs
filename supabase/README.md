@@ -5,7 +5,7 @@ The integration is implemented; a hosted project is **not provisioned by this re
 ## 1. Create a development project
 
 1. Sign in at [Supabase](https://supabase.com/dashboard) using your own account.
-2. Choose your organization and create a project named `sherlock-logs-dev`. Choose your region and an appropriate available plan. Set and store the database password privately; the application does not need it.
+2. Choose your organization and create a project named `sherlock-logs-dev`. Choose your region and an appropriate available plan. Set and store the database administrator password privately. It is used only for trusted setup; the running frontend and API do not need that administrator password. Telemetry uses separate restricted database logins.
 3. Wait for the project to finish provisioning.
 4. Copy the **Project URL** and **publishable API key** from the project's connection/API settings. The key should start with `sb_publishable_`. This integration intentionally rejects secret keys and legacy JWT keys.
 
@@ -62,7 +62,7 @@ The API validates bearer tokens by calling the fixed project's `/auth/v1/user` e
 6. Try a second development account and confirm it cannot read or update the first account's profile. Apply the administrator steps below and verify revocation.
 7. Exercise invalid passwords and confirm the project's configured rate limits. Browser mock tests do not establish hosted rate-limit or email-delivery behavior.
 
-The public status endpoint only reports whether backend project settings are present. **“Settings present” is not a live authentication or migration readiness probe.** Login events and ML scores are not collected yet.
+The public status endpoint only reports whether backend project settings are present. **“Settings present” is not a live authentication or migration readiness probe.** Telemetry requires the separate setup below; no ML model is trained yet.
 
 ## Administrator assignment
 

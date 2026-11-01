@@ -1,6 +1,6 @@
 # Implementation roadmap
 
-Repository, application, identity integration, and telemetry infrastructure are built. Hosted Supabase setup, authentication/event coverage verification, and the failed-login publisher are pending. Detection milestones remain planned.
+Repository, application, identity integration, and telemetry infrastructure are built. Development Supabase schemas, local Auth redirects, and restricted server connections are configured. Authentication/event coverage verification and the failed-login publisher are pending. Detection milestones remain planned.
 
 ## 1. Repository foundation
 
@@ -21,7 +21,8 @@ Done when a new developer can start the frontend and API from the documented ins
 - [x] Implement registration, login, PKCE confirmation/recovery, logout, and protected routes.
 - [x] Define profile migrations, column grants, RLS, and server-controlled roles.
 - [x] Add API/SQL checks for profile isolation, forged metadata, self-promotion, and revocation.
-- [ ] Create the hosted project, apply migrations, and configure email redirects/delivery.
+- [x] Create the development project, apply schemas, and configure exact local email redirects.
+- [ ] Review hosted password policy, email delivery, and authentication rate limits.
 - [ ] Verify hosted sign-in, recovery, two-account isolation, roles, and rate-limit behavior.
 - [ ] Apply equivalent access boundaries to investigation records when those tables exist.
 
@@ -36,7 +37,8 @@ Done when sign-in works and authorization checks pass independently of the ML se
 - [x] Exclude secrets and implement configurable retention plus physical cleanup.
 - [x] Add an idempotent audit collector that rescans to catch late source records.
 - [x] Test signatures, browser write rejection, SQL access, concurrent retries, and retention.
-- [ ] Connect a hosted project and inspect controlled successes, wrong passwords, and unknown accounts.
+- [x] Connect restricted server logins and inspect the hosted private audit projection.
+- [ ] Inspect controlled successes, wrong passwords, and unknown accounts in the hosted project.
 - [ ] Connect and verify a trusted failed-login publisher before claiming attack-attempt coverage.
 - [ ] Schedule and monitor collection and physical retention cleanup in the deployment.
 

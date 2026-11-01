@@ -8,7 +8,7 @@ An ML-powered website security monitoring project that learns login behavior, fl
 
 Step 4: trusted telemetry infrastructure. Private PostgreSQL event storage, validated service-signed ingestion, duplicate/conflict handling, administrator-only reads, a Supabase audit collector, and retention cleanup are implemented. Identity integration includes registration, login, confirmation/recovery, private profiles, and server-enforced administrator access.
 
-A hosted Supabase project still needs to be created and configured using the [setup guide](supabase/README.md). Public pages work without it; account forms explain missing configuration. The audit collector supports successful `login` rows; real failed-login coverage needs a verified server publisher. See [telemetry coverage and setup](docs/TELEMETRY.md). ML training and investigation dashboards remain planned; no fabricated activity is shown.
+A development Supabase project is connected locally: schemas, exact local Auth redirects, and restricted server database credentials are configured. Auth responds, and source inspection plus two collector runs succeeded with zero available login events. Real sign-in, recovery, authorization flows, and event coverage still need controlled verification; see the [verification record](docs/DEVELOPMENT_VERIFICATION.md). Local configuration is untracked, so new clones still require the [setup guide](supabase/README.md). The collector supports successful `login` rows; failed-login coverage needs a verified server publisher. ML training and investigation dashboards remain planned; no fabricated activity is shown.
 
 ## Project guide
 
@@ -83,7 +83,8 @@ Anomaly scores are not probabilities of account compromise. Synthetic benchmarks
 
 - [x] Scaffold frontend, API, and local development services.
 - [x] Implement Supabase Auth integration, database migrations, and access policies.
-- [ ] Provision Supabase and verify hosted sign-in, recovery, and rate limits.
+- [x] Provision development Supabase, apply schemas, and connect restricted server logins.
+- [ ] Verify hosted sign-in, recovery, and rate limits.
 - [x] Implement private event storage, signed ingestion, deduplication, and the audit collector.
 - [ ] Verify hosted event coverage and connect a trusted failed-login publisher.
 - [ ] Build synthetic normal activity and local attack scenarios.

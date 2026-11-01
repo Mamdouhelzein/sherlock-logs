@@ -41,16 +41,20 @@ def inspect_audit_schema(dsn: str) -> dict:
     with connect(dsn) as connection:
         rows = connection.execute(
             """select column_name from information_schema.columns
-            where table_schema = 'auth' and table_name = 'audit_log_entries'"""
+            where table_schema = 'private' and table_name = 'login_audit_source'"""
         ).fetchall()
         columns = {row["column_name"] for row in rows}
-        required = {"id", "created_at", "payload"}
+        required = {"id", "created_at", "action", "actor_id", "user_agent", "ip_address"}
         if not required <= columns:
             raise ValueError("Required audit columns are missing or inaccessible")
         # Schema visibility is not proof of SELECT privilege.
-        connection.execute("select id, created_at, payload from auth.audit_log_entries limit 0")
+        connection.execute(
+            "select id, created_at, action, actor_id, user_agent, ip_address "
+            "from private.login_audit_source limit 0"
+        )
     return {
         "schema_accessible": True,
+        "source_projection": "private.login_audit_source",
         "ip_column_available": "ip_address" in columns,
         "supported_action": "login",
         "failed_login_coverage": "unavailable_from_audit_adapter",
@@ -76,10 +80,9 @@ def collect_once(
     for _ in range(max_pages):
         with connect(source_dsn) as connection:
             where_cursor = sql.SQL("and (created_at,id) > (%s,%s)") if after else sql.SQL("")
-            query = sql.SQL("""select id, created_at, payload ->> 'action' as action,
-                payload ->> 'actor_id' as actor_id, payload ->> 'user_agent' as user_agent,
-                {} as ip_address from auth.audit_log_entries
-                where payload ->> 'action' = 'login' and created_at >= %s and created_at <= %s
+            query = sql.SQL("""select id, created_at, action, actor_id, user_agent,
+                {} as ip_address from private.login_audit_source
+                where action = 'login' and created_at >= %s and created_at <= %s
                 {} order by created_at,id limit %s""").format(ip_column, where_cursor)
             parameters = (cutoff, now, *(after or ()), batch_size)
             rows = connection.execute(query, parameters).fetchall()

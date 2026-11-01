@@ -1,10 +1,10 @@
 # Step 4: trusted login telemetry
 
-Status: the private event store, strict contract, service-signed ingestion, admin-only API, audit adapter, and retention command are implemented. **No hosted Supabase project is connected or verified.** A successful test against fixtures does not establish live event coverage.
+Status: the private event store, strict contract, service-signed ingestion, admin-only API, audit adapter, and retention command are implemented. A development Supabase project is connected locally with separate restricted API and collector logins. Source inspection and two collection runs succeeded with zero available login events. **Controlled live login coverage is not verified.** See [development verification](DEVELOPMENT_VERIFICATION.md).
 
 ## Coverage decision
 
-The first collector reads `auth.audit_log_entries` through a read-only database connection. It accepts only the `login` action and maps it to a successful authentication event. It ignores refreshes, registrations, recovery requests, and other actions. It does not infer a failed attempt from the absence of a successful entry.
+The first collector reads `private.login_audit_source` through a read-only database connection. This private view projects only allowlisted login facts from `auth.audit_log_entries`; its owner must have source SELECT access and be able to read the source's RLS-protected rows. The view intentionally uses owner permissions and a security barrier. The collector login receives neither Auth-schema access nor BYPASSRLS, and cannot read raw provider payloads or user-account tables. The view accepts only the `login` action, which the adapter maps to success. It ignores refreshes, registrations, recovery requests, and other actions. It does not infer a failed attempt from the absence of a successful entry.
 
 Supabase's [password-grant implementation](https://github.com/supabase/auth/blob/master/internal/api/token.go) returns invalid-credential errors before creating its login audit entry. Its [audit model](https://github.com/supabase/auth/blob/master/internal/models/audit_log_entry.go) also shows why database rows and external Auth logs can contain different context. These are upstream implementation observations, **not verification of your hosted version**.
 
@@ -24,7 +24,7 @@ The supported initial scope is therefore successful Supabase audit events plus a
 2. Apply [the telemetry migration](../supabase/migrations/202610300002_telemetry.sql) once after the identity migration. Keep `private` out of exposed Data API schemas.
 3. Use trusted database administration to create dedicated **LOGIN** roles and strong passwords. The migration creates only **NOLOGIN group roles**, so no credentials are created automatically.
 4. Grant the API database login membership in `sherlock_ingest` and `sherlock_reader`. It can insert/read events, but cannot update/delete facts or change user roles.
-5. Apply [collector access setup](../supabase/setup/collector_access.sql) as a database owner with permission to grant access to Auth audit columns. Grant the separate collector login membership in `sherlock_audit_source`.
+5. Apply [collector access setup](../supabase/setup/collector_access.sql) as a trusted view owner with access to the source rows. Hosted Supabase's database administrator can own this view even when it cannot delegate usage of the managed Auth schema. Grant the separate collector login membership in `sherlock_audit_source`; this grants SELECT on the private projection, not on Auth tables. Reapply this setup when upgrading from the direct-column collector, then deploy the updated collector together with it.
 6. For retention, use a separate maintenance login with `sherlock_retention`. Use that connection as `DATABASE_URL` only in the maintenance command's environment. Avoid granting retention/delete access to the running API.
 
 Example membership grants after you have created those named login roles:
@@ -57,7 +57,7 @@ backend/.venv/bin/python -m sherlock_api.telemetry.cli inspect-source
 backend/.venv/bin/python -m sherlock_api.telemetry.cli collect-once
 ```
 
-The optional installed equivalent is `sherlock-telemetry`. Inspection reports schema access, IP-column availability, and explicit coverage limitations. Schema access is not proof that real login events are captured. Collection prints only counts: scanned, inserted, duplicate, rejected, and completion status. It does not print raw audit records, addresses, account identifiers, or credentials.
+The optional installed equivalent is `sherlock-telemetry`. Inspection reports projection access, its nullable IP field, and explicit coverage limitations. When the provider has no IP column, setup projects null; field availability does not establish observed IP coverage. Schema access is not proof that real login events are captured. Collection prints only counts: scanned, inserted, duplicate, rejected, and completion status. It does not print raw audit records, addresses, account identifiers, or credentials.
 
 Each run scans the configured retention window in stable `(created_at,id)` order. Re-scanning catches late-committing source rows, and unique source IDs make retries safe. This prototype favors correctness over polling efficiency. Batches are bounded; `--max-pages` bounds a run (default 1,000 pages of 100). Exit 2 means incomplete scanning or rejected rows, and requires operator investigation. Raising the page limit may be needed for a backfill. Exit 1 means a configuration, database, schema, or data-conflict error. Commands never print exception details containing connection secrets.
 
