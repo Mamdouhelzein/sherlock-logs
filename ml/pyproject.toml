@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling>=1.26,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sherlock-logs-ml"
+version = "0.1.0"
+description = "Reproducible offline login scenarios, historical features, and baselines"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+sherlock-ml = "sherlock_ml.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sherlock_ml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

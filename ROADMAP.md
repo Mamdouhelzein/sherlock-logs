@@ -1,6 +1,6 @@
 # Implementation roadmap
 
-Repository, application, identity integration, and telemetry infrastructure are built. Development Supabase schemas, local Auth redirects, and restricted server connections are configured. Authentication/event coverage verification and the failed-login publisher are pending. Detection milestones remain planned.
+Repository, application, identity integration, telemetry infrastructure, and offline dataset/feature/baseline experiments are built. Development Supabase schemas, local Auth redirects, and restricted server connections are configured. Real password sign-in and successful-login collection/deduplication are verified. Remaining authorization checks, per-account brute-force protection, and the failed-login publisher are pending. ML training and live detection remain planned.
 
 ## 1. Repository foundation
 
@@ -50,10 +50,11 @@ Done when controlled login successes and failures produce trustworthy event reco
 
 ## 5. Dataset and baseline
 
-- [ ] Generate individual user habits and legitimate behavior changes.
-- [ ] Simulate brute force, spraying, and suspicious successful logins locally.
-- [ ] Implement chronological feature extraction and cold-start defaults.
-- [ ] Implement configurable rule and statistical baselines.
+- [x] Generate individual user habits and legitimate behavior changes.
+- [x] Simulate brute force, spraying, and suspicious successful logins locally.
+- [x] Implement chronological feature extraction and cold-start defaults.
+- [x] Implement configurable rule and statistical baselines.
+- [x] Verify reproducibility and leakage checks, and publish actual synthetic baseline results.
 
 Done when scenarios reproduce with a seed and tests detect future-data leakage.
 

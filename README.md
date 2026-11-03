@@ -12,6 +12,8 @@ A development Supabase project is connected locally: schemas, exact local Auth r
 
 ## Project guide
 
+Step 5 now includes a reproducible offline dataset generator, 15 chronological features, configurable security rules, and a statistical baseline. Two synthetic runs and their failure analysis are documented in the [baseline report](ml/reports/baseline-v1.md). No ML model is trained yet, and these offline experiments do not change live authentication or supply missing failed-login coverage.
+
 - [Architecture](ARCHITECTURE.md): components, event flow, and access boundaries.
 - [Roadmap](ROADMAP.md): implementation milestones and acceptance criteria.
 - [Contributing](CONTRIBUTING.md): development and review conventions.
@@ -87,8 +89,8 @@ Anomaly scores are not probabilities of account compromise. Synthetic benchmarks
 - [ ] Verify hosted sign-in, recovery, and rate limits.
 - [x] Implement private event storage, signed ingestion, deduplication, and the audit collector.
 - [ ] Verify hosted event coverage and connect a trusted failed-login publisher.
-- [ ] Build synthetic normal activity and local attack scenarios.
-- [ ] Implement historical features and security-rule baselines.
+- [x] Build synthetic normal activity and local attack scenarios.
+- [x] Implement historical features and security-rule/statistical baselines.
 - [ ] Train, validate, and evaluate the anomaly detector.
 - [ ] Add durable background scoring and incident grouping.
 - [ ] Build the security dashboard and investigation timeline.

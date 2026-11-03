@@ -1,6 +1,6 @@
 # Architecture
 
-Status: React, FastAPI, identity integration, private profiles, administrator authorization, private event storage, signed ingestion, and an audit collector are implemented. Hosted Supabase setup and live coverage verification are pending. The audit adapter covers successful `login` events; a failed-login publisher still needs connecting. The worker and detection remain planned.
+Status: React, FastAPI, identity integration, private profiles, administrator authorization, private event storage, signed ingestion, and an audit collector are implemented. Development Supabase is connected; real sign-in and successful-login capture/deduplication are verified. Remaining authorization checks and a failed-login publisher are pending. Offline synthetic generation, chronological features, and rule/statistical baselines are implemented; the live worker and trained ML model remain planned.
 
 ## Implemented foundation
 
@@ -69,6 +69,10 @@ FastAPI sends the bearer token to the fixed project's Supabase Auth `/auth/v1/us
 Profiles have owner-scoped SELECT/UPDATE RLS and column-level update grants; browser users cannot insert or delete profiles or reassign their IDs. A trusted trigger creates profiles. Administrator assignments live in an unexposed private schema with no client grants. Role changes apply on the next API request. Direct API and Data API calls retain the same restrictions as the interface.
 
 The SPA uses PKCE email callbacks and browser-persisted, auto-refreshed sessions. Tokens travel in Authorization headers and never enter event logs. Hosted email delivery and rate-limit behavior require verification after project creation. Treat caller-provided source headers and device identifiers as untrusted; trust forwarding headers only from configured proxies.
+
+## Offline experiment boundary
+
+The standalone `ml/src/sherlock_ml` package generates fictional observable events and separate evaluation labels without reading application configuration or connecting to the database. It builds prior-history snapshots in stable time/ID order, fits statistical reference parameters only on the initial training period, and calibrates thresholds only on benign validation examples. Safe JSON artifacts include feature version, dataset hashes, thresholds, and provenance. New seeds can reuse frozen parameters. Generated data/artifacts are excluded from Git; only code and aggregate benchmark documentation are published. The shared feature code is not yet attached to a live worker. See the [ML guide](ml/README.md).
 
 ## Deferred extensions
 
