@@ -1,6 +1,6 @@
 # Step 4: trusted login telemetry
 
-Status: the private event store, strict contract, service-signed ingestion, admin-only API, audit adapter, and retention command are implemented. A development Supabase project is connected locally with separate restricted API and collector logins. Source inspection and two collection runs succeeded with zero available login events. **Controlled live login coverage is not verified.** See [development verification](DEVELOPMENT_VERIFICATION.md).
+Status: the private event store, strict contract, service-signed ingestion, admin-only API, audit adapter, and retention command are implemented. A development Supabase project is connected locally with separate restricted API and collector logins. A real sign-in succeeded on 2026-11-03, but collection remained empty because database audit writing was disabled. That setting is now enabled and persisted after reload. **Capture of a fresh login and real collection deduplication are not yet verified.** See [development verification](DEVELOPMENT_VERIFICATION.md).
 
 ## Coverage decision
 
@@ -121,7 +121,7 @@ No cleanup schedule is installed automatically. An operator must schedule and mo
 
 After connecting a development project:
 
-1. Confirm database audit storage and inspect the actual schema.
+1. Enable Authentication > Audit Logs > Write audit logs to the database, save, and verify after reload. Inspect the actual schema. Logins that happened before enabling storage are not assumed to be backfilled.
 2. Make a controlled successful login, wrong-password attempt, and unknown-email attempt through the real application.
 3. Check which events and fields exist in database audit logs versus external Auth logs. Record the hosted version, test times, source semantics, and gaps without copying secrets into the repository.
 4. Run the collector twice: the second run must report duplicates and preserve original records.

@@ -22,8 +22,10 @@ Done when a new developer can start the frontend and API from the documented ins
 - [x] Define profile migrations, column grants, RLS, and server-controlled roles.
 - [x] Add API/SQL checks for profile isolation, forged metadata, self-promotion, and revocation.
 - [x] Create the development project, apply schemas, and configure exact local email redirects.
-- [ ] Review hosted password policy, email delivery, and authentication rate limits.
-- [ ] Verify hosted sign-in, recovery, two-account isolation, roles, and rate-limit behavior.
+- [x] Review hosted password policy, email delivery, and authentication rate limits.
+- [x] Verify a real hosted password sign-in, private profile loading/saving, session restoration, and member-route denial.
+- [ ] Verify hosted recovery, two-account isolation, direct member/admin API access, role revocation, and rate-limit behavior.
+- [ ] Enforce and verify per-account brute-force protection at an authentication boundary that cannot be bypassed through direct provider requests.
 - [ ] Apply equivalent access boundaries to investigation records when those tables exist.
 
 Done when sign-in works and authorization checks pass independently of the ML service.
@@ -38,6 +40,7 @@ Done when sign-in works and authorization checks pass independently of the ML se
 - [x] Add an idempotent audit collector that rescans to catch late source records.
 - [x] Test signatures, browser write rejection, SQL access, concurrent retries, and retention.
 - [x] Connect restricted server logins and inspect the hosted private audit projection.
+- [x] Enable database audit writing in the development project and verify the setting persists.
 - [ ] Inspect controlled successes, wrong passwords, and unknown accounts in the hosted project.
 - [ ] Connect and verify a trusted failed-login publisher before claiming attack-attempt coverage.
 - [ ] Schedule and monitor collection and physical retention cleanup in the deployment.
