@@ -41,6 +41,7 @@ Done when sign-in works and authorization checks pass independently of the ML se
 - [x] Test signatures, browser write rejection, SQL access, concurrent retries, and retention.
 - [x] Connect restricted server logins and inspect the hosted private audit projection.
 - [x] Enable database audit writing in the development project and verify the setting persists.
+- [x] Capture a real successful login and verify that collecting it again inserts no duplicate.
 - [ ] Inspect controlled successes, wrong passwords, and unknown accounts in the hosted project.
 - [ ] Connect and verify a trusted failed-login publisher before claiming attack-attempt coverage.
 - [ ] Schedule and monitor collection and physical retention cleanup in the deployment.

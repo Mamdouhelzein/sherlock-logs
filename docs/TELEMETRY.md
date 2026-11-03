@@ -1,6 +1,6 @@
 # Step 4: trusted login telemetry
 
-Status: the private event store, strict contract, service-signed ingestion, admin-only API, audit adapter, and retention command are implemented. A development Supabase project is connected locally with separate restricted API and collector logins. A real sign-in succeeded on 2026-11-03, but collection remained empty because database audit writing was disabled. That setting is now enabled and persisted after reload. **Capture of a fresh login and real collection deduplication are not yet verified.** See [development verification](DEVELOPMENT_VERIFICATION.md).
+Status: the private event store, strict contract, service-signed ingestion, admin-only API, audit adapter, and retention command are implemented. A development Supabase project is connected locally with separate restricted API and collector logins. On 2026-11-03, database audit writing was enabled and a fresh real login was captured: the first run inserted one event; the retry inserted none and reported one duplicate, with zero rejections. **Successful-login capture and retry deduplication are verified; failed-login coverage is still unavailable.** See [development verification](DEVELOPMENT_VERIFICATION.md).
 
 ## Coverage decision
 
