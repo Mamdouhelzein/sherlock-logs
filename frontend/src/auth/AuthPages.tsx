@@ -162,7 +162,7 @@ export function AuthPage({ mode }: { mode: Mode }) {
         if (result.data.session) navigate("/account", { replace: true });
         else
           setNotice(
-            "Check your inbox for a confirmation link. Open the newest link in this browser. Avoid submitting registration again while waiting; that can interrupt an earlier link. If you already followed a confirmation link or have an account, try signing in.",
+            "Registration request received. If confirmation is needed and email delivery is available, check your inbox and spam folder. Already registered or confirmed? Sign in with your existing password. This response does not confirm email delivery; avoid registering repeatedly. Open any new confirmation link in this browser.",
           );
       } else if (mode === "forgot") {
         const result = await client.auth.resetPasswordForEmail(email, {

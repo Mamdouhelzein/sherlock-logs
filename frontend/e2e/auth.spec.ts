@@ -147,7 +147,9 @@ test("registers, confirms a PKCE link, and rejects an expired callback", async (
   await page
     .getByRole("button", { name: "Create account", exact: true })
     .click();
-  await expect(page.getByText(/Check your inbox/)).toBeVisible();
+  await expect(page.getByRole("status")).toContainText(
+    "This response does not confirm email delivery",
+  );
   await page.goto("/auth/callback?code=confirmation-fixture");
   await expect(
     page.getByRole("heading", { name: "Identity, verified." }),
