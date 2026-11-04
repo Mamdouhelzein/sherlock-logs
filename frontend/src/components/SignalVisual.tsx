@@ -88,7 +88,7 @@ export function SignalVisual() {
         <span className="trail-next-dot" aria-hidden="true" />
         <div>
           <strong>Behavioral review</strong>
-          <span>Model training is the next stage.</span>
+          <span>Rules and a trained model review collected events.</span>
         </div>
       </div>
       <figcaption>

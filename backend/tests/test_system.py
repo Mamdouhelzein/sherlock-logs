@@ -19,13 +19,23 @@ def test_liveness_does_not_claim_future_services_are_ready(client):
     assert response.json()["status"] == "ok"
     assert response.headers["cache-control"] == "no-store"
     snapshot = client.get("/api/v1/system").json()
-    assert snapshot["stage"] == "telemetry"
+    assert snapshot["stage"] == "inference"
     assert snapshot["uptime_seconds"] >= 0
     assert snapshot["checked_at"].endswith("Z")
     assert {item["status"] for item in snapshot["integrations"]} == {
         "not_configured",
-        "not_trained",
     }
+
+
+def test_public_detection_setting_does_not_claim_live_readiness_or_need_worker_credentials():
+    settings = Settings(_env_file=None, environment="test", detection_enabled=True)
+    with TestClient(create_app(settings)) as client:
+        snapshot = client.get("/api/v1/system").json()
+        detector = next(item for item in snapshot["integrations"] if item["id"] == "detector")
+        assert detector["status"] == "configured"
+        assert "administrators can check worker readiness" in detector["detail"]
+        assert client.get("/api/v1/admin/detection/status").status_code == 401
+        assert not settings.worker_database_url.get_secret_value()
 
 
 def test_cors_allows_configured_frontend_and_rejects_other_origins(client):

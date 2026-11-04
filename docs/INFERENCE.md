@@ -1,6 +1,6 @@
 # Background inference, step 7
 
-Status: worker, migration, shadow results, incident grouping, and administrator reads are implemented in source. Hosted migration, dedicated worker login, and real worker execution have not been configured yet. Synthetic model metrics are not a production-readiness claim. Existing authentication remains independent of scoring.
+Status: implemented and activated locally against development Supabase on 2026-11-04. The restricted worker scored one real collected login; an immediate second run claimed/processed zero events. A separate local daemon has a fresh ready heartbeat. The login was not flagged, so no hosted incident was created. Incident creation, concurrency, and retry behavior were checked separately on disposable PostgreSQL. Synthetic model metrics are not a production-readiness claim. Existing authentication remains independent of scoring.
 
 ## Boundaries
 
@@ -47,6 +47,8 @@ PYTHONPATH=backend/src:ml/src ml/.venv/bin/python -m sherlock_api.detection.cli 
 
 Install runtime dependencies with `pip install --require-hashes -r backend/requirements.lock -r ml/requirements.lock` in the worker environment. An optional container service uses `docker compose --profile inference up --build -d worker`, a non-root process, and a read-only artifact mount. It receives no collector, API, or browser credentials.
 
+Set `DETECTION_ENABLED=true` for the API after enabling the separate worker and restart the API. This public configuration flag is not a live readiness probe and gives the API no worker credentials. Administrator status reads check the database heartbeat separately.
+
 The daemon polls every 2 seconds by default and refreshes its heartbeat during long batches. SIGINT/SIGTERM stops between jobs; forced termination is recovered through leases. A one-shot run records a stopped heartbeat when it exits. Restart the worker to activate a deliberately changed pinned artifact. Existing processed events are not silently rescored.
 
 The collector still needs to run separately to bring new provider logins into event storage; scoring does not grant the worker access to raw provider logs. Source collection and physical retention scheduling remain deployment tasks.
@@ -62,6 +64,8 @@ Reads enforce retention and existing server-side administrator authorization. Un
 
 ## Verification
 
-Unit tests cover fail-closed authorization, role revocation, model/database outages, overflow, retries, and stale finalization. ML adapter tests compare online snapshots/scores with the exact offline code. Disposable PostgreSQL CI checks grants, concurrent claims, atomic retry-safe results/grouping, lease expiry, retry limits, prior-only history, snapshot validation, retention cascades, and private identifiers disappearing with empty incidents. Hosted activation and end-to-end collection/scoring must be verified separately before claiming they are running.
+Unit tests cover fail-closed authorization, role revocation, model/database outages, overflow, retries, and stale finalization. ML adapter tests compare online snapshots/scores with the exact offline code. Disposable PostgreSQL CI checks grants, concurrent claims, atomic retry-safe results/grouping, lease expiry, retry limits, prior-only history, snapshot validation, retention cascades, and private identifiers disappearing with empty incidents. Hosted checks on 2026-11-04 verified certificate/hostname-verified TLS, only the dedicated worker membership, no elevated role flags, no Auth/account-role access, immutable original events, and RLS on all six scoring tables. The actual stored result records its pinned model, scores, feature snapshot, and missing-source/browser/cold-start/history warnings. It was inserted once; a second cycle inserted nothing. A local daemon continued with a fresh ready heartbeat.
+
+This is a local development process: laptop sleep/shutdown pauses processing, and no boot-time service or cloud worker is installed. Collection still runs separately. The next hosted login requires collection before the worker can score it; no automatic end-to-end collection schedule or real failed-login coverage is claimed.
 
 References: [PostgreSQL queue locking](https://www.postgresql.org/docs/current/sql-select.html#SQL-FOR-UPDATE-SHARE), [repeatable-read snapshots](https://www.postgresql.org/docs/current/transaction-iso.html#XACT-REPEATABLE-READ), and the [prototype model card](../ml/reports/iforest-v1.md).

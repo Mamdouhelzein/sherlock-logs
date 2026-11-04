@@ -2,7 +2,7 @@ export const systemFixture = {
   service: "sherlock-logs-api",
   version: "0.1.0",
   status: "ok",
-  stage: "foundation",
+  stage: "inference",
   checked_at: "2026-10-29T10:00:00Z",
   uptime_seconds: 2,
   integrations: [
@@ -21,8 +21,8 @@ export const systemFixture = {
     {
       id: "detector",
       name: "Isolation Forest",
-      status: "not_trained",
-      detail: "The model is not trained.",
+      status: "not_configured",
+      detail: "Separate shadow worker setup is required.",
     },
   ],
 };

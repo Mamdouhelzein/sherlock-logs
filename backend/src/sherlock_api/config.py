@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     database_url: SecretStr = SecretStr("")
     collector_database_url: SecretStr = SecretStr("")
     worker_database_url: SecretStr = SecretStr("")
+    detection_enabled: bool = False
     ingestion_signing_key: SecretStr = SecretStr("")
     event_retention_days: int = Field(default=30, ge=1, le=365)
 

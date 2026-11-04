@@ -37,7 +37,7 @@ it("recovers from API failure through a manual retry", async () => {
   ).toBeInTheDocument();
   await userEvent.click(screen.getByRole("button", { name: "Check again" }));
   expect(await screen.findByText("API reachable")).toBeInTheDocument();
-  expect(screen.getByText("The model is not trained.")).toBeInTheDocument();
+  expect(screen.getByText("Separate shadow worker setup is required.")).toBeInTheDocument();
   expect(request).toHaveBeenCalledTimes(2);
 });
 

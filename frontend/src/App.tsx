@@ -62,8 +62,8 @@ const roadmap = [
   },
   {
     title: "Behavioral detection",
-    description: "Historical features and model evaluation.",
-    state: "Planned",
+    description: "Trained model and background shadow scoring.",
+    state: "Configure worker",
     id: "detector",
   },
 ];
@@ -387,7 +387,9 @@ export default function App() {
                               integration(item.id)?.status === "configured"
                                 ? item.id === "authentication"
                                   ? "Verify sign-in"
-                                  : "Verify source"
+                                  : item.id === "database"
+                                    ? "Verify source"
+                                    : "Check worker"
                                 : item.state;
                             return (
                               <div
@@ -447,9 +449,9 @@ export default function App() {
                             id: "detector",
                             name: "Behavioral intelligence",
                             icon: BrainCircuit,
-                            tag: "Not trained",
+                            tag: "Worker setup",
                             description:
-                              "Historical features and anomaly detection are planned.",
+                              "A separate worker reviews collected events in shadow mode.",
                           },
                         ].map(({ id, name, icon: Icon, tag, description }) => (
                           <article

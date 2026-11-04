@@ -5,7 +5,11 @@ test("connects to the real API and supports direct navigation", async ({
 }) => {
   await page.goto("/");
   await expect(page.getByText("API reachable", { exact: true })).toBeVisible();
-  await expect(page.getByText("Not trained", { exact: true })).toBeVisible();
+  const detector = page.locator('[data-integration="detector"]');
+  await expect(detector).toContainText(
+    /Shadow scoring is enabled|Offline experiments and the shadow worker are built/,
+  );
+  await expect(detector.getByText("Not trained", { exact: true })).not.toBeVisible();
   await page
     .getByRole("link", { name: "System architecture", exact: true })
     .click();

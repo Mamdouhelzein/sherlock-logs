@@ -35,7 +35,7 @@ class SystemResponse(BaseModel):
     service: Literal["sherlock-logs-api"] = "sherlock-logs-api"
     version: str = __version__
     status: Literal["ok"] = "ok"
-    stage: Literal["telemetry"] = "telemetry"
+    stage: Literal["inference"] = "inference"
     checked_at: datetime
     uptime_seconds: int = Field(ge=0)
     integrations: list[Integration]
@@ -113,8 +113,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 Integration(
                     id="detector",
                     name="Isolation Forest",
-                    status="not_trained",
-                    detail="Data generation, training, and evaluation are upcoming milestones.",
+                    status="configured" if config.detection_enabled else "not_configured",
+                    detail=(
+                        (
+                            "Shadow scoring is enabled in deployment settings; "
+                            "administrators can check worker readiness."
+                        )
+                        if config.detection_enabled
+                        else (
+                            "Offline experiments and the shadow worker are built. "
+                            "Separate worker setup is required."
+                        )
+                    ),
                 ),
             ],
         )
