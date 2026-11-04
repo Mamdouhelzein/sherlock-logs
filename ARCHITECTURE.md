@@ -1,6 +1,6 @@
 # Architecture
 
-Status: React, FastAPI, identity integration, private profiles, administrator authorization, private event storage, signed ingestion, and an audit collector are implemented. Development Supabase is connected; real sign-in and successful-login capture/deduplication are verified. Remaining authorization checks and a failed-login publisher are pending. Offline synthetic generation, chronological features, and rule/statistical baselines are implemented; the live worker and trained ML model remain planned.
+Status: React, FastAPI, identity integration, private profiles, administrator authorization, private event storage, signed ingestion, and an audit collector are implemented. Development Supabase is connected; real sign-in and successful-login capture/deduplication are verified. Remaining authorization checks and a failed-login publisher are pending. Offline generation, chronological features, baselines, and trained Isolation Forest experiments are implemented; the live worker remains planned.
 
 ## Implemented foundation
 
@@ -73,6 +73,8 @@ The SPA uses PKCE email callbacks and browser-persisted, auto-refreshed sessions
 ## Offline experiment boundary
 
 The standalone `ml/src/sherlock_ml` package generates fictional observable events and separate evaluation labels without reading application configuration or connecting to the database. It builds prior-history snapshots in stable time/ID order, fits statistical reference parameters only on the initial training period, and calibrates thresholds only on benign validation examples. Safe JSON artifacts include feature version, dataset hashes, thresholds, and provenance. New seeds can reuse frozen parameters. Generated data/artifacts are excluded from Git; only code and aggregate benchmark documentation are published. The shared feature code is not yet attached to a live worker. See the [ML guide](ml/README.md).
+
+Offline training now fits Isolation Forest on the first chronological partition and selects its preset configuration using validation metrics only. Rules, ML, and statistics calibrate against a common validation false-alert cap; the combined OR shares that cap between branches. Test data and fresh seeds are evaluated after parameters freeze. Versioned local artifacts include trusted-only joblib, JSON metadata/schema/thresholds, metrics, error examples, and inference latency. Loading checks versions, schema/code, and hashes before an explicitly trusted deserialization. No trained model is active in the API. See the [model card](ml/reports/iforest-v1.md).
 
 ## Deferred extensions
 

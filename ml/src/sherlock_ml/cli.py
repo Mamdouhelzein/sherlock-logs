@@ -240,6 +240,27 @@ def parser() -> argparse.ArgumentParser:
     ):
         baseline_parser.add_argument(f"--{name}", type=int, default=default)
     baseline_parser.add_argument("--unusual-hour", type=float, default=4.0)
+    for command in ("train", "evaluate"):
+        command_parser = commands.add_parser(
+            command, help=f"{command.title()} offline Isolation Forest"
+        )
+        command_parser.add_argument("--dataset", type=Path, required=True)
+        command_parser.add_argument("--features", type=Path, required=True)
+        command_parser.add_argument("--output", type=Path, required=True)
+        if command == "train":
+            command_parser.add_argument("--model-seed", type=int, default=42)
+            command_parser.add_argument("--trees", type=int, default=200)
+            command_parser.add_argument(
+                "--sample-sizes", type=int, nargs="+", default=[128, 256, 512]
+            )
+            command_parser.add_argument("--false-alert-budget", type=float, default=5.0)
+        else:
+            command_parser.add_argument("--artifact", type=Path, required=True)
+            command_parser.add_argument(
+                "--trust-local-artifact",
+                action="store_true",
+                help="Only use for artifacts you created or fully trust; joblib can execute code",
+            )
     return root
 
 
@@ -252,17 +273,23 @@ def main(argv=None) -> int:
             result = generate_files(config, args.output)
         elif args.command == "features":
             result = feature_files(args.dataset, args.output)
-        else:
+        elif args.command == "baseline":
             result = baseline_files(args)
+        else:
+            # Keep generation and baseline commands usable without scientific dependencies.
+            from sherlock_ml.experiments import evaluate_files, train_files
+
+            result = train_files(args) if args.command == "train" else evaluate_files(args)
         print(json.dumps(result, sort_keys=True, allow_nan=False))
         return 0
-    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+    except (OSError, ValueError, KeyError, TypeError, AttributeError, ImportError):
         # Avoid echoing data records or paths from untrusted input into diagnostics.
         print(
             json.dumps(
                 {
                     "error": "Experiment failed. Check input schemas, checksums, date ranges, "
-                    "and parameters. Output directories must not already exist."
+                    "parameters, artifact trust/version compatibility, and installed dependencies. "
+                    "Output directories must not already exist."
                 }
             )
         )

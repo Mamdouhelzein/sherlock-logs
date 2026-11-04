@@ -25,11 +25,11 @@ Report precision, recall, false alerts per 1,000 benign events, incident recall,
 
 Each trained release should contain `model.joblib`, `metadata.json`, `feature_schema.json`, and `metrics.json`. Record package versions, data configuration, feature version, seed, date ranges, and threshold. Generated artifacts belong outside Git; publish a model card with actual results when available.
 
-Step 5 is implemented: seeded fictional events, separate labels, causal features, fixed configurable rules, and a robust statistical baseline. **No Isolation Forest model has been trained or connected to the app.** Hugging Face publication is optional after reproducible training exists.
+Steps 5 and 6 are implemented: seeded events, separate labels, causal features, rule/statistical baselines, and trained Isolation Forest experiments. **The trained model is offline and not connected to live authentication.** See the [model card](reports/iforest-v1.md). Hugging Face publication remains optional.
 
 ## Reproduce step 5
 
-Use Python 3.12+ from the repository root. This package uses only the standard library; it does not load `.env`, make network requests, use production credentials, or write to Supabase. Generated data and artifacts stay in Git-ignored directories. No login attempts are sent to any website.
+Use Python 3.12+ from the repository root for generation/features/baselines. These preparation commands use only the standard library; training adds separate scientific dependencies. No experiment command loads `.env`, makes network requests, uses production credentials, or writes to Supabase. Generated data/artifacts stay in Git-ignored directories. No login attempts are sent to any website.
 
 ```sh
 PYTHONPATH=ml/src python3 -m sherlock_ml generate \
@@ -78,16 +78,48 @@ PYTHONPATH=ml/src python3 -m sherlock_ml baseline \
   --output artifacts/baselines/seed-43/results
 ```
 
-See [actual baseline results and limitations](reports/baseline-v1.md). Step 6 will compare rules-only, ML-only, and combined detection at comparable false-alert budgets. Record actual latency in that experiment; offline time to alert is not processing latency. Real failed-login capture and per-account protection remain separate unfinished security tasks. Synthetic results cannot establish real-world effectiveness.
+See [actual baseline results and limitations](reports/baseline-v1.md). Step 6 now compares detectors under a common validation false-alert cap and records inference latency separately from time to alert. Real failed-login capture and per-account protection remain separate unfinished security tasks. Synthetic results cannot establish real-world effectiveness.
+
+## Train and evaluate Isolation Forest
+
+Create a separate environment with Python 3.13; the running API does not need ML dependencies:
+
+```sh
+python3 -m venv ml/.venv
+ml/.venv/bin/python -m pip install --require-hashes --only-binary=:all: -r ml/requirements.lock
+PYTHONPATH=ml/src ml/.venv/bin/python -m sherlock_ml train \
+  --dataset data/generated/seed-42 --features artifacts/baselines/seed-42/features \
+  --output artifacts/models/iforest-v1
+```
+
+The preset search compares 200-tree forests with 128/256/512 samples per tree, seed 42, and single-process fitting. CLI parameters can change these settings. `fit_experiment` accepts training features, validation features, and validation labels only, with no training labels or test inputs. It keeps all training events and casts the 15 numeric features to float32 without a fitted scaler. Candidates rank by validation episode recall, event recall, fewer false alerts, then smaller sample size. Test metrics never enter selection. Scores are `-IsolationForest.score_samples`; higher means more unusual, not a probability of compromise.
+
+Continuous rule scores use the strongest normalized count/hour signal. ML, rule scores, and statistics each calibrate to the same validation false-alert cap. Discrete rules can use less of that budget. The combined OR detector gives each branch half the cap so it cannot double the validation budget. Original fixed rules remain a reference. The cap is not guaranteed on later traffic.
+
+Outputs include `model.joblib`, `metadata.json`, `experiment.json`, `feature_schema.json`, `selection.json`, `metrics.json`, `examples.json`, `predictions.csv`, and `latency.json`. Metadata records versions, seeds, dates, dataset/feature hashes, model ID, code hashes, and provenance. Error examples contain observed features, not causal feature attributions. Latency measures warm in-process ML inference only, excluding feature extraction, I/O, and scheduling.
+
+Reuse a frozen artifact without fitting or recalibration:
+
+```sh
+PYTHONPATH=ml/src ml/.venv/bin/python -m sherlock_ml evaluate \
+  --dataset data/generated/seed-43 --features artifacts/baselines/seed-43/features \
+  --artifact artifacts/models/iforest-v1 --trust-local-artifact \
+  --output artifacts/models/iforest-v1-seed-43
+```
+
+`--trust-local-artifact` is required because **joblib loading can execute code**. Only load artifacts you created or fully trust. Hashes detect corruption, not malicious replacement of both a model and manifest. Dependency versions, Python major/minor, feature schema/order/code, and hashes are checked before deserialization. There is no model upload or HTTP loading endpoint. Binaries stay Git-ignored; a fresh clone must reproduce training locally.
+
+To reproduce the fresh-seed evaluation, generate seed 44 with defaults, extract features into a new directory, and evaluate the same artifact with new output paths. See the [model card](reports/iforest-v1.md) for actual results on all three datasets. The background inference worker is the next milestone and is not built by these offline commands.
 
 ## Development checks
 
-Reuse the backend development lockfile's tools:
+Install the separate hash-locked training/test environment:
 
 ```sh
-backend/.venv/bin/ruff check ml
-backend/.venv/bin/ruff format --check ml
-PYTHONPATH=ml/src backend/.venv/bin/python -m pytest ml/tests -q
+ml/.venv/bin/python -m pip install --require-hashes --only-binary=:all: -r ml/requirements-dev.lock
+ml/.venv/bin/ruff check ml
+ml/.venv/bin/ruff format --check ml
+PYTHONPATH=ml/src ml/.venv/bin/python -m pytest ml/tests -q
 ```
 
-CI covers seed/byte reproducibility, scenario coverage, account isolation, time windows, midnight, missing context, ties, future-data leakage, test-label/feature isolation from fitting/calibration, frozen references, hashes, and the CLI pipeline.
+CI has a dedicated ML job covering the preparation checks plus actual fitting, ignored training/test labels, test-feature isolation, combined validation budgets, reproducible selection, artifact round trips, rejection before untrusted/incompatible loading, and frozen evaluation without fitting. Locks pin exact versions and official release hashes; use `pip-compile --generate-hashes` with the corresponding `.in` file when intentionally updating dependencies.

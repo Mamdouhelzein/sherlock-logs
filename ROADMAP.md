@@ -1,6 +1,6 @@
 # Implementation roadmap
 
-Repository, application, identity integration, telemetry infrastructure, and offline dataset/feature/baseline experiments are built. Development Supabase schemas, local Auth redirects, and restricted server connections are configured. Real password sign-in and successful-login collection/deduplication are verified. Remaining authorization checks, per-account brute-force protection, and the failed-login publisher are pending. ML training and live detection remain planned.
+Repository, application, identity integration, telemetry infrastructure, and offline dataset/model experiments are built. Isolation Forest has been trained, calibrated, and evaluated on synthetic data, including frozen evaluations on other seeds. Development Supabase is connected; real sign-in and successful-login collection/deduplication are verified. Remaining authorization checks, per-account brute-force protection, the failed-login publisher, and live background inference remain pending. Synthetic results do not establish production effectiveness.
 
 ## 1. Repository foundation
 
@@ -60,11 +60,11 @@ Done when scenarios reproduce with a seed and tests detect future-data leakage.
 
 ## 6. ML experiments
 
-- [ ] Train Isolation Forest on an initial mostly benign period.
-- [ ] Select a threshold using validation data and a false-alert budget.
-- [ ] Compare rules-only, ML-only, and combined detection.
-- [ ] Evaluate later held-out data, fresh seeds, and changed scenario parameters.
-- [ ] Publish actual metrics and false-positive/missed-attack examples.
+- [x] Train Isolation Forest on an initial mostly benign period.
+- [x] Select a threshold using validation data and a false-alert budget.
+- [x] Compare rules-only, ML-only, and combined detection.
+- [x] Evaluate later held-out data, fresh seeds, and changed scenario parameters.
+- [x] Publish actual metrics and false-positive/missed-attack examples.
 
 Done when results reproduce from commands without tuning on the test set.
 

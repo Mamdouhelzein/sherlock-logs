@@ -6,13 +6,13 @@ An ML-powered website security monitoring project that learns login behavior, fl
 
 ## Status
 
-Step 4: trusted telemetry infrastructure. Private PostgreSQL event storage, validated service-signed ingestion, duplicate/conflict handling, administrator-only reads, a Supabase audit collector, and retention cleanup are implemented. Identity integration includes registration, login, confirmation/recovery, private profiles, and server-enforced administrator access.
+Step 6: offline ML experiments are implemented. Private event storage, signed ingestion, deduplication, administrator-only reads, an audit collector, and retention cleanup are also built. Identity integration includes registration, login, confirmation/recovery, private profiles, and server-enforced administrator access. Live background inference remains unimplemented.
 
-A development Supabase project is connected locally: schemas, exact local Auth redirects, and restricted server database credentials are configured. Real password sign-in, private profile loading/saving, session restoration, and the member-only UI boundary were checked against the hosted service. With database audit writing enabled, the collector stored one real login; a retry inserted nothing and reported one duplicate. Recovery, two-account isolation, direct member/admin API checks, and per-account brute-force protection remain outstanding; see the [verification record](docs/DEVELOPMENT_VERIFICATION.md). Local configuration is untracked, so new clones still require the [setup guide](supabase/README.md). The collector supports successful `login` rows; failed-login coverage needs a verified server publisher. ML training and investigation dashboards remain planned; no fabricated activity is shown.
+A development Supabase project is connected locally: schemas, exact local Auth redirects, and restricted server database credentials are configured. Real password sign-in, private profile loading/saving, session restoration, and the member-only UI boundary were checked against the hosted service. With database audit writing enabled, the collector stored one real login; a retry inserted nothing and reported one duplicate. Recovery, two-account isolation, direct member/admin API checks, and per-account brute-force protection remain outstanding; see the [verification record](docs/DEVELOPMENT_VERIFICATION.md). Local configuration is untracked, so new clones still require the [setup guide](supabase/README.md). The collector supports successful `login` rows; failed-login coverage needs a verified server publisher. An offline model is trained; live inference and investigation dashboards remain planned. No fabricated activity is shown.
 
 ## Project guide
 
-Step 5 now includes a reproducible offline dataset generator, 15 chronological features, configurable security rules, and a statistical baseline. Two synthetic runs and their failure analysis are documented in the [baseline report](ml/reports/baseline-v1.md). No ML model is trained yet, and these offline experiments do not change live authentication or supply missing failed-login coverage.
+Steps 5–6 include a reproducible dataset generator, 15 chronological features, rule/statistical baselines, and trained Isolation Forest experiments. Three synthetic evaluations and their limitations are documented in the [model card](ml/reports/iforest-v1.md). The model is offline; these experiments do not change live authentication or supply missing failed-login coverage.
 
 - [Architecture](ARCHITECTURE.md): components, event flow, and access boundaries.
 - [Roadmap](ROADMAP.md): implementation milestones and acceptance criteria.
@@ -91,7 +91,7 @@ Anomaly scores are not probabilities of account compromise. Synthetic benchmarks
 - [ ] Verify hosted event coverage and connect a trusted failed-login publisher.
 - [x] Build synthetic normal activity and local attack scenarios.
 - [x] Implement historical features and security-rule/statistical baselines.
-- [ ] Train, validate, and evaluate the anomaly detector.
+- [x] Train, validate, and evaluate an offline synthetic-data anomaly detector.
 - [ ] Add durable background scoring and incident grouping.
 - [ ] Build the security dashboard and investigation timeline.
 - [ ] Add automated checks, benchmark results, and a recorded demo.

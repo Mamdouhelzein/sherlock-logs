@@ -55,6 +55,20 @@ jobs:
       - run: ruff check backend ml
       - run: ruff format --check backend ml
       - run: pytest backend/tests -q
+  machine-learning:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: |
+            ml/requirements.lock
+            ml/requirements-dev.lock
+      - run: python -m pip install --require-hashes -r ml/requirements-dev.lock
+      - run: ruff check ml
+      - run: ruff format --check ml
       - run: pytest ml/tests -q
         env:
           PYTHONPATH: ml/src

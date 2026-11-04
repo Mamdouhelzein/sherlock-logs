@@ -1,0 +1,2133 @@
+{
+  "evaluations": {
+    "42": {
+      "config": {
+        "attack_episodes": 90,
+        "attack_scale": 1.0,
+        "days": 90,
+        "seed": 42,
+        "start": "2026-01-05",
+        "train_days": 50,
+        "users": 200,
+        "validation_days": 20
+      },
+      "detectors": {
+        "combined": {
+          "test": {
+            "attack_events": 688,
+            "attack_prevalence": 0.16800976800976802,
+            "benign_events": 3407,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 5,
+                "events": 2394
+              },
+              "benign_mistake": {
+                "alerts": 4,
+                "events": 677
+              },
+              "benign_new_browser": {
+                "alerts": 4,
+                "events": 53
+              },
+              "benign_schedule_change": {
+                "alerts": 9,
+                "events": 283
+              },
+              "brute_force": {
+                "alerts": 422,
+                "events": 449
+              },
+              "password_spray": {
+                "alerts": 221,
+                "events": 225
+              },
+              "suspicious_success": {
+                "alerts": 9,
+                "events": 14
+              }
+            },
+            "detected_incidents": 34,
+            "events": 4095,
+            "false_alerts_per_1000_benign": 6.457293806868212,
+            "false_negatives": 36,
+            "false_positive_examples": [
+              "7ca72ef7-ce6d-4400-a4f3-701d953714ac",
+              "5791f4fa-1442-44ec-b603-1a837c983857",
+              "844190ac-e11c-483a-bc68-e125aa6881e1",
+              "d6c4f317-baa4-4321-8a5a-e6cac953a1b2",
+              "369af3a7-b535-4a18-90e8-4fe1764441ea"
+            ],
+            "false_positives": 22,
+            "incident_recall": 0.8717948717948718,
+            "incidents": 39,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "0770411e-e091-4e18-a230-aac6c8ddad2a",
+              "83a876cc-33b0-4657-a166-01ad14979eff",
+              "0dd7b936-87c6-426e-917f-b919205ed882",
+              "6aeefd6e-5caf-41ba-967c-04046f801f9e",
+              "b7636966-d101-49b2-8ea1-93f157006de9"
+            ],
+            "precision": 0.9673590504451038,
+            "recall": 0.9476744186046512,
+            "true_negatives": 3385,
+            "true_positives": 652
+          },
+          "validation": {
+            "attack_events": 687,
+            "attack_prevalence": 0.17192192192192193,
+            "benign_events": 3309,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 5,
+                "events": 2518
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 633
+              },
+              "benign_new_browser": {
+                "alerts": 5,
+                "events": 75
+              },
+              "benign_schedule_change": {
+                "alerts": 1,
+                "events": 83
+              },
+              "brute_force": {
+                "alerts": 365,
+                "events": 379
+              },
+              "password_spray": {
+                "alerts": 279,
+                "events": 296
+              },
+              "suspicious_success": {
+                "alerts": 10,
+                "events": 12
+              }
+            },
+            "detected_incidents": 39,
+            "events": 3996,
+            "false_alerts_per_1000_benign": 3.324267150196434,
+            "false_negatives": 33,
+            "false_positive_examples": [
+              "5cffd12f-0160-456b-a4e1-524d313ac464",
+              "1791b7a1-a301-4eea-8727-6bdbb8e77e1a",
+              "92811d91-c6a6-4ec2-9d91-d67b3f64b49e",
+              "1d847a01-d153-4f10-a3de-d06384b6caac",
+              "ae27c083-d1fc-40fc-aa45-55928d127da6"
+            ],
+            "false_positives": 11,
+            "incident_recall": 0.9512195121951219,
+            "incidents": 41,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "015daadc-17a3-453f-aebc-eb2289be54ec",
+              "af3bccfb-8a16-4ee1-8ff1-c8980a9010e2",
+              "928f27a1-9ca7-4adc-9aee-17d2c9dda6b7",
+              "65bad73b-965b-4848-ae86-25109419f930",
+              "6621cf6c-901e-43a1-80ea-4fecf04f70ad"
+            ],
+            "precision": 0.9834586466165414,
+            "recall": 0.9519650655021834,
+            "true_negatives": 3298,
+            "true_positives": 654
+          }
+        },
+        "fixed_rules_reference": {
+          "test": {
+            "attack_events": 688,
+            "attack_prevalence": 0.16800976800976802,
+            "benign_events": 3407,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 0,
+                "events": 2394
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 677
+              },
+              "benign_new_browser": {
+                "alerts": 0,
+                "events": 53
+              },
+              "benign_schedule_change": {
+                "alerts": 0,
+                "events": 283
+              },
+              "brute_force": {
+                "alerts": 379,
+                "events": 449
+              },
+              "password_spray": {
+                "alerts": 137,
+                "events": 225
+              },
+              "suspicious_success": {
+                "alerts": 9,
+                "events": 14
+              }
+            },
+            "detected_incidents": 34,
+            "events": 4095,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 163,
+            "false_positive_examples": [],
+            "false_positives": 0,
+            "incident_recall": 0.8717948717948718,
+            "incidents": 39,
+            "median_time_to_alert_seconds": 60.0,
+            "missed_attack_examples": [
+              "9f8b85c1-e3f5-4d08-beff-05e12a7cf9c6",
+              "643344f1-aed0-49e9-ba7d-f0c79a5b1ae6",
+              "9fa227e3-42d1-40ce-a22f-a7388a51d789",
+              "724e6cfc-9ae0-4087-b162-626b8998a21b",
+              "e800d6e1-6977-47e3-b25b-324a67626562"
+            ],
+            "precision": 1.0,
+            "recall": 0.7630813953488372,
+            "true_negatives": 3407,
+            "true_positives": 525
+          },
+          "validation": {
+            "attack_events": 687,
+            "attack_prevalence": 0.17192192192192193,
+            "benign_events": 3309,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 0,
+                "events": 2518
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 633
+              },
+              "benign_new_browser": {
+                "alerts": 0,
+                "events": 75
+              },
+              "benign_schedule_change": {
+                "alerts": 0,
+                "events": 83
+              },
+              "brute_force": {
+                "alerts": 309,
+                "events": 379
+              },
+              "password_spray": {
+                "alerts": 176,
+                "events": 296
+              },
+              "suspicious_success": {
+                "alerts": 10,
+                "events": 12
+              }
+            },
+            "detected_incidents": 39,
+            "events": 3996,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 192,
+            "false_positive_examples": [],
+            "false_positives": 0,
+            "incident_recall": 0.9512195121951219,
+            "incidents": 41,
+            "median_time_to_alert_seconds": 64.0,
+            "missed_attack_examples": [
+              "1969e0db-c41b-4d15-936f-d132961b14d1",
+              "5b9cb65c-6943-4bb1-8952-24c4f67da43d",
+              "16d14acf-89a3-40d8-bfc1-d7acaf120ea5",
+              "5ea94dd0-e006-4d17-a964-3b4e76483621",
+              "fe119306-9ebe-4203-bc5d-53428be00428"
+            ],
+            "precision": 1.0,
+            "recall": 0.7205240174672489,
+            "true_negatives": 3309,
+            "true_positives": 495
+          }
+        },
+        "ml": {
+          "test": {
+            "attack_events": 688,
+            "attack_prevalence": 0.16800976800976802,
+            "benign_events": 3407,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 14,
+                "events": 2394
+              },
+              "benign_mistake": {
+                "alerts": 7,
+                "events": 677
+              },
+              "benign_new_browser": {
+                "alerts": 4,
+                "events": 53
+              },
+              "benign_schedule_change": {
+                "alerts": 13,
+                "events": 283
+              },
+              "brute_force": {
+                "alerts": 424,
+                "events": 449
+              },
+              "password_spray": {
+                "alerts": 221,
+                "events": 225
+              },
+              "suspicious_success": {
+                "alerts": 9,
+                "events": 14
+              }
+            },
+            "detected_incidents": 34,
+            "events": 4095,
+            "false_alerts_per_1000_benign": 11.153507484590548,
+            "false_negatives": 34,
+            "false_positive_examples": [
+              "7c0872ff-54d6-4608-bc8e-27f4fedc0961",
+              "7ca72ef7-ce6d-4400-a4f3-701d953714ac",
+              "844190ac-e11c-483a-bc68-e125aa6881e1",
+              "171a9cf5-9cd3-4f17-ba7a-460851f9dc17",
+              "d6c4f317-baa4-4321-8a5a-e6cac953a1b2"
+            ],
+            "false_positives": 38,
+            "incident_recall": 0.8717948717948718,
+            "incidents": 39,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "0770411e-e091-4e18-a230-aac6c8ddad2a",
+              "83a876cc-33b0-4657-a166-01ad14979eff",
+              "0dd7b936-87c6-426e-917f-b919205ed882",
+              "6aeefd6e-5caf-41ba-967c-04046f801f9e",
+              "b7636966-d101-49b2-8ea1-93f157006de9"
+            ],
+            "precision": 0.9450867052023122,
+            "recall": 0.9505813953488372,
+            "true_negatives": 3369,
+            "true_positives": 654
+          },
+          "validation": {
+            "attack_events": 687,
+            "attack_prevalence": 0.17192192192192193,
+            "benign_events": 3309,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 7,
+                "events": 2518
+              },
+              "benign_mistake": {
+                "alerts": 1,
+                "events": 633
+              },
+              "benign_new_browser": {
+                "alerts": 4,
+                "events": 75
+              },
+              "benign_schedule_change": {
+                "alerts": 4,
+                "events": 83
+              },
+              "brute_force": {
+                "alerts": 368,
+                "events": 379
+              },
+              "password_spray": {
+                "alerts": 281,
+                "events": 296
+              },
+              "suspicious_success": {
+                "alerts": 10,
+                "events": 12
+              }
+            },
+            "detected_incidents": 39,
+            "events": 3996,
+            "false_alerts_per_1000_benign": 4.835297673012995,
+            "false_negatives": 28,
+            "false_positive_examples": [
+              "1791b7a1-a301-4eea-8727-6bdbb8e77e1a",
+              "a4f4dea6-d77a-47db-98cb-c20946e15af8",
+              "92811d91-c6a6-4ec2-9d91-d67b3f64b49e",
+              "1c53ff95-305f-4d9a-92f9-054bc4c4fdc3",
+              "ae27c083-d1fc-40fc-aa45-55928d127da6"
+            ],
+            "false_positives": 16,
+            "incident_recall": 0.9512195121951219,
+            "incidents": 41,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "928f27a1-9ca7-4adc-9aee-17d2c9dda6b7",
+              "6621cf6c-901e-43a1-80ea-4fecf04f70ad",
+              "c7dda5b6-209d-4e08-a690-d1fe80e51412",
+              "13291064-3e53-4431-886e-82d7084547d3",
+              "285627b0-207e-4952-92a7-6027f8530e5d"
+            ],
+            "precision": 0.9762962962962963,
+            "recall": 0.9592430858806404,
+            "true_negatives": 3293,
+            "true_positives": 659
+          }
+        },
+        "rules": {
+          "test": {
+            "attack_events": 688,
+            "attack_prevalence": 0.16800976800976802,
+            "benign_events": 3407,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 0,
+                "events": 2394
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 677
+              },
+              "benign_new_browser": {
+                "alerts": 2,
+                "events": 53
+              },
+              "benign_schedule_change": {
+                "alerts": 0,
+                "events": 283
+              },
+              "brute_force": {
+                "alerts": 393,
+                "events": 449
+              },
+              "password_spray": {
+                "alerts": 170,
+                "events": 225
+              },
+              "suspicious_success": {
+                "alerts": 9,
+                "events": 14
+              }
+            },
+            "detected_incidents": 34,
+            "events": 4095,
+            "false_alerts_per_1000_benign": 0.587026709715292,
+            "false_negatives": 116,
+            "false_positive_examples": [
+              "5791f4fa-1442-44ec-b603-1a837c983857",
+              "9d543532-bc36-46ed-a9b0-595e109ab1d3"
+            ],
+            "false_positives": 2,
+            "incident_recall": 0.8717948717948718,
+            "incidents": 39,
+            "median_time_to_alert_seconds": 49.5,
+            "missed_attack_examples": [
+              "9f8b85c1-e3f5-4d08-beff-05e12a7cf9c6",
+              "643344f1-aed0-49e9-ba7d-f0c79a5b1ae6",
+              "9fa227e3-42d1-40ce-a22f-a7388a51d789",
+              "724e6cfc-9ae0-4087-b162-626b8998a21b",
+              "e800d6e1-6977-47e3-b25b-324a67626562"
+            ],
+            "precision": 0.9965156794425087,
+            "recall": 0.8313953488372093,
+            "true_negatives": 3405,
+            "true_positives": 572
+          },
+          "validation": {
+            "attack_events": 687,
+            "attack_prevalence": 0.17192192192192193,
+            "benign_events": 3309,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 0,
+                "events": 2518
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 633
+              },
+              "benign_new_browser": {
+                "alerts": 3,
+                "events": 75
+              },
+              "benign_schedule_change": {
+                "alerts": 0,
+                "events": 83
+              },
+              "brute_force": {
+                "alerts": 323,
+                "events": 379
+              },
+              "password_spray": {
+                "alerts": 221,
+                "events": 296
+              },
+              "suspicious_success": {
+                "alerts": 10,
+                "events": 12
+              }
+            },
+            "detected_incidents": 39,
+            "events": 3996,
+            "false_alerts_per_1000_benign": 0.9066183136899365,
+            "false_negatives": 133,
+            "false_positive_examples": [
+              "5cffd12f-0160-456b-a4e1-524d313ac464",
+              "1d847a01-d153-4f10-a3de-d06384b6caac",
+              "b5d8e462-f68f-42d6-bc91-7e70fe6bc333"
+            ],
+            "false_positives": 3,
+            "incident_recall": 0.9512195121951219,
+            "incidents": 41,
+            "median_time_to_alert_seconds": 55.0,
+            "missed_attack_examples": [
+              "1969e0db-c41b-4d15-936f-d132961b14d1",
+              "5b9cb65c-6943-4bb1-8952-24c4f67da43d",
+              "16d14acf-89a3-40d8-bfc1-d7acaf120ea5",
+              "5ea94dd0-e006-4d17-a964-3b4e76483621",
+              "015daadc-17a3-453f-aebc-eb2289be54ec"
+            ],
+            "precision": 0.9946140035906643,
+            "recall": 0.8064046579330422,
+            "true_negatives": 3306,
+            "true_positives": 554
+          }
+        },
+        "statistical": {
+          "test": {
+            "attack_events": 688,
+            "attack_prevalence": 0.16800976800976802,
+            "benign_events": 3407,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 1,
+                "events": 2394
+              },
+              "benign_mistake": {
+                "alerts": 8,
+                "events": 677
+              },
+              "benign_new_browser": {
+                "alerts": 0,
+                "events": 53
+              },
+              "benign_schedule_change": {
+                "alerts": 23,
+                "events": 283
+              },
+              "brute_force": {
+                "alerts": 437,
+                "events": 449
+              },
+              "password_spray": {
+                "alerts": 207,
+                "events": 225
+              },
+              "suspicious_success": {
+                "alerts": 14,
+                "events": 14
+              }
+            },
+            "detected_incidents": 39,
+            "events": 4095,
+            "false_alerts_per_1000_benign": 9.392427355444672,
+            "false_negatives": 30,
+            "false_positive_examples": [
+              "7ca72ef7-ce6d-4400-a4f3-701d953714ac",
+              "b28bc259-fc64-44e6-91be-d8b9524c52a6",
+              "833ed126-2f46-4e78-b21d-ee97fe4dfbb7",
+              "2b4d6a6f-530e-4a03-bc2a-95ae287bbc27",
+              "e3d84592-d789-4c32-881d-391149a48384"
+            ],
+            "false_positives": 32,
+            "incident_recall": 1.0,
+            "incidents": 39,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "9f8b85c1-e3f5-4d08-beff-05e12a7cf9c6",
+              "724e6cfc-9ae0-4087-b162-626b8998a21b",
+              "4d5a9ffa-62c1-4c72-9819-d5bb05240fc5",
+              "26bbd6ae-6eaa-414c-90fc-8da9d581a1af",
+              "140775a3-3769-4bca-a3fb-474061f6e0e5"
+            ],
+            "precision": 0.9536231884057971,
+            "recall": 0.9563953488372093,
+            "true_negatives": 3375,
+            "true_positives": 658
+          },
+          "validation": {
+            "attack_events": 687,
+            "attack_prevalence": 0.17192192192192193,
+            "benign_events": 3309,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 0,
+                "events": 2518
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 633
+              },
+              "benign_new_browser": {
+                "alerts": 0,
+                "events": 75
+              },
+              "benign_schedule_change": {
+                "alerts": 16,
+                "events": 83
+              },
+              "brute_force": {
+                "alerts": 363,
+                "events": 379
+              },
+              "password_spray": {
+                "alerts": 268,
+                "events": 296
+              },
+              "suspicious_success": {
+                "alerts": 12,
+                "events": 12
+              }
+            },
+            "detected_incidents": 41,
+            "events": 3996,
+            "false_alerts_per_1000_benign": 4.835297673012995,
+            "false_negatives": 44,
+            "false_positive_examples": [
+              "7e20ca2f-1b58-4a68-9cfb-0d14ff795706",
+              "7cc9bc06-10d6-4451-a71e-41cd272f60e9",
+              "719ef7ea-2a98-4ae2-b660-927ce454e252",
+              "2eca91b2-4dcc-4ef7-9119-93192d343d0a",
+              "2d8fe215-4913-406d-b13e-e8d2df95ced0"
+            ],
+            "false_positives": 16,
+            "incident_recall": 1.0,
+            "incidents": 41,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "af3bccfb-8a16-4ee1-8ff1-c8980a9010e2",
+              "6621cf6c-901e-43a1-80ea-4fecf04f70ad",
+              "4be3b88a-f561-4d3a-b607-15db3556b7e5",
+              "c7dda5b6-209d-4e08-a690-d1fe80e51412",
+              "aa140ee2-c950-45be-88ca-2370ee27e2de"
+            ],
+            "precision": 0.9757207890743551,
+            "recall": 0.9359534206695779,
+            "true_negatives": 3293,
+            "true_positives": 643
+          }
+        }
+      },
+      "provenance": {
+        "mode": "fit then freeze",
+        "model_id": "iforest-027e70e789fd5e28"
+      }
+    },
+    "43": {
+      "config": {
+        "attack_episodes": 90,
+        "attack_scale": 0.6,
+        "days": 90,
+        "seed": 43,
+        "start": "2026-01-05",
+        "train_days": 50,
+        "users": 200,
+        "validation_days": 20
+      },
+      "detectors": {
+        "combined": {
+          "test": {
+            "attack_events": 526,
+            "attack_prevalence": 0.13542739443872295,
+            "benign_events": 3358,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 5,
+                "events": 2350
+              },
+              "benign_mistake": {
+                "alerts": 5,
+                "events": 582
+              },
+              "benign_new_browser": {
+                "alerts": 4,
+                "events": 62
+              },
+              "benign_schedule_change": {
+                "alerts": 12,
+                "events": 364
+              },
+              "brute_force": {
+                "alerts": 270,
+                "events": 287
+              },
+              "password_spray": {
+                "alerts": 209,
+                "events": 224
+              },
+              "suspicious_success": {
+                "alerts": 13,
+                "events": 15
+              }
+            },
+            "detected_incidents": 47,
+            "events": 3884,
+            "false_alerts_per_1000_benign": 7.742703990470519,
+            "false_negatives": 34,
+            "false_positive_examples": [
+              "26904054-87d9-4b24-9e5b-47ca6e808923",
+              "a6b94f27-c537-462a-8c99-2df5b9e52c44",
+              "31af845f-c4f5-4d0d-8623-a9f373904ef9",
+              "66e699eb-4752-48a9-a22c-817c71e85e3a",
+              "4084c6bc-a4f8-47b5-b835-f44a053c0538"
+            ],
+            "false_positives": 26,
+            "incident_recall": 0.9591836734693877,
+            "incidents": 49,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "db171e4f-14e2-4dfe-8629-6bd7cc993211",
+              "a2602af9-b2f5-4ed4-8c6f-0c6643d6b87a",
+              "85ce9653-c01d-4c2b-b64d-d419053a6b69",
+              "81154122-86a3-4b48-9479-fbfb960ebd1a",
+              "3af1773c-4c24-4333-8653-d89cf26e1f02"
+            ],
+            "precision": 0.9498069498069498,
+            "recall": 0.935361216730038,
+            "true_negatives": 3332,
+            "true_positives": 492
+          },
+          "validation": {
+            "attack_events": 366,
+            "attack_prevalence": 0.0986788891884605,
+            "benign_events": 3343,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 8,
+                "events": 2565
+              },
+              "benign_mistake": {
+                "alerts": 2,
+                "events": 653
+              },
+              "benign_new_browser": {
+                "alerts": 5,
+                "events": 65
+              },
+              "benign_schedule_change": {
+                "alerts": 0,
+                "events": 60
+              },
+              "brute_force": {
+                "alerts": 221,
+                "events": 234
+              },
+              "password_spray": {
+                "alerts": 112,
+                "events": 121
+              },
+              "suspicious_success": {
+                "alerts": 8,
+                "events": 11
+              }
+            },
+            "detected_incidents": 33,
+            "events": 3709,
+            "false_alerts_per_1000_benign": 4.486987735566856,
+            "false_negatives": 25,
+            "false_positive_examples": [
+              "76ee0711-0ed9-4d77-ad78-758767868262",
+              "af9cc6a7-ca56-454f-a804-60077a13aebe",
+              "08321de8-1360-4a2c-afd3-e4baae636323",
+              "23597cc3-89bd-400e-a3a6-337f8e132188",
+              "ad418d2f-d5f3-4706-be8c-1b995f42318f"
+            ],
+            "false_positives": 15,
+            "incident_recall": 0.9166666666666666,
+            "incidents": 36,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "3f0c3b4e-5695-487c-9690-3a4ea2954bac",
+              "1c8f75e5-013b-4242-a218-292d2ac3f8da",
+              "3833b42e-bde3-4929-8088-6e7429a624f2",
+              "0b03c875-a03b-44b3-b68b-b281b791ef69",
+              "2fa75462-d97d-4cf3-946d-106022ca8a1e"
+            ],
+            "precision": 0.9578651685393258,
+            "recall": 0.9316939890710383,
+            "true_negatives": 3328,
+            "true_positives": 341
+          }
+        },
+        "fixed_rules_reference": {
+          "test": {
+            "attack_events": 526,
+            "attack_prevalence": 0.13542739443872295,
+            "benign_events": 3358,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 0,
+                "events": 2350
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 582
+              },
+              "benign_new_browser": {
+                "alerts": 0,
+                "events": 62
+              },
+              "benign_schedule_change": {
+                "alerts": 0,
+                "events": 364
+              },
+              "brute_force": {
+                "alerts": 212,
+                "events": 287
+              },
+              "password_spray": {
+                "alerts": 80,
+                "events": 224
+              },
+              "suspicious_success": {
+                "alerts": 13,
+                "events": 15
+              }
+            },
+            "detected_incidents": 42,
+            "events": 3884,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 221,
+            "false_positive_examples": [],
+            "false_positives": 0,
+            "incident_recall": 0.8571428571428571,
+            "incidents": 49,
+            "median_time_to_alert_seconds": 50.5,
+            "missed_attack_examples": [
+              "db171e4f-14e2-4dfe-8629-6bd7cc993211",
+              "a2602af9-b2f5-4ed4-8c6f-0c6643d6b87a",
+              "85ce9653-c01d-4c2b-b64d-d419053a6b69",
+              "81154122-86a3-4b48-9479-fbfb960ebd1a",
+              "2c505eb3-29f9-427c-9805-d1874fe494d1"
+            ],
+            "precision": 1.0,
+            "recall": 0.5798479087452472,
+            "true_negatives": 3358,
+            "true_positives": 305
+          },
+          "validation": {
+            "attack_events": 366,
+            "attack_prevalence": 0.0986788891884605,
+            "benign_events": 3343,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 0,
+                "events": 2565
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 653
+              },
+              "benign_new_browser": {
+                "alerts": 0,
+                "events": 65
+              },
+              "benign_schedule_change": {
+                "alerts": 0,
+                "events": 60
+              },
+              "brute_force": {
+                "alerts": 164,
+                "events": 234
+              },
+              "password_spray": {
+                "alerts": 37,
+                "events": 121
+              },
+              "suspicious_success": {
+                "alerts": 8,
+                "events": 11
+              }
+            },
+            "detected_incidents": 30,
+            "events": 3709,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 157,
+            "false_positive_examples": [],
+            "false_positives": 0,
+            "incident_recall": 0.8333333333333334,
+            "incidents": 36,
+            "median_time_to_alert_seconds": 61.5,
+            "missed_attack_examples": [
+              "596f6429-ccac-4d17-a7c0-d4266e472394",
+              "9c060f84-843d-482c-8e8c-1fb82e2b2def",
+              "faf13543-bd9d-418a-9495-64a116c8108c",
+              "9069dc58-7d67-4e61-935a-70cf5a969d1e",
+              "f4b7202f-b67e-4fe8-8fe8-5f804d3bd958"
+            ],
+            "precision": 1.0,
+            "recall": 0.5710382513661202,
+            "true_negatives": 3343,
+            "true_positives": 209
+          }
+        },
+        "ml": {
+          "test": {
+            "attack_events": 526,
+            "attack_prevalence": 0.13542739443872295,
+            "benign_events": 3358,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 7,
+                "events": 2350
+              },
+              "benign_mistake": {
+                "alerts": 11,
+                "events": 582
+              },
+              "benign_new_browser": {
+                "alerts": 4,
+                "events": 62
+              },
+              "benign_schedule_change": {
+                "alerts": 15,
+                "events": 364
+              },
+              "brute_force": {
+                "alerts": 271,
+                "events": 287
+              },
+              "password_spray": {
+                "alerts": 212,
+                "events": 224
+              },
+              "suspicious_success": {
+                "alerts": 13,
+                "events": 15
+              }
+            },
+            "detected_incidents": 47,
+            "events": 3884,
+            "false_alerts_per_1000_benign": 11.0184633710542,
+            "false_negatives": 30,
+            "false_positive_examples": [
+              "26904054-87d9-4b24-9e5b-47ca6e808923",
+              "a6b94f27-c537-462a-8c99-2df5b9e52c44",
+              "31af845f-c4f5-4d0d-8623-a9f373904ef9",
+              "bfb661d6-86e0-4b8c-a1a7-1e50d9aea06b",
+              "129e5bb3-93e1-4df2-8670-e0b341845190"
+            ],
+            "false_positives": 37,
+            "incident_recall": 0.9591836734693877,
+            "incidents": 49,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "a2602af9-b2f5-4ed4-8c6f-0c6643d6b87a",
+              "85ce9653-c01d-4c2b-b64d-d419053a6b69",
+              "81154122-86a3-4b48-9479-fbfb960ebd1a",
+              "3af1773c-4c24-4333-8653-d89cf26e1f02",
+              "04246a5b-b5de-4070-b5e4-7bbbb65fbe3c"
+            ],
+            "precision": 0.9305816135084428,
+            "recall": 0.9429657794676806,
+            "true_negatives": 3321,
+            "true_positives": 496
+          },
+          "validation": {
+            "attack_events": 366,
+            "attack_prevalence": 0.0986788891884605,
+            "benign_events": 3343,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 11,
+                "events": 2565
+              },
+              "benign_mistake": {
+                "alerts": 2,
+                "events": 653
+              },
+              "benign_new_browser": {
+                "alerts": 7,
+                "events": 65
+              },
+              "benign_schedule_change": {
+                "alerts": 1,
+                "events": 60
+              },
+              "brute_force": {
+                "alerts": 223,
+                "events": 234
+              },
+              "password_spray": {
+                "alerts": 114,
+                "events": 121
+              },
+              "suspicious_success": {
+                "alerts": 8,
+                "events": 11
+              }
+            },
+            "detected_incidents": 33,
+            "events": 3709,
+            "false_alerts_per_1000_benign": 6.281782829793599,
+            "false_negatives": 21,
+            "false_positive_examples": [
+              "1bdc10fc-cd66-490e-a993-17a4e53ff5f1",
+              "76ee0711-0ed9-4d77-ad78-758767868262",
+              "af9cc6a7-ca56-454f-a804-60077a13aebe",
+              "08321de8-1360-4a2c-afd3-e4baae636323",
+              "23597cc3-89bd-400e-a3a6-337f8e132188"
+            ],
+            "false_positives": 21,
+            "incident_recall": 0.9166666666666666,
+            "incidents": 36,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "3f0c3b4e-5695-487c-9690-3a4ea2954bac",
+              "1c8f75e5-013b-4242-a218-292d2ac3f8da",
+              "3833b42e-bde3-4929-8088-6e7429a624f2",
+              "0b03c875-a03b-44b3-b68b-b281b791ef69",
+              "2fa75462-d97d-4cf3-946d-106022ca8a1e"
+            ],
+            "precision": 0.9426229508196722,
+            "recall": 0.9426229508196722,
+            "true_negatives": 3322,
+            "true_positives": 345
+          }
+        },
+        "rules": {
+          "test": {
+            "attack_events": 526,
+            "attack_prevalence": 0.13542739443872295,
+            "benign_events": 3358,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 0,
+                "events": 2350
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 582
+              },
+              "benign_new_browser": {
+                "alerts": 0,
+                "events": 62
+              },
+              "benign_schedule_change": {
+                "alerts": 0,
+                "events": 364
+              },
+              "brute_force": {
+                "alerts": 227,
+                "events": 287
+              },
+              "password_spray": {
+                "alerts": 129,
+                "events": 224
+              },
+              "suspicious_success": {
+                "alerts": 13,
+                "events": 15
+              }
+            },
+            "detected_incidents": 47,
+            "events": 3884,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 157,
+            "false_positive_examples": [],
+            "false_positives": 0,
+            "incident_recall": 0.9591836734693877,
+            "incidents": 49,
+            "median_time_to_alert_seconds": 48.0,
+            "missed_attack_examples": [
+              "db171e4f-14e2-4dfe-8629-6bd7cc993211",
+              "a2602af9-b2f5-4ed4-8c6f-0c6643d6b87a",
+              "85ce9653-c01d-4c2b-b64d-d419053a6b69",
+              "81154122-86a3-4b48-9479-fbfb960ebd1a",
+              "c7bf1271-f7d8-4ce6-8aab-0612738e19fb"
+            ],
+            "precision": 1.0,
+            "recall": 0.7015209125475285,
+            "true_negatives": 3358,
+            "true_positives": 369
+          },
+          "validation": {
+            "attack_events": 366,
+            "attack_prevalence": 0.0986788891884605,
+            "benign_events": 3343,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 0,
+                "events": 2565
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 653
+              },
+              "benign_new_browser": {
+                "alerts": 1,
+                "events": 65
+              },
+              "benign_schedule_change": {
+                "alerts": 0,
+                "events": 60
+              },
+              "brute_force": {
+                "alerts": 178,
+                "events": 234
+              },
+              "password_spray": {
+                "alerts": 66,
+                "events": 121
+              },
+              "suspicious_success": {
+                "alerts": 8,
+                "events": 11
+              }
+            },
+            "detected_incidents": 33,
+            "events": 3709,
+            "false_alerts_per_1000_benign": 0.2991325157044571,
+            "false_negatives": 114,
+            "false_positive_examples": [
+              "b374e91e-3196-4f19-a63a-a65256492fee"
+            ],
+            "false_positives": 1,
+            "incident_recall": 0.9166666666666666,
+            "incidents": 36,
+            "median_time_to_alert_seconds": 50.0,
+            "missed_attack_examples": [
+              "596f6429-ccac-4d17-a7c0-d4266e472394",
+              "9c060f84-843d-482c-8e8c-1fb82e2b2def",
+              "faf13543-bd9d-418a-9495-64a116c8108c",
+              "9069dc58-7d67-4e61-935a-70cf5a969d1e",
+              "fc411c1e-eb1f-450b-8ae7-c4f4cf08384a"
+            ],
+            "precision": 0.9960474308300395,
+            "recall": 0.6885245901639344,
+            "true_negatives": 3342,
+            "true_positives": 252
+          }
+        },
+        "statistical": {
+          "test": {
+            "attack_events": 526,
+            "attack_prevalence": 0.13542739443872295,
+            "benign_events": 3358,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 0,
+                "events": 2350
+              },
+              "benign_mistake": {
+                "alerts": 17,
+                "events": 582
+              },
+              "benign_new_browser": {
+                "alerts": 0,
+                "events": 62
+              },
+              "benign_schedule_change": {
+                "alerts": 46,
+                "events": 364
+              },
+              "brute_force": {
+                "alerts": 275,
+                "events": 287
+              },
+              "password_spray": {
+                "alerts": 187,
+                "events": 224
+              },
+              "suspicious_success": {
+                "alerts": 15,
+                "events": 15
+              }
+            },
+            "detected_incidents": 49,
+            "events": 3884,
+            "false_alerts_per_1000_benign": 18.761167361524716,
+            "false_negatives": 49,
+            "false_positive_examples": [
+              "e4d9c90c-4163-4b9e-ae85-bd043763cf26",
+              "a8c2546a-bb74-4b41-9de9-a85733061d67",
+              "d3d30e3e-0c14-4f34-86b3-801896affd93",
+              "43ee0c28-6df6-4f5e-b27f-29d2f0bddffd",
+              "be9a9958-e190-4f99-b257-716499ee91dc"
+            ],
+            "false_positives": 63,
+            "incident_recall": 1.0,
+            "incidents": 49,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "db171e4f-14e2-4dfe-8629-6bd7cc993211",
+              "a2602af9-b2f5-4ed4-8c6f-0c6643d6b87a",
+              "85ce9653-c01d-4c2b-b64d-d419053a6b69",
+              "81154122-86a3-4b48-9479-fbfb960ebd1a",
+              "e86f752a-96ab-4fda-8b00-8a811ba85bcc"
+            ],
+            "precision": 0.8833333333333333,
+            "recall": 0.9068441064638784,
+            "true_negatives": 3295,
+            "true_positives": 477
+          },
+          "validation": {
+            "attack_events": 366,
+            "attack_prevalence": 0.0986788891884605,
+            "benign_events": 3343,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 0,
+                "events": 2565
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 653
+              },
+              "benign_new_browser": {
+                "alerts": 0,
+                "events": 65
+              },
+              "benign_schedule_change": {
+                "alerts": 17,
+                "events": 60
+              },
+              "brute_force": {
+                "alerts": 230,
+                "events": 234
+              },
+              "password_spray": {
+                "alerts": 100,
+                "events": 121
+              },
+              "suspicious_success": {
+                "alerts": 11,
+                "events": 11
+              }
+            },
+            "detected_incidents": 36,
+            "events": 3709,
+            "false_alerts_per_1000_benign": 5.0852527669757706,
+            "false_negatives": 25,
+            "false_positive_examples": [
+              "b72c12d1-6d59-4dfd-b1d7-36da632c446b",
+              "5853dac1-5a88-4f1f-b928-38312e45ba2d",
+              "5533debf-58fd-487e-9134-8493cb516d39",
+              "467f1752-0de2-4412-a468-82be47bc4756",
+              "68d7ae63-2050-4e16-93a0-0a2c84097132"
+            ],
+            "false_positives": 17,
+            "incident_recall": 1.0,
+            "incidents": 36,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "38ebb4a2-e038-4ede-aa16-4a1dcd1867bb",
+              "3f0c3b4e-5695-487c-9690-3a4ea2954bac",
+              "07f65369-4397-4abc-b7a6-43f296f0b5fb",
+              "48bcabc8-29e3-4428-a258-d21af2cc78b6",
+              "3e4481d3-a849-4bf7-baa4-9e4029b463d1"
+            ],
+            "precision": 0.952513966480447,
+            "recall": 0.9316939890710383,
+            "true_negatives": 3326,
+            "true_positives": 341
+          }
+        }
+      },
+      "provenance": {
+        "artifact_metadata_sha256": "e552c7c11b6ee68a47f460f6fd4f0fbf093bbca52b14def6a48d71ac4acfe3b5",
+        "dataset_manifest_sha256": "4266d21ee1df007a6a815dc6539fb08856d658a5713155f97901514eda1c8da5",
+        "mode": "frozen artifact; no fitting or recalibration",
+        "model_id": "iforest-027e70e789fd5e28"
+      }
+    },
+    "44": {
+      "config": {
+        "attack_episodes": 90,
+        "attack_scale": 1.0,
+        "days": 90,
+        "seed": 44,
+        "start": "2026-01-05",
+        "train_days": 50,
+        "users": 200,
+        "validation_days": 20
+      },
+      "detectors": {
+        "combined": {
+          "test": {
+            "attack_events": 853,
+            "attack_prevalence": 0.20275730924649393,
+            "benign_events": 3354,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 7,
+                "events": 2347
+              },
+              "benign_mistake": {
+                "alerts": 2,
+                "events": 665
+              },
+              "benign_new_browser": {
+                "alerts": 10,
+                "events": 73
+              },
+              "benign_schedule_change": {
+                "alerts": 3,
+                "events": 269
+              },
+              "brute_force": {
+                "alerts": 510,
+                "events": 541
+              },
+              "password_spray": {
+                "alerts": 286,
+                "events": 298
+              },
+              "suspicious_success": {
+                "alerts": 14,
+                "events": 14
+              }
+            },
+            "detected_incidents": 48,
+            "events": 4207,
+            "false_alerts_per_1000_benign": 6.55933214072749,
+            "false_negatives": 43,
+            "false_positive_examples": [
+              "54334f9b-d205-4f99-809b-0f8786c69613",
+              "8a2fe515-86c2-413a-8095-09c81c728927",
+              "a0ceb78d-208a-4f31-9618-8082ebf7678e",
+              "aac825d6-136d-4210-a069-649d7698daf5",
+              "ffb993e8-a28f-4013-bc56-24d3b374fa52"
+            ],
+            "false_positives": 22,
+            "incident_recall": 1.0,
+            "incidents": 48,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "3a470e3d-8031-4b96-bac7-e67e21880741",
+              "efdc07b9-1d82-4bb2-b8e5-1f2922a55278",
+              "4f2ca46d-cd24-470c-8ed0-e4549cbe92c6",
+              "f8fb8218-a45c-48e0-b0bf-a769790b7567",
+              "833e9780-9b23-435a-b379-d9d2e3683adc"
+            ],
+            "precision": 0.9735576923076923,
+            "recall": 0.9495896834701055,
+            "true_negatives": 3332,
+            "true_positives": 810
+          },
+          "validation": {
+            "attack_events": 478,
+            "attack_prevalence": 0.12622128333773436,
+            "benign_events": 3309,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 4,
+                "events": 2533
+              },
+              "benign_mistake": {
+                "alerts": 2,
+                "events": 622
+              },
+              "benign_new_browser": {
+                "alerts": 5,
+                "events": 77
+              },
+              "benign_schedule_change": {
+                "alerts": 1,
+                "events": 77
+              },
+              "brute_force": {
+                "alerts": 190,
+                "events": 201
+              },
+              "password_spray": {
+                "alerts": 247,
+                "events": 263
+              },
+              "suspicious_success": {
+                "alerts": 11,
+                "events": 14
+              }
+            },
+            "detected_incidents": 32,
+            "events": 3787,
+            "false_alerts_per_1000_benign": 3.626473254759746,
+            "false_negatives": 30,
+            "false_positive_examples": [
+              "19af8749-39ee-4e3a-be38-e9d7f70d459c",
+              "3c8d1029-e627-49ac-ae19-d99d8343c355",
+              "e92a1eee-ba90-4df7-a4e4-5c9e1add2538",
+              "e001350a-339f-49fe-ad16-d36565545b5a",
+              "561e5e40-64f3-4567-9661-90f0d13c99df"
+            ],
+            "false_positives": 12,
+            "incident_recall": 0.9142857142857143,
+            "incidents": 35,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "1db455cc-2e42-4ac1-8645-ea36f1999fff",
+              "de2989a5-990f-44ee-b3ec-44ccb66ff11a",
+              "02f3e9c5-da11-46d0-afa8-7699af27fab5",
+              "e42f57f7-0a4e-43b7-89bb-95d95e9166cc",
+              "d2a20ccf-96c6-47c3-a02b-954c1c88819e"
+            ],
+            "precision": 0.9739130434782609,
+            "recall": 0.9372384937238494,
+            "true_negatives": 3297,
+            "true_positives": 448
+          }
+        },
+        "fixed_rules_reference": {
+          "test": {
+            "attack_events": 853,
+            "attack_prevalence": 0.20275730924649393,
+            "benign_events": 3354,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 1,
+                "events": 2347
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 665
+              },
+              "benign_new_browser": {
+                "alerts": 0,
+                "events": 73
+              },
+              "benign_schedule_change": {
+                "alerts": 0,
+                "events": 269
+              },
+              "brute_force": {
+                "alerts": 441,
+                "events": 541
+              },
+              "password_spray": {
+                "alerts": 186,
+                "events": 298
+              },
+              "suspicious_success": {
+                "alerts": 12,
+                "events": 14
+              }
+            },
+            "detected_incidents": 46,
+            "events": 4207,
+            "false_alerts_per_1000_benign": 0.2981514609421586,
+            "false_negatives": 214,
+            "false_positive_examples": [
+              "1949f1bc-d4ea-43d0-a4e1-3482998d3c2b"
+            ],
+            "false_positives": 1,
+            "incident_recall": 0.9583333333333334,
+            "incidents": 48,
+            "median_time_to_alert_seconds": 55.0,
+            "missed_attack_examples": [
+              "3a470e3d-8031-4b96-bac7-e67e21880741",
+              "8c2dcf0d-bcac-435b-9415-22bdfa9e770d",
+              "cb8577dc-3588-474c-856b-c8fcf5835bbe",
+              "82a5e86d-6f0b-4494-9841-e1a3460974bf",
+              "76542b44-98bc-40f5-bf5c-20a34cf37fc7"
+            ],
+            "precision": 0.9984375,
+            "recall": 0.7491207502930832,
+            "true_negatives": 3353,
+            "true_positives": 639
+          },
+          "validation": {
+            "attack_events": 478,
+            "attack_prevalence": 0.12622128333773436,
+            "benign_events": 3309,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 0,
+                "events": 2533
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 622
+              },
+              "benign_new_browser": {
+                "alerts": 1,
+                "events": 77
+              },
+              "benign_schedule_change": {
+                "alerts": 0,
+                "events": 77
+              },
+              "brute_force": {
+                "alerts": 161,
+                "events": 201
+              },
+              "password_spray": {
+                "alerts": 159,
+                "events": 263
+              },
+              "suspicious_success": {
+                "alerts": 11,
+                "events": 14
+              }
+            },
+            "detected_incidents": 32,
+            "events": 3787,
+            "false_alerts_per_1000_benign": 0.3022061045633122,
+            "false_negatives": 147,
+            "false_positive_examples": [
+              "29072ee1-08a9-4baf-ba7a-d3421e4f2cd1"
+            ],
+            "false_positives": 1,
+            "incident_recall": 0.9142857142857143,
+            "incidents": 35,
+            "median_time_to_alert_seconds": 63.0,
+            "missed_attack_examples": [
+              "1404c971-e736-4c21-96f0-55dbd8b72348",
+              "ecbfd2cd-4b56-4d5b-83bb-78cbd394659d",
+              "d79a9ac6-681b-4f69-84ac-3feb8e80fb2a",
+              "1db455cc-2e42-4ac1-8645-ea36f1999fff",
+              "213b2ac6-abf8-4064-843b-5827364dc3f0"
+            ],
+            "precision": 0.9969879518072289,
+            "recall": 0.6924686192468619,
+            "true_negatives": 3308,
+            "true_positives": 331
+          }
+        },
+        "ml": {
+          "test": {
+            "attack_events": 853,
+            "attack_prevalence": 0.20275730924649393,
+            "benign_events": 3354,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 10,
+                "events": 2347
+              },
+              "benign_mistake": {
+                "alerts": 2,
+                "events": 665
+              },
+              "benign_new_browser": {
+                "alerts": 10,
+                "events": 73
+              },
+              "benign_schedule_change": {
+                "alerts": 5,
+                "events": 269
+              },
+              "brute_force": {
+                "alerts": 509,
+                "events": 541
+              },
+              "password_spray": {
+                "alerts": 287,
+                "events": 298
+              },
+              "suspicious_success": {
+                "alerts": 14,
+                "events": 14
+              }
+            },
+            "detected_incidents": 48,
+            "events": 4207,
+            "false_alerts_per_1000_benign": 8.050089445438283,
+            "false_negatives": 43,
+            "false_positive_examples": [
+              "54334f9b-d205-4f99-809b-0f8786c69613",
+              "8a2fe515-86c2-413a-8095-09c81c728927",
+              "a0ceb78d-208a-4f31-9618-8082ebf7678e",
+              "aac825d6-136d-4210-a069-649d7698daf5",
+              "ffb993e8-a28f-4013-bc56-24d3b374fa52"
+            ],
+            "false_positives": 27,
+            "incident_recall": 1.0,
+            "incidents": 48,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "3a470e3d-8031-4b96-bac7-e67e21880741",
+              "efdc07b9-1d82-4bb2-b8e5-1f2922a55278",
+              "4f2ca46d-cd24-470c-8ed0-e4549cbe92c6",
+              "f8fb8218-a45c-48e0-b0bf-a769790b7567",
+              "833e9780-9b23-435a-b379-d9d2e3683adc"
+            ],
+            "precision": 0.967741935483871,
+            "recall": 0.9495896834701055,
+            "true_negatives": 3327,
+            "true_positives": 810
+          },
+          "validation": {
+            "attack_events": 478,
+            "attack_prevalence": 0.12622128333773436,
+            "benign_events": 3309,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 8,
+                "events": 2533
+              },
+              "benign_mistake": {
+                "alerts": 4,
+                "events": 622
+              },
+              "benign_new_browser": {
+                "alerts": 7,
+                "events": 77
+              },
+              "benign_schedule_change": {
+                "alerts": 3,
+                "events": 77
+              },
+              "brute_force": {
+                "alerts": 190,
+                "events": 201
+              },
+              "password_spray": {
+                "alerts": 250,
+                "events": 263
+              },
+              "suspicious_success": {
+                "alerts": 11,
+                "events": 14
+              }
+            },
+            "detected_incidents": 32,
+            "events": 3787,
+            "false_alerts_per_1000_benign": 6.648534300392868,
+            "false_negatives": 27,
+            "false_positive_examples": [
+              "5fc936df-8edb-4306-a59c-4b038cdc6ff3",
+              "43380287-3cf2-45a0-9abb-a5e9d3134e87",
+              "19af8749-39ee-4e3a-be38-e9d7f70d459c",
+              "3c8d1029-e627-49ac-ae19-d99d8343c355",
+              "51147088-f0da-4412-bfa2-ec253ce767c5"
+            ],
+            "false_positives": 22,
+            "incident_recall": 0.9142857142857143,
+            "incidents": 35,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "de2989a5-990f-44ee-b3ec-44ccb66ff11a",
+              "02f3e9c5-da11-46d0-afa8-7699af27fab5",
+              "e42f57f7-0a4e-43b7-89bb-95d95e9166cc",
+              "d2a20ccf-96c6-47c3-a02b-954c1c88819e",
+              "5d72bc3b-0ac6-407f-bb5a-b407913f8919"
+            ],
+            "precision": 0.9534883720930233,
+            "recall": 0.9435146443514645,
+            "true_negatives": 3287,
+            "true_positives": 451
+          }
+        },
+        "rules": {
+          "test": {
+            "attack_events": 853,
+            "attack_prevalence": 0.20275730924649393,
+            "benign_events": 3354,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 1,
+                "events": 2347
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 665
+              },
+              "benign_new_browser": {
+                "alerts": 3,
+                "events": 73
+              },
+              "benign_schedule_change": {
+                "alerts": 0,
+                "events": 269
+              },
+              "brute_force": {
+                "alerts": 461,
+                "events": 541
+              },
+              "password_spray": {
+                "alerts": 228,
+                "events": 298
+              },
+              "suspicious_success": {
+                "alerts": 12,
+                "events": 14
+              }
+            },
+            "detected_incidents": 46,
+            "events": 4207,
+            "false_alerts_per_1000_benign": 1.1926058437686344,
+            "false_negatives": 152,
+            "false_positive_examples": [
+              "54334f9b-d205-4f99-809b-0f8786c69613",
+              "a98a7391-3736-4f65-86a4-cd1cbfaaf347",
+              "1949f1bc-d4ea-43d0-a4e1-3482998d3c2b",
+              "fb69d305-b31c-40d3-a325-3d6d8da69875"
+            ],
+            "false_positives": 4,
+            "incident_recall": 0.9583333333333334,
+            "incidents": 48,
+            "median_time_to_alert_seconds": 44.0,
+            "missed_attack_examples": [
+              "3a470e3d-8031-4b96-bac7-e67e21880741",
+              "8c2dcf0d-bcac-435b-9415-22bdfa9e770d",
+              "cb8577dc-3588-474c-856b-c8fcf5835bbe",
+              "82a5e86d-6f0b-4494-9841-e1a3460974bf",
+              "76542b44-98bc-40f5-bf5c-20a34cf37fc7"
+            ],
+            "precision": 0.9943262411347518,
+            "recall": 0.8218053927315357,
+            "true_negatives": 3350,
+            "true_positives": 701
+          },
+          "validation": {
+            "attack_events": 478,
+            "attack_prevalence": 0.12622128333773436,
+            "benign_events": 3309,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 1,
+                "events": 2533
+              },
+              "benign_mistake": {
+                "alerts": 0,
+                "events": 622
+              },
+              "benign_new_browser": {
+                "alerts": 1,
+                "events": 77
+              },
+              "benign_schedule_change": {
+                "alerts": 0,
+                "events": 77
+              },
+              "brute_force": {
+                "alerts": 169,
+                "events": 201
+              },
+              "password_spray": {
+                "alerts": 198,
+                "events": 263
+              },
+              "suspicious_success": {
+                "alerts": 11,
+                "events": 14
+              }
+            },
+            "detected_incidents": 32,
+            "events": 3787,
+            "false_alerts_per_1000_benign": 0.6044122091266244,
+            "false_negatives": 100,
+            "false_positive_examples": [
+              "561e5e40-64f3-4567-9661-90f0d13c99df",
+              "29072ee1-08a9-4baf-ba7a-d3421e4f2cd1"
+            ],
+            "false_positives": 2,
+            "incident_recall": 0.9142857142857143,
+            "incidents": 35,
+            "median_time_to_alert_seconds": 47.5,
+            "missed_attack_examples": [
+              "1404c971-e736-4c21-96f0-55dbd8b72348",
+              "ecbfd2cd-4b56-4d5b-83bb-78cbd394659d",
+              "d79a9ac6-681b-4f69-84ac-3feb8e80fb2a",
+              "1db455cc-2e42-4ac1-8645-ea36f1999fff",
+              "213b2ac6-abf8-4064-843b-5827364dc3f0"
+            ],
+            "precision": 0.9947368421052631,
+            "recall": 0.7907949790794979,
+            "true_negatives": 3307,
+            "true_positives": 378
+          }
+        },
+        "statistical": {
+          "test": {
+            "attack_events": 853,
+            "attack_prevalence": 0.20275730924649393,
+            "benign_events": 3354,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 1,
+                "events": 2347
+              },
+              "benign_mistake": {
+                "alerts": 4,
+                "events": 665
+              },
+              "benign_new_browser": {
+                "alerts": 0,
+                "events": 73
+              },
+              "benign_schedule_change": {
+                "alerts": 19,
+                "events": 269
+              },
+              "brute_force": {
+                "alerts": 509,
+                "events": 541
+              },
+              "password_spray": {
+                "alerts": 274,
+                "events": 298
+              },
+              "suspicious_success": {
+                "alerts": 14,
+                "events": 14
+              }
+            },
+            "detected_incidents": 48,
+            "events": 4207,
+            "false_alerts_per_1000_benign": 7.155635062611807,
+            "false_negatives": 56,
+            "false_positive_examples": [
+              "e99abe87-3637-4398-b16a-0f8afaa14f75",
+              "fa44b011-85e3-43c0-9bbb-8996e0e4d6ce",
+              "d04d5924-9ad7-4d98-928e-6aed725fa620",
+              "90fbd7f7-fd69-400e-a4fb-b8098e1ffe41",
+              "e43fdb12-5f4d-4dc3-a9a0-a45daaacf45a"
+            ],
+            "false_positives": 24,
+            "incident_recall": 1.0,
+            "incidents": 48,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "8c2dcf0d-bcac-435b-9415-22bdfa9e770d",
+              "82a5e86d-6f0b-4494-9841-e1a3460974bf",
+              "a42b2975-119f-44f9-ae1e-bf59b5025c08",
+              "efdc07b9-1d82-4bb2-b8e5-1f2922a55278",
+              "f46c1b26-7265-4561-8104-c3ff2fb3ef93"
+            ],
+            "precision": 0.9707673568818515,
+            "recall": 0.9343493552168816,
+            "true_negatives": 3330,
+            "true_positives": 797
+          },
+          "validation": {
+            "attack_events": 478,
+            "attack_prevalence": 0.12622128333773436,
+            "benign_events": 3309,
+            "by_scenario": {
+              "benign_login": {
+                "alerts": 1,
+                "events": 2533
+              },
+              "benign_mistake": {
+                "alerts": 1,
+                "events": 622
+              },
+              "benign_new_browser": {
+                "alerts": 1,
+                "events": 77
+              },
+              "benign_schedule_change": {
+                "alerts": 10,
+                "events": 77
+              },
+              "brute_force": {
+                "alerts": 193,
+                "events": 201
+              },
+              "password_spray": {
+                "alerts": 237,
+                "events": 263
+              },
+              "suspicious_success": {
+                "alerts": 14,
+                "events": 14
+              }
+            },
+            "detected_incidents": 35,
+            "events": 3787,
+            "false_alerts_per_1000_benign": 3.9286793593230582,
+            "false_negatives": 34,
+            "false_positive_examples": [
+              "a304727a-ed9d-4af0-a4ec-123dc3d25d76",
+              "b1993a71-3cca-42e6-8f23-71b20aa4d02a",
+              "561e5e40-64f3-4567-9661-90f0d13c99df",
+              "3885a91b-c3b2-44b2-b9ee-7b9eb52ea73c",
+              "74438c26-7f8a-469a-bef6-fef20cfb5a3c"
+            ],
+            "false_positives": 13,
+            "incident_recall": 1.0,
+            "incidents": 35,
+            "median_time_to_alert_seconds": 0.0,
+            "missed_attack_examples": [
+              "1db455cc-2e42-4ac1-8645-ea36f1999fff",
+              "de2989a5-990f-44ee-b3ec-44ccb66ff11a",
+              "02f3e9c5-da11-46d0-afa8-7699af27fab5",
+              "e42f57f7-0a4e-43b7-89bb-95d95e9166cc",
+              "d2a20ccf-96c6-47c3-a02b-954c1c88819e"
+            ],
+            "precision": 0.9715536105032823,
+            "recall": 0.9288702928870293,
+            "true_negatives": 3296,
+            "true_positives": 444
+          }
+        }
+      },
+      "provenance": {
+        "artifact_metadata_sha256": "e552c7c11b6ee68a47f460f6fd4f0fbf093bbca52b14def6a48d71ac4acfe3b5",
+        "dataset_manifest_sha256": "09d59416f10fdad2e73990d247569c9fd8bf6de420f9d4a0708109521c106291",
+        "mode": "frozen artifact; no fitting or recalibration",
+        "model_id": "iforest-027e70e789fd5e28"
+      }
+    }
+  },
+  "latency": {
+    "batch_amortized_ms_per_event": 0.007115700125798892,
+    "batch_seconds": 0.029138792015146464,
+    "events_in_batch": 4095,
+    "platform": "macOS-14.3-arm64-arm-64bit-Mach-O",
+    "scope": "Warm in-process ML inference only; excludes I/O and feature extraction.",
+    "single_event_p50_ms": 4.808187484741211,
+    "single_event_p95_ms": 4.956562636652961,
+    "single_event_samples": 50
+  },
+  "model_hash": "027e70e789fd5e28bb9e0a1caf589b922f891a6e04749708f2096b3174ed23a5",
+  "model_id": "iforest-027e70e789fd5e28",
+  "selected_parameters": {
+    "max_samples": 512,
+    "trees": 200
+  },
+  "selection": [
+    {
+      "max_samples": 128,
+      "threshold": 0.6163254958692274,
+      "trees": 200,
+      "validation": {
+        "attack_events": 687,
+        "attack_prevalence": 0.17192192192192193,
+        "benign_events": 3309,
+        "by_scenario": {
+          "benign_login": {
+            "alerts": 9,
+            "events": 2518
+          },
+          "benign_mistake": {
+            "alerts": 0,
+            "events": 633
+          },
+          "benign_new_browser": {
+            "alerts": 2,
+            "events": 75
+          },
+          "benign_schedule_change": {
+            "alerts": 5,
+            "events": 83
+          },
+          "brute_force": {
+            "alerts": 363,
+            "events": 379
+          },
+          "password_spray": {
+            "alerts": 266,
+            "events": 296
+          },
+          "suspicious_success": {
+            "alerts": 5,
+            "events": 12
+          }
+        },
+        "detected_incidents": 34,
+        "events": 3996,
+        "false_alerts_per_1000_benign": 4.835297673012995,
+        "false_negatives": 53,
+        "false_positive_examples": [
+          "1791b7a1-a301-4eea-8727-6bdbb8e77e1a",
+          "92811d91-c6a6-4ec2-9d91-d67b3f64b49e",
+          "940c92fd-2625-4a82-adbe-8f63214f8528",
+          "3b6f4a0b-21f1-4c7c-a6bc-13bfea47385a",
+          "381344da-9fff-457e-94a1-5ce094c93bba"
+        ],
+        "false_positives": 16,
+        "incident_recall": 0.8292682926829268,
+        "incidents": 41,
+        "median_time_to_alert_seconds": 15.5,
+        "missed_attack_examples": [
+          "e7985e04-27ab-4d81-a783-50b62ac73eed",
+          "015daadc-17a3-453f-aebc-eb2289be54ec",
+          "af3bccfb-8a16-4ee1-8ff1-c8980a9010e2",
+          "928f27a1-9ca7-4adc-9aee-17d2c9dda6b7",
+          "9fa6a066-29b6-4e29-9a42-1762f4e4df87"
+        ],
+        "precision": 0.9753846153846154,
+        "recall": 0.9228529839883551,
+        "true_negatives": 3293,
+        "true_positives": 634
+      }
+    },
+    {
+      "max_samples": 256,
+      "threshold": 0.598637474847995,
+      "trees": 200,
+      "validation": {
+        "attack_events": 687,
+        "attack_prevalence": 0.17192192192192193,
+        "benign_events": 3309,
+        "by_scenario": {
+          "benign_login": {
+            "alerts": 7,
+            "events": 2518
+          },
+          "benign_mistake": {
+            "alerts": 1,
+            "events": 633
+          },
+          "benign_new_browser": {
+            "alerts": 3,
+            "events": 75
+          },
+          "benign_schedule_change": {
+            "alerts": 5,
+            "events": 83
+          },
+          "brute_force": {
+            "alerts": 364,
+            "events": 379
+          },
+          "password_spray": {
+            "alerts": 279,
+            "events": 296
+          },
+          "suspicious_success": {
+            "alerts": 10,
+            "events": 12
+          }
+        },
+        "detected_incidents": 39,
+        "events": 3996,
+        "false_alerts_per_1000_benign": 4.835297673012995,
+        "false_negatives": 34,
+        "false_positive_examples": [
+          "1791b7a1-a301-4eea-8727-6bdbb8e77e1a",
+          "92811d91-c6a6-4ec2-9d91-d67b3f64b49e",
+          "1c53ff95-305f-4d9a-92f9-054bc4c4fdc3",
+          "381344da-9fff-457e-94a1-5ce094c93bba",
+          "ae27c083-d1fc-40fc-aa45-55928d127da6"
+        ],
+        "false_positives": 16,
+        "incident_recall": 0.9512195121951219,
+        "incidents": 41,
+        "median_time_to_alert_seconds": 0.0,
+        "missed_attack_examples": [
+          "015daadc-17a3-453f-aebc-eb2289be54ec",
+          "928f27a1-9ca7-4adc-9aee-17d2c9dda6b7",
+          "9fa6a066-29b6-4e29-9a42-1762f4e4df87",
+          "65bad73b-965b-4848-ae86-25109419f930",
+          "6621cf6c-901e-43a1-80ea-4fecf04f70ad"
+        ],
+        "precision": 0.976083707025411,
+        "recall": 0.950509461426492,
+        "true_negatives": 3293,
+        "true_positives": 653
+      }
+    },
+    {
+      "max_samples": 512,
+      "threshold": 0.5824170562321728,
+      "trees": 200,
+      "validation": {
+        "attack_events": 687,
+        "attack_prevalence": 0.17192192192192193,
+        "benign_events": 3309,
+        "by_scenario": {
+          "benign_login": {
+            "alerts": 7,
+            "events": 2518
+          },
+          "benign_mistake": {
+            "alerts": 1,
+            "events": 633
+          },
+          "benign_new_browser": {
+            "alerts": 4,
+            "events": 75
+          },
+          "benign_schedule_change": {
+            "alerts": 4,
+            "events": 83
+          },
+          "brute_force": {
+            "alerts": 368,
+            "events": 379
+          },
+          "password_spray": {
+            "alerts": 281,
+            "events": 296
+          },
+          "suspicious_success": {
+            "alerts": 10,
+            "events": 12
+          }
+        },
+        "detected_incidents": 39,
+        "events": 3996,
+        "false_alerts_per_1000_benign": 4.835297673012995,
+        "false_negatives": 28,
+        "false_positive_examples": [
+          "1791b7a1-a301-4eea-8727-6bdbb8e77e1a",
+          "a4f4dea6-d77a-47db-98cb-c20946e15af8",
+          "92811d91-c6a6-4ec2-9d91-d67b3f64b49e",
+          "1c53ff95-305f-4d9a-92f9-054bc4c4fdc3",
+          "ae27c083-d1fc-40fc-aa45-55928d127da6"
+        ],
+        "false_positives": 16,
+        "incident_recall": 0.9512195121951219,
+        "incidents": 41,
+        "median_time_to_alert_seconds": 0.0,
+        "missed_attack_examples": [
+          "928f27a1-9ca7-4adc-9aee-17d2c9dda6b7",
+          "6621cf6c-901e-43a1-80ea-4fecf04f70ad",
+          "c7dda5b6-209d-4e08-a690-d1fe80e51412",
+          "13291064-3e53-4431-886e-82d7084547d3",
+          "285627b0-207e-4952-92a7-6027f8530e5d"
+        ],
+        "precision": 0.9762962962962963,
+        "recall": 0.9592430858806404,
+        "true_negatives": 3293,
+        "true_positives": 659
+      }
+    }
+  ],
+  "synthetic_only": true,
+  "thresholds": {
+    "combined_ml": 0.5901581572824343,
+    "combined_rules": 0.6,
+    "ml": 0.5824170562321728,
+    "rules": 0.6,
+    "statistical": 3.488227067235486
+  },
+  "training_provenance": {
+    "dataset_config": {
+      "attack_episodes": 90,
+      "attack_scale": 1.0,
+      "days": 90,
+      "seed": 42,
+      "start": "2026-01-05",
+      "train_days": 50,
+      "users": 200,
+      "validation_days": 20
+    },
+    "dataset_manifest_sha256": "72a81c3240fc0ea0ffa3ab1c38cb51b8a4d81171a8c9e0362f3c708f6acdfcf4",
+    "features_sha256": "e1a13032b2186c9f52c8a4d7b53d3acd82b209442201b6ff64bac00a4e96f372",
+    "fit_population": "all training features; labels never passed to fit",
+    "selection_population": "validation labels/scores only; test untouched by selection",
+    "test_range": [
+      "2026-03-16T00:00:00+00:00",
+      "2026-04-05T00:00:00+00:00"
+    ],
+    "training_range": [
+      "2026-01-05T00:00:00+00:00",
+      "2026-02-24T00:00:00+00:00"
+    ],
+    "validation_range": [
+      "2026-02-24T00:00:00+00:00",
+      "2026-03-16T00:00:00+00:00"
+    ]
+  },
+  "versions": {
+    "cloudpickle": "3.1.2",
+    "joblib": "1.6.0",
+    "narwhals": "2.28.0",
+    "numpy": "2.5.4",
+    "python": "3.13.12",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1",
+    "threadpoolctl": "3.7.0"
+  }
+}
