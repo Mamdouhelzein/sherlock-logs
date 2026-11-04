@@ -2,6 +2,8 @@
 
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
+from random import uniform
+from time import sleep
 from uuid import UUID
 
 from psycopg import IsolationLevel
@@ -54,12 +56,15 @@ class WorkerStore:
             )
 
     def claim(self, version: str) -> Claim | None:
-        for attempt in range(3):
+        for attempt in range(6):
             try:
                 return self._claim(version)
             except SerializationFailure:
-                if attempt == 2:
+                if attempt == 5:
                     raise
+                # Fresh snapshots plus jitter avoid synchronized workers repeatedly
+                # colliding with the same just-committed row under repeatable read.
+                sleep(uniform(0.01, min(0.25, 0.02 * 2**attempt)))
         return None
 
     def _claim(self, version: str) -> Claim | None:

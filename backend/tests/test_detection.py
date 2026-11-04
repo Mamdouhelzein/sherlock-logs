@@ -11,7 +11,7 @@ from sherlock_api.auth import get_auth_client
 from sherlock_api.config import Settings
 from sherlock_api.detection.api import reader
 from sherlock_api.detection.config import WorkerSettings
-from sherlock_api.detection.store import Claim
+from sherlock_api.detection.store import Claim, WorkerStore
 from sherlock_api.detection.worker import Worker
 from sherlock_api.main import create_app
 
@@ -103,6 +103,34 @@ def test_database_failure_reports_unavailable_and_does_not_expose_credentials():
     report = Worker(settings(), store=store, runtime=SimpleNamespace(version="a" * 64)).cycle()
     assert report.status == "database_unavailable" and report.claimed == 0
     assert "postgres" not in str(report.record())
+
+
+def test_serialization_retries_are_jittered_bounded_and_restart_the_whole_claim(monkeypatch):
+    store = WorkerStore("unused", 30, 60, 10000)
+    calls, delays = [], []
+
+    def conflicted(version):
+        calls.append(version)
+        if len(calls) <= 3:
+            raise psycopg.errors.SerializationFailure()
+        return "accepted-claim"
+
+    monkeypatch.setattr(store, "_claim", conflicted)
+    monkeypatch.setattr("sherlock_api.detection.store.uniform", lambda low, high: low)
+    monkeypatch.setattr("sherlock_api.detection.store.sleep", delays.append)
+    assert store.claim("fixture") == "accepted-claim"
+    assert len(calls) == 4 and delays == [0.01] * 3
+    calls.clear()
+    delays.clear()
+
+    def exhausted(version):
+        calls.append(version)
+        raise psycopg.errors.SerializationFailure()
+
+    monkeypatch.setattr(store, "_claim", exhausted)
+    with pytest.raises(psycopg.errors.SerializationFailure):
+        store.claim("fixture")
+    assert len(calls) == 6 and len(delays) == 5
 
 
 def test_api_guard_is_server_enforced_before_storage_and_rechecks_revocation():

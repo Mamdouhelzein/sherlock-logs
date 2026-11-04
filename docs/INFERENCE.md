@@ -12,7 +12,7 @@ The `sherlock_worker` NOLOGIN group has SELECT on event facts and EXECUTE on nar
 
 ## Leases, history, and retries
 
-Each claim locks one eligible job with `FOR UPDATE SKIP LOCKED`, issues a fresh token, and sets an expiring lease (60 seconds by default). Claim plus history reads run in a repeatable-read transaction. Serialization conflicts retry the whole claim transaction. This avoids concurrent ingestion changing a context snapshot during construction. Raw event facts are never updated by scoring.
+Each claim locks one eligible job with `FOR UPDATE SKIP LOCKED`, issues a fresh token, and sets an expiring lease (60 seconds by default). Claim plus history reads run in a repeatable-read transaction. Serialization conflicts retry the whole claim transaction, with up to six attempts and bounded randomized backoff to prevent synchronized workers from repeatedly colliding. This avoids concurrent ingestion changing a context snapshot during construction. Raw event facts are never updated by scoring.
 
 Only earlier `(occurred_at, internal_event_id)` facts enter history: the target account's preceding 30 days and the target source's preceding 5 minutes, bounded by retention. Internal event IDs prevent collisions between equal provider IDs from different sources. Missing accounts/sources never share a catch-all identity. A bounded row limit fails the job with `history_limit` rather than silently scoring truncated history. Results record snapshot time and context warnings for cold starts, missing context, short account histories, and meaningful retention truncation.
 
