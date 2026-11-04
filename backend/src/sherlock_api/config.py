@@ -24,10 +24,11 @@ class Settings(BaseSettings):
     supabase_publishable_key: SecretStr = SecretStr("")
     database_url: SecretStr = SecretStr("")
     collector_database_url: SecretStr = SecretStr("")
+    worker_database_url: SecretStr = SecretStr("")
     ingestion_signing_key: SecretStr = SecretStr("")
     event_retention_days: int = Field(default=30, ge=1, le=365)
 
-    @field_validator("database_url", "collector_database_url")
+    @field_validator("database_url", "collector_database_url", "worker_database_url")
     @classmethod
     def validate_database_url(cls, value: SecretStr) -> SecretStr:
         raw = value.get_secret_value()
@@ -115,7 +116,7 @@ class Settings(BaseSettings):
         if self.environment == "production" and self.supabase_url.startswith("http:"):
             raise ValueError("Production Supabase must use HTTPS")
         if self.environment == "production":
-            for value in [self.database_url, self.collector_database_url]:
+            for value in [self.database_url, self.collector_database_url, self.worker_database_url]:
                 raw = value.get_secret_value()
                 if raw and parse_qs(urlsplit(raw).query).get("sslmode") != ["verify-full"]:
                     raise ValueError("Production database connections require sslmode=verify-full")

@@ -1,5 +1,20 @@
 # Connects to an optional external Supabase project; does not provision one.
 services:
+  worker:
+    profiles: ["inference"]
+    build:
+      context: .
+      dockerfile: ml/Worker.Dockerfile
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      WORKER_DATABASE_URL: ${WORKER_DATABASE_URL:-}
+      WORKER_MODEL_VERSION: ${WORKER_MODEL_VERSION:-}
+      WORKER_TRUST_LOCAL_ARTIFACT: ${WORKER_TRUST_LOCAL_ARTIFACT:-false}
+      EVENT_RETENTION_DAYS: ${EVENT_RETENTION_DAYS:-30}
+      WORKER_POLL_SECONDS: ${WORKER_POLL_SECONDS:-2}
+    volumes:
+      - ${MODEL_ARTIFACT_DIR:-./artifacts/models/iforest-v1}:/models:ro
+    restart: unless-stopped
   api:
     build:
       context: .

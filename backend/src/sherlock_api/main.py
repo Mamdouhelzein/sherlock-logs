@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 from sherlock_api import __version__
 from sherlock_api.auth import router as identity_router
 from sherlock_api.config import Settings
+from sherlock_api.detection.api import router as detection_router
 from sherlock_api.telemetry.api import router as telemetry_router
 
 
@@ -69,6 +70,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     application.include_router(identity_router)
     application.include_router(telemetry_router)
+    application.include_router(detection_router)
 
     @application.middleware("http")
     async def response_headers(request: Request, call_next):

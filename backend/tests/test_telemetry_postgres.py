@@ -20,10 +20,10 @@ pytestmark = pytest.mark.skipif(not DSN, reason="Needs a disposable PostgreSQL t
 def store():
     # Destructive cleanup is restricted to TEST_DATABASE_URL, never DATABASE_URL.
     with connect(DSN) as connection:
-        connection.execute("truncate private.security_events, auth.audit_log_entries")
+        connection.execute("truncate private.security_events, auth.audit_log_entries cascade")
     yield EventStore(DSN, 30)
     with connect(DSN) as connection:
-        connection.execute("truncate private.security_events, auth.audit_log_entries")
+        connection.execute("truncate private.security_events, auth.audit_log_entries cascade")
 
 
 def event(**changes):
