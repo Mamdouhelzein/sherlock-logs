@@ -127,3 +127,15 @@ jobs:
         if: failure()
       - run: docker compose down
         if: always()
+  worker-container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f ml/Worker.Dockerfile -t sherlock-worker-ci .
+      - name: Check isolated worker runtime and safe unconfigured startup
+        run: |
+          docker run --rm sherlock-worker-ci python -c '
+          from sherlock_ml.artifacts import load_experiment
+          from sherlock_api.detection.cli import main
+          assert main(["process-once"]) == 2
+          '

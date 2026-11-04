@@ -1,6 +1,6 @@
 # Implementation roadmap
 
-Repository, application, identity integration, telemetry infrastructure, and offline dataset/model experiments are built. Isolation Forest has been trained, calibrated, and evaluated on synthetic data, including frozen evaluations on other seeds. Development Supabase is connected; real sign-in and successful-login collection/deduplication are verified. Remaining authorization checks, per-account brute-force protection, the failed-login publisher, and live background inference remain pending. Synthetic results do not establish production effectiveness.
+Repository, application, identity integration, telemetry infrastructure, and offline dataset/model experiments are built. Isolation Forest has been trained, calibrated, and evaluated on synthetic data, including frozen evaluations on other seeds. Development Supabase is connected; real sign-in and successful-login collection/deduplication are verified. Remaining authorization checks, per-account brute-force protection, the failed-login publisher, and hosted worker activation remain pending. The leased background worker and private investigation records are implemented and tested. Synthetic results do not establish production effectiveness.
 
 ## 1. Repository foundation
 
@@ -26,7 +26,7 @@ Done when a new developer can start the frontend and API from the documented ins
 - [x] Verify a real hosted password sign-in, private profile loading/saving, session restoration, and member-route denial.
 - [ ] Verify hosted recovery, two-account isolation, direct member/admin API access, role revocation, and rate-limit behavior.
 - [ ] Enforce and verify per-account brute-force protection at an authentication boundary that cannot be bypassed through direct provider requests.
-- [ ] Apply equivalent access boundaries to investigation records when those tables exist.
+- [x] Apply equivalent access boundaries to investigation records (SQL and API tests; hosted checks pending).
 
 Done when sign-in works and authorization checks pass independently of the ML service.
 
@@ -70,10 +70,11 @@ Done when results reproduce from commands without tuning on the test set.
 
 ## 7. Background inference
 
-- [ ] Claim pending events with expiring leases.
-- [ ] Add retry-safe scoring and model version tracking.
-- [ ] Group related events into incidents.
-- [ ] Surface unavailable models and backlog without breaking sign-in.
+- [x] Claim pending events with expiring leases.
+- [x] Add retry-safe scoring and model version tracking.
+- [x] Group related events into incidents.
+- [x] Surface unavailable models and backlog without breaking sign-in through administrator APIs.
+- [ ] Activate the dedicated hosted worker and verify real collection-to-score flow.
 
 Done when a controlled event becomes an incident and retries do not duplicate results.
 

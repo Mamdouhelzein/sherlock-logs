@@ -6,13 +6,13 @@ An ML-powered website security monitoring project that learns login behavior, fl
 
 ## Status
 
-Step 6: offline ML experiments are implemented. Private event storage, signed ingestion, deduplication, administrator-only reads, an audit collector, and retention cleanup are also built. Identity integration includes registration, login, confirmation/recovery, private profiles, and server-enforced administrator access. Live background inference remains unimplemented.
+Step 7: the background scoring worker is implemented and tested; hosted activation is pending. Private event storage, signed ingestion, deduplication, administrator-only reads, an audit collector, and retention cleanup are also built. Identity integration includes registration, login, confirmation/recovery, private profiles, and server-enforced administrator access. The worker uses leased jobs, pinned model versions, retry-safe results, and shadow incident grouping.
 
-A development Supabase project is connected locally: schemas, exact local Auth redirects, and restricted server database credentials are configured. Real password sign-in, private profile loading/saving, session restoration, and the member-only UI boundary were checked against the hosted service. With database audit writing enabled, the collector stored one real login; a retry inserted nothing and reported one duplicate. Recovery, two-account isolation, direct member/admin API checks, and per-account brute-force protection remain outstanding; see the [verification record](docs/DEVELOPMENT_VERIFICATION.md). Local configuration is untracked, so new clones still require the [setup guide](supabase/README.md). The collector supports successful `login` rows; failed-login coverage needs a verified server publisher. An offline model is trained; live inference and investigation dashboards remain planned. No fabricated activity is shown.
+A development Supabase project is connected locally: schemas, exact local Auth redirects, and restricted server database credentials are configured. Real password sign-in, private profile loading/saving, session restoration, and the member-only UI boundary were checked against the hosted service. With database audit writing enabled, the collector stored one real login; a retry inserted nothing and reported one duplicate. Recovery, two-account isolation, direct member/admin API checks, and per-account brute-force protection remain outstanding; see the [verification record](docs/DEVELOPMENT_VERIFICATION.md). Local configuration is untracked, so new clones still require the [setup guide](supabase/README.md). The collector supports successful `login` rows; failed-login coverage needs a verified server publisher. An offline model is trained and its background adapter is built; hosted worker activation and investigation dashboards remain pending. No fabricated activity is shown.
 
 ## Project guide
 
-Steps 5–6 include a reproducible dataset generator, 15 chronological features, rule/statistical baselines, and trained Isolation Forest experiments. Three synthetic evaluations and their limitations are documented in the [model card](ml/reports/iforest-v1.md). The model is offline; these experiments do not change live authentication or supply missing failed-login coverage.
+Steps 5–6 include a reproducible dataset generator, 15 chronological features, rule/statistical baselines, and trained Isolation Forest experiments. Three synthetic evaluations and their limitations are documented in the [model card](ml/reports/iforest-v1.md). The model was trained offline; the separate background worker reuses its feature code and frozen calibration. Neither the experiments nor shadow scoring change live authentication or supply missing failed-login coverage.
 
 - [Architecture](ARCHITECTURE.md): components, event flow, and access boundaries.
 - [Roadmap](ROADMAP.md): implementation milestones and acceptance criteria.
@@ -23,6 +23,7 @@ Steps 5–6 include a reproducible dataset generator, 15 chronological features,
 - [ML](ml/README.md): training and evaluation protocol.
 - [Supabase](supabase/README.md): project creation, migration, email setup, and administrator assignment.
 - [Telemetry](docs/TELEMETRY.md): trusted event sources, coverage gaps, service signatures, collector, and retention.
+- [Background inference](docs/INFERENCE.md): worker setup, model pinning, leases, shadow incidents, and administrator reads.
 
 ## Repository layout
 
@@ -92,7 +93,8 @@ Anomaly scores are not probabilities of account compromise. Synthetic benchmarks
 - [x] Build synthetic normal activity and local attack scenarios.
 - [x] Implement historical features and security-rule/statistical baselines.
 - [x] Train, validate, and evaluate an offline synthetic-data anomaly detector.
-- [ ] Add durable background scoring and incident grouping.
+- [x] Implement durable background scoring and incident grouping.
+- [ ] Activate and verify the restricted worker against hosted events.
 - [ ] Build the security dashboard and investigation timeline.
 - [ ] Add automated checks, benchmark results, and a recorded demo.
 
@@ -163,7 +165,7 @@ docker compose up --build
 docker compose down
 ```
 
-This builds the static frontend and API and binds them to loopback at ports 5173 and 8000. No PostgreSQL, Supabase, or ML worker is provisioned yet. `VITE_API_BASE_URL` is a build-time browser URL; changing it requires rebuilding the frontend. This Compose configuration is for local development, not public deployment.
+This builds the static frontend and API and binds them to loopback at ports 5173 and 8000. PostgreSQL and Supabase still require setup. The optional `inference` profile runs the worker after its dedicated credentials and trusted model are configured; see the [worker guide](docs/INFERENCE.md). `VITE_API_BASE_URL` is a build-time browser URL; changing it requires rebuilding the frontend. This Compose configuration is for local development, not public deployment.
 
 ### Checks
 
@@ -194,7 +196,7 @@ Tests cover real browser-to-API connectivity and desktop/mobile navigation. Acco
 - **API unavailable:** start terminal 1, open `/healthz`, check `VITE_API_BASE_URL` and `ALLOWED_ORIGINS`, then select **Check again**.
 - **Port already in use:** stop the conflicting process, or update the frontend/API ports and corresponding environment configuration together.
 - **Imports fail:** run the editable install command after installing the locked dependencies; do not use a globally installed uvicorn.
-- **Supabase not configured:** follow the project setup guide; both services need the same project URL and publishable key. Apply the migration and restart both services. ML remains untrained.
+- **Supabase not configured:** follow the project setup guide; both services need the same project URL and publishable key. Apply the migrations and restart both services. Reproduce offline training or configure a locally trusted model before enabling the separate worker.
 
 ## License
 
