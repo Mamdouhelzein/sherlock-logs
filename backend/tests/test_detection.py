@@ -141,6 +141,9 @@ def test_api_guard_is_server_enforced_before_storage_and_rechecks_revocation():
         def incident(self, *args):
             return {"rows": [], "has_more": False}
 
+        def events(self, *args, **kwargs):
+            return {"rows": [], "has_more": False}
+
         def event(self, *args):
             return None
 
@@ -150,6 +153,7 @@ def test_api_guard_is_server_enforced_before_storage_and_rechecks_revocation():
         "/api/v1/admin/detection/status",
         "/api/v1/admin/incidents",
         f"/api/v1/admin/incidents/{uuid4()}",
+        "/api/v1/admin/investigation/events",
         f"/api/v1/admin/events/{uuid4()}/detection",
     ]
     headers = {"Authorization": "Bearer opaque-fixture"}
@@ -161,6 +165,15 @@ def test_api_guard_is_server_enforced_before_storage_and_rechecks_revocation():
         assert client.get(paths[0], headers=headers).json()["mode"] == "shadow"
         assert client.get(paths[1], headers=headers).json()["items"] == []
         assert client.get(paths[1] + "?cursor=bad", headers=headers).status_code == 422
+        assert client.get(paths[3], headers=headers).json()["items"] == []
+        for filters in ["cursor=bad", "user_id=bad", "account_key=bad", "outcome=bad", "limit=101"]:
+            assert client.get(paths[3] + "?" + filters, headers=headers).status_code == 422
+        assert (
+            client.get(
+                paths[3] + f"?user_id={uuid4()}&account_key={'a' * 64}", headers=headers
+            ).status_code
+            == 422
+        )
         assert client.get(paths[-1], headers=headers).status_code == 404
         role = "member"
         assert client.get(paths[0], headers=headers).status_code == 403

@@ -3,7 +3,7 @@
 import base64
 import json
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
 import psycopg
@@ -83,6 +83,28 @@ def event_detection(
     if result is None:
         raise HTTPException(404, "Event is unavailable or outside retention.")
     return result
+
+
+@router.get("/investigation/events")
+def investigation_events(
+    _identity: Annotated[Identity, Depends(require_admin)],
+    store: Annotated[DetectionReader, Depends(reader)],
+    limit: Annotated[int, Query(ge=1, le=100)] = 30,
+    cursor: Annotated[str | None, Query(max_length=256)] = None,
+    flagged: bool | None = None,
+    outcome: Literal["success", "failure"] | None = None,
+    user_id: UUID | None = None,
+    account_key: Annotated[str | None, Query(pattern=r"^[a-f0-9]{64}$")] = None,
+):
+    if user_id is not None and account_key is not None:
+        raise HTTPException(422, "Choose one account identifier.")
+    return page(
+        lambda size, before: store.events(
+            size, before, flagged=flagged, outcome=outcome, user_id=user_id, account_key=account_key
+        ),
+        limit,
+        cursor,
+    )
 
 
 @router.get("/incidents/{incident_id}")

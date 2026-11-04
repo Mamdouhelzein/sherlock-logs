@@ -60,7 +60,7 @@ The collector still needs to run separately to bring new provider logins into ev
 - `GET /api/v1/admin/incidents?limit=50&cursor=...`: bounded keyset incident pages.
 - `GET /api/v1/admin/incidents/{id}?limit=50&cursor=...`: bounded keyset event/evidence pages.
 
-Reads enforce retention and existing server-side administrator authorization. Unknown/expired event IDs return 404. Missing migration/storage returns a safe 503, not a connection error body. Incidents can change while paging; refresh the list for newly updated groups. No model activation or incident mutation is exposed to browsers in this milestone. The investigation frontend is a later step.
+Reads enforce retention and existing server-side administrator authorization. Unknown/expired event IDs return 404. Missing migration/storage returns a safe 503, not a connection error body. Incidents can change while paging; refresh the list for newly updated groups. No model activation or incident mutation is exposed to browsers in this milestone. The read-only investigation frontend is at `/investigations`; see [the investigation guide](INVESTIGATIONS.md).
 
 ## Verification
 

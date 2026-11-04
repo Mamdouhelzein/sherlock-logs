@@ -217,3 +217,50 @@ def test_invalid_snapshot_rolls_back_then_retention_removes_incident_identifiers
                 connection.execute(f"select count(*) as n from private.{table}").fetchone()["n"]
                 == 0
             )
+
+
+def test_investigation_reader_filters_accounts_decisions_and_keyset_pages(worker, monkeypatch):
+    account, other = uuid4(), uuid4()
+    pseudonym = "c" * 64
+    now = datetime.now(UTC) - timedelta(minutes=2)
+    facts = [
+        LoginEvent(
+            event_id=uuid4(),
+            occurred_at=now + timedelta(seconds=i),
+            outcome="failure" if i < 2 else "success",
+            user_id=identity,
+            account_key=pseudonym,
+            source_ip="192.0.2.10",
+        )
+        for i, identity in enumerate([account, account, other, None])
+    ]
+    EventStore(DSN, 30).insert(facts, "trusted_auth_adapter")
+    for i in range(4):
+        claim = worker.claim(VERSION)
+        assert worker.complete(claim, result(i == 0))
+
+    def restricted_reader(dsn):
+        connection = connect(dsn)
+        connection.autocommit = True
+        connection.execute("set role sherlock_reader")
+        connection.autocommit = False
+        return connection
+
+    monkeypatch.setattr("sherlock_api.detection.store.connect", restricted_reader)
+    reader = DetectionReader(DSN, 30)
+    first = reader.events(1, user_id=account)
+    assert first["has_more"] and len(first["rows"]) == 1
+    row = first["rows"][0]
+    second = reader.events(1, (row["occurred_at"], row["id"]), user_id=account)
+    assert not second["has_more"] and len(second["rows"]) == 1
+    assert row["id"] != second["rows"][0]["id"]
+    assert {row["user_id"] for row in first["rows"] + second["rows"]} == {account}
+    flagged = reader.events(30, flagged=True, outcome="failure", user_id=account)["rows"]
+    assert len(flagged) == 1 and flagged[0]["source_ip"] == "192.0.2.10"
+    assert reader.events(30, flagged=True, outcome="success")["rows"] == []
+    anonymous = reader.events(30, account_key=pseudonym)["rows"]
+    assert len(anonymous) == 1 and anonymous[0]["user_id"] is None
+    assert reader.events(30, user_id=uuid4())["rows"] == []
+    detail = reader.event(row["id"])
+    assert detail["source_ip"] == "192.0.2.10" and detail["user_id"] == account
+    assert detail["job_state"] == "processed" and detail["model_version_id"] == VERSION

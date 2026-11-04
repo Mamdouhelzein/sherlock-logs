@@ -81,8 +81,8 @@ Done when a controlled event becomes an incident and retries do not duplicate re
 
 ## 8. Investigation interface
 
-- [ ] Build overview, incident list, incident timeline, and account history.
-- [ ] Show observed signals, model version, and anomaly score.
+- [x] Build the administrator-only overview, event ledger, incident list/timeline, and server-filtered account history.
+- [x] Show observed signals, model version, anomaly/rule scores, thresholds, features, and context warnings.
 - [ ] Add restricted status changes with audit records.
 - [ ] Add a development-only scenario replay.
 

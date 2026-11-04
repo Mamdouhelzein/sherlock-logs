@@ -178,7 +178,9 @@ class DetectionReader:
         cutoff = datetime.now(UTC) - timedelta(days=self.retention_days)
         with connect(self.dsn) as connection:
             return connection.execute(
-                """select e.id,e.occurred_at,j.state as job_state,j.attempts,j.last_error,
+                """select e.id,e.occurred_at,e.received_at,e.source,e.outcome,e.user_id,
+                  e.account_key,host(e.source_ip) as source_ip,e.user_agent,
+                  j.state as job_state,j.attempts,j.last_error,
                   r.model_version_id,m.artifact_label,m.mode,r.features,r.feature_version,
                   r.ml_score,r.rule_score,m.ml_threshold,m.rule_threshold,r.flagged,r.signals,
                   r.context_warnings,r.history_as_of,r.scored_at
@@ -188,6 +190,38 @@ class DetectionReader:
                 where e.id = %s and e.occurred_at > %s""",
                 (event_id, cutoff),
             ).fetchone()
+
+    def events(
+        self, limit: int, before=None, *, flagged=None, outcome=None, user_id=None, account_key=None
+    ) -> dict:
+        cutoff = datetime.now(UTC) - timedelta(days=self.retention_days)
+        conditions = ["e.occurred_at > %s"]
+        values = [cutoff]
+        for condition, parameters in (
+            ("(e.occurred_at,e.id) < (%s,%s)", list(before) if before else []),
+            ("r.flagged = %s", [flagged] if flagged is not None else []),
+            ("e.outcome = %s", [outcome] if outcome else []),
+            ("e.user_id = %s", [user_id] if user_id else []),
+            ("e.user_id is null and e.account_key = %s", [account_key] if account_key else []),
+        ):
+            if parameters:
+                conditions.append(condition)
+                values.extend(parameters)
+        with connect(self.dsn) as connection:
+            rows = connection.execute(
+                f"""select e.id,e.occurred_at,e.received_at,e.source,e.outcome,e.user_id,
+                  e.account_key,host(e.source_ip) as source_ip,e.user_agent,
+                  j.state as job_state,j.attempts,j.last_error,r.flagged,
+                  r.ml_score,r.rule_score,r.signals,r.context_warnings,
+                  r.model_version_id,m.artifact_label
+                from private.security_events e left join private.scoring_jobs j on j.event_id=e.id
+                  left join private.detection_results r on r.event_id=e.id
+                  left join private.model_versions m on m.id=r.model_version_id
+                where {" and ".join(conditions)}
+                order by e.occurred_at desc,e.id desc limit %s""",
+                (*values, limit + 1),
+            ).fetchall()
+        return {"rows": rows[:limit], "has_more": len(rows) > limit}
 
     def incidents(self, limit: int, before=None) -> dict:
         cutoff = datetime.now(UTC) - timedelta(days=self.retention_days)

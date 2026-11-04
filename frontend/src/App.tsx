@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import {
@@ -25,13 +25,22 @@ import {
 import { Button } from "./components/ui/button";
 import { CommandMenu } from "./components/CommandMenu";
 import { SignalVisual } from "./components/SignalVisual";
-import { AuthCallback, AuthPage, ProtectedPage } from "./auth/AuthPages";
+import {
+  AuthCallback,
+  AuthPage,
+  Pending,
+  ProtectedPage,
+} from "./auth/AuthPages";
 import { fetchSystem, getApiOrigin } from "./lib/api";
 
 const repository = "https://github.com/Mamdouhelzein/sherlock-logs";
+const InvestigationDashboard = lazy(
+  () => import("./investigation/InvestigationDashboard"),
+);
 const navigation = [
   { to: "/", label: "Overview", icon: LayoutDashboard },
   { to: "/account", label: "Your account", icon: Fingerprint },
+  { to: "/investigations", label: "Investigations", icon: ScanEye },
   { to: "/architecture", label: "System architecture", icon: GitBranch },
   { to: "/setup", label: "Local setup", icon: Terminal },
 ];
@@ -232,6 +241,18 @@ export default function App() {
         <main id="main-content" tabIndex={-1}>
           <div className="route-view" key={location.pathname}>
             <Routes>
+              <Route
+                path="/investigations"
+                element={
+                  <ProtectedPage admin>
+                    <Suspense
+                      fallback={<Pending text="Opening investigation tools…" />}
+                    >
+                      <InvestigationDashboard />
+                    </Suspense>
+                  </ProtectedPage>
+                }
+              />
               <Route
                 path="/"
                 element={

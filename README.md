@@ -8,7 +8,7 @@ An ML-powered website security monitoring project that learns login behavior, fl
 
 Step 7: the background scoring worker is implemented, tested, and activated locally against development Supabase. Private event storage, signed ingestion, deduplication, administrator-only reads, an audit collector, and retention cleanup are also built. Identity integration includes registration, login, confirmation/recovery, private profiles, and server-enforced administrator access. The worker uses leased jobs, pinned model versions, retry-safe results, and shadow incident grouping.
 
-A development Supabase project is connected locally: schemas, exact local Auth redirects, and restricted server database credentials are configured. Real password sign-in, private profile loading/saving, session restoration, and the member-only UI boundary were checked against the hosted service. With database audit writing enabled, the collector stored one real login; a retry inserted nothing and reported one duplicate. Recovery, two-account isolation, direct member/admin API checks, and per-account brute-force protection remain outstanding; see the [verification record](docs/DEVELOPMENT_VERIFICATION.md). Local configuration is untracked, so new clones still require the [setup guide](supabase/README.md). The collector supports successful `login` rows; failed-login coverage needs a verified server publisher. An offline model is trained and its background adapter is built; a local shadow worker has scored the real collected login once, with no duplicate result on retry. Investigation dashboards remain pending. No fabricated activity is shown.
+A development Supabase project is connected locally: schemas, exact local Auth redirects, and restricted server database credentials are configured. Real password sign-in, private profile loading/saving, session restoration, and the member-only UI boundary were checked against the hosted service. With database audit writing enabled, the collector stored one real login; a retry inserted nothing and reported one duplicate. Recovery, two-account isolation, direct member/admin API checks, and per-account brute-force protection remain outstanding; see the [verification record](docs/DEVELOPMENT_VERIFICATION.md). Local configuration is untracked, so new clones still require the [setup guide](supabase/README.md). The collector supports successful `login` rows; failed-login coverage needs a verified server publisher. An offline model is trained and its background adapter is built; a local shadow worker has scored the real collected login once, with no duplicate result on retry. The administrator investigation desk is implemented at `/investigations`; granting the development account administrator access and verifying the hosted administrator session remain pending. No fabricated activity is shown.
 
 ## Project guide
 
@@ -95,7 +95,8 @@ Anomaly scores are not probabilities of account compromise. Synthetic benchmarks
 - [x] Train, validate, and evaluate an offline synthetic-data anomaly detector.
 - [x] Implement durable background scoring and incident grouping.
 - [x] Activate and verify the restricted local worker against hosted events.
-- [ ] Build the security dashboard and investigation timeline.
+- [x] Build the protected investigation dashboard, incident timeline, and account history.
+- [ ] Verify a hosted administrator session in the dashboard.
 - [ ] Add automated checks, benchmark results, and a recorded demo.
 
 ## Security boundaries

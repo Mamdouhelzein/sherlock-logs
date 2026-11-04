@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -336,7 +336,13 @@ export function AuthCallback() {
   );
 }
 
-export function ProtectedPage({ admin = false }: { admin?: boolean }) {
+export function ProtectedPage({
+  admin = false,
+  children,
+}: {
+  admin?: boolean;
+  children?: ReactNode;
+}) {
   const { session, loading, client } = useAuth();
   const identity = useQuery({
     queryKey: ["identity", session?.user.id, session?.expires_at],
@@ -384,7 +390,9 @@ export function ProtectedPage({ admin = false }: { admin?: boolean }) {
       </div>
     );
   return admin ? (
-    <AdminPage identity={identity.data} token={session.access_token} />
+    <AdminPage identity={identity.data} token={session.access_token}>
+      {children}
+    </AdminPage>
   ) : (
     <AccountPage identity={identity.data} />
   );
@@ -548,8 +556,8 @@ function AccountPage({ identity }: { identity: Identity }) {
           </p>
           <Link to="/admin">Check administrator access</Link>
           <p className="section-footnote">
-            Event infrastructure is built; hosted collection needs setup and
-            verification. ML detection comes later.
+            Investigation tools are available to administrators. The shadow
+            detector reviews collected events without blocking sign-ins.
           </p>
         </section>
       </div>
@@ -557,9 +565,18 @@ function AccountPage({ identity }: { identity: Identity }) {
   );
 }
 
-function AdminPage({ identity, token }: { identity: Identity; token: string }) {
+function AdminPage({
+  identity,
+  token,
+  children,
+}: {
+  identity: Identity;
+  token: string;
+  children?: ReactNode;
+}) {
+  const { session } = useAuth();
   const authorization = useQuery({
-    queryKey: ["admin-status", identity.id],
+    queryKey: ["admin-status", identity.id, session?.expires_at],
     meta: { private: true },
     staleTime: 0,
     retry: false,
@@ -579,6 +596,7 @@ function AdminPage({ identity, token }: { identity: Identity; token: string }) {
         retry={() => void authorization.refetch()}
       />
     );
+  if (children) return <>{children}</>;
   return (
     <div className="document-page">
       <div className="page-label">Administrator access</div>
@@ -586,13 +604,12 @@ function AdminPage({ identity, token }: { identity: Identity; token: string }) {
       <div className="boundary-note">
         <ShieldCheck size={26} aria-hidden="true" />
         <p>
-          The API has authorized this account as an administrator. Event
-          ingestion and the restricted event API are built; connect the event
-          database and verify its source coverage. Detection and investigation
-          tools come later.
+          The API has authorized this account as an administrator. Event records
+          and shadow detection results are available in the investigation desk.
+          Source coverage and worker readiness are shown separately.
         </p>
       </div>
-      <Link to="/account">Return to your account</Link>
+      <Link to="/investigations">Open investigation desk</Link>
     </div>
   );
 }
