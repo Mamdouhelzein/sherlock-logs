@@ -47,8 +47,10 @@ def logs_query(after: tuple[datetime, UUID] | None, start: datetime, end: dateti
 
     cursor = ""
     if after:
-        cursor = f"and (timestamp,id) > ({timestamp(after[0])},'{UUID(str(after[1]))}')"
-    return f"""select id,toString(timestamp) as observed_at,
+        cursor = (
+            f"and (toDateTime64(timestamp,6),id) > ({timestamp(after[0])},'{UUID(str(after[1]))}')"
+        )
+    return f"""select id,toString(toDateTime64(timestamp,6)) as observed_at,
       JSONExtractString(event_message,'error_code') as error_code,
       JSONExtractString(event_message,'grant_type') as grant_type,
       JSONExtractString(event_message,'method') as method,
@@ -63,7 +65,7 @@ def logs_query(after: tuple[datetime, UUID] | None, start: datetime, end: dateti
       and JSONExtractString(event_message,'method')='POST'
       and JSONExtractString(event_message,'path')='/token'
       and JSONExtractInt(event_message,'status')=400
-      {cursor} order by timestamp,id limit 100"""
+      {cursor} order by toDateTime64(timestamp,6),id limit 100"""
 
 
 def collect_failures(token: str, project: str, store, *, progress, max_pages=10, client=None):

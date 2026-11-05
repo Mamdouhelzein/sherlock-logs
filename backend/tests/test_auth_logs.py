@@ -186,4 +186,4 @@ def test_multiple_pages_advance_validated_cursor_and_do_not_skip_same_timestamp(
         report, _, _ = collect_failures("token", PROJECT, store, progress=lambda: True, client=http)
     assert report.complete and report.inserted == 101
     assert ids[99] in requests[1].url.params["sql"]
-    assert "and (timestamp,id) >" in requests[1].url.params["sql"]
+    assert "and (toDateTime64(timestamp,6),id) >" in requests[1].url.params["sql"]
