@@ -82,6 +82,9 @@ test("confirms a new account, enforces cooldown, and recovers through real PKCE"
   await expect(page.getByRole("alert")).toContainText("Sign-in failed");
   await expect(page).toHaveURL(/\/login$/);
   await page.getByRole("link", { name: "Forgot password?" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Back to your account." }),
+  ).toBeVisible();
   await page.getByLabel("Email address").fill(email);
   const recoveryResponse = page.waitForResponse((response) =>
     response.url().includes("/auth/v1/recover"),

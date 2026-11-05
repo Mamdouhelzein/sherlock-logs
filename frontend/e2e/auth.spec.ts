@@ -80,6 +80,31 @@ async function login(page: Page) {
   ).toBeVisible();
 }
 
+test("can request recovery after navigating from a failed sign-in", async ({
+  page,
+}) => {
+  await mockProvider(page);
+  await page.goto("/login");
+  await page.getByLabel("Email address").fill(user.email);
+  await page.getByLabel("Password", { exact: true }).fill("wrong-password");
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect(page.getByRole("alert")).toContainText("Sign-in failed");
+  await page.getByRole("link", { name: "Forgot password?" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Back to your account." }),
+  ).toBeVisible();
+  await page.getByLabel("Email address").fill(user.email);
+  const response = page.waitForResponse(
+    (response) => response.url().includes("/auth/v1/recover"),
+    { timeout: 5000 },
+  );
+  await page
+    .getByRole("button", { name: "Send recovery link", exact: true })
+    .click();
+  expect((await response).status()).toBe(200);
+  await expect(page.getByText(/If an account exists/)).toBeVisible();
+});
+
 test("protects deep links, signs in, persists, saves a private profile, and signs out", async ({
   page,
 }) => {
