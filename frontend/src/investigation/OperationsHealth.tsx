@@ -95,8 +95,9 @@ export function OperationsHealth({
           <div>
             <dt>Last run counts</dt>
             <dd>
-              {c.counts.scanned} scanned, {c.counts.inserted} added,{" "}
-              {c.counts.duplicates} duplicates, {c.counts.rejected} rejected
+              {["error", "stopped"].includes(c.status)
+                ? "Not reported for failed or stopped runs."
+                : `${c.counts.scanned} scanned, ${c.counts.inserted} added, ${c.counts.duplicates} duplicates, ${c.counts.rejected} rejected`}
             </dd>
           </div>
           <div>
@@ -105,7 +106,11 @@ export function OperationsHealth({
           </div>
           <div>
             <dt>Next collection attempt</dt>
-            <dd>{date(c.next_run_at)}</dd>
+            <dd>
+              {c.status === "stopped"
+                ? "Not scheduled while stopped"
+                : date(c.next_run_at)}
+            </dd>
           </div>
           <div>
             <dt>Expired events deleted in last cleanup</dt>
@@ -113,9 +118,9 @@ export function OperationsHealth({
           </div>
         </dl>
         <p>
-          Collection does not capture failed logins yet. Full rescans run at
-          least every six hours to find late records. This panel reflects the
-          last check.
+          Collection does not capture failed logins yet. Full rescans are due
+          every six hours to find late records. This panel reflects the last
+          check.
         </p>
       </details>
     </section>
