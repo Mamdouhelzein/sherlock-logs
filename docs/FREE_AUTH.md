@@ -18,6 +18,8 @@ The database and gateway base images are pinned by digest. Auth, PostgREST and M
 
 The gateway overwrites caller-supplied source headers, blocks Auth administration/metrics routes and leaves RLS authoritative for data reads. Auth and REST are reachable only on their Docker network. Server settings and strong generated credentials stay in ignored `.env.free-auth.local`, mode 0600. Only the project URL and an opaque `sb_publishable_` key enter React; the JWT signing secret and database passwords do not.
 
+Gateway access and request-error logging are disabled because confirmation/recovery query strings contain one-time credentials. Use startup diagnostics and health checks instead of request dumps; do not turn on debug/request logging to investigate an account flow.
+
 The API continues to verify tokens with its fixed Auth service and read the caller's current role through the same user's RPC. No local JWT decoding shortcut, trusted browser role, password proxy to the old hosted service, service-role browser key, or parallel public password endpoint is introduced for the new realm.
 
 ## Start locally

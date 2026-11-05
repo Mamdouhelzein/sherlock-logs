@@ -16,6 +16,8 @@ server {
     listen 8080;
     server_tokens off;
     access_log off;
+    # Nginx request-error logs can include the confirmation token's query string.
+    error_log /dev/null;
     client_max_body_size 16k;
     add_header Cache-Control "no-store" always;
     add_header X-Content-Type-Options "nosniff" always;

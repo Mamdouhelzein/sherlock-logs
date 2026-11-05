@@ -1,6 +1,6 @@
 # Per-account brute-force protection
 
-Status, 2026-11-05: the owner chose the free self-hosted route. Its SQL guard, separate Auth stack, gateway, bootstrap and verification suites are implemented; see [free Auth setup and cutover limits](FREE_AUTH.md). Activation of the existing hosted realm is still pending. The existing hosted project is on Free and disables Password Verification Attempt, requiring Team or Enterprise. No upgrade or hosted Auth configuration change was performed.
+Status, 2026-11-06: the owner chose the free self-hosted route. Its SQL guard, separate Auth stack, gateway, bootstrap and verification suites are implemented; see [free Auth setup and cutover limits](FREE_AUTH.md). Cutover from the existing hosted realm is still pending. The existing hosted project is on Free and disables Password Verification Attempt, requiring Team or Enterprise. No upgrade or hosted Auth configuration change was performed.
 
 ## Enforcement boundary
 
