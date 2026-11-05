@@ -1,6 +1,6 @@
 # Per-account brute-force protection
 
-Status, 2026-11-05: design prepared; **not implemented or activated**. The owner selected full per-account enforcement rather than CAPTCHA/IP limits alone. The existing hosted project is on Free. Its Auth Hooks menu explicitly disables Password Verification Attempt and requires Team or Enterprise. No plan upgrade, Auth settings change, additional failed sign-in request, or credential creation was performed during this review.
+Status, 2026-11-05: the owner chose the free self-hosted route. Its SQL guard, separate Auth stack, gateway, bootstrap and verification suites are implemented; see [free Auth setup and cutover limits](FREE_AUTH.md). Activation of the existing hosted realm is still pending. The existing hosted project is on Free and disables Password Verification Attempt, requiring Team or Enterprise. No upgrade or hosted Auth configuration change was performed.
 
 ## Enforcement boundary
 
@@ -10,7 +10,7 @@ Keep monitoring and ML independent of enforcement. Model outages or synthetic an
 
 ## Architecture decision
 
-Two routes can meet the account-level requirement. Neither is enabled by this document.
+Two routes were assessed. The selected implementation uses self-hosted Supabase Auth with its provider-enforced hook and private account state, preserving the SDK and RLS model. The gateway alone is not the enforcement mechanism.
 
 | Route | Work required | Activation prerequisite |
 | --- | --- | --- |

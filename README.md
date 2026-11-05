@@ -28,7 +28,8 @@ Steps 5–6 include a reproducible dataset generator, 15 chronological features,
 - [Background inference](docs/INFERENCE.md): worker setup, model pinning, leases, shadow incidents, and administrator reads.
 - [Failed-login adapter](docs/FAILED_LOGINS.md): provider-confirmed password failures, recent-hour scope, restricted access, and verification limits.
 - [Automatic collection](docs/AUTOMATIC_COLLECTION.md): scheduled collection, operational monitoring, and approved physical retention.
-- [Per-account protection plan](docs/BRUTE_FORCE_PROTECTION.md): enforcement boundary, proposed cooldown policy, Supabase plan prerequisite, and activation tests. Not active yet.
+- [Per-account protection](docs/BRUTE_FORCE_PROTECTION.md): enforcement boundary, cooldown policy and acceptance checks.
+- [Free self-hosted Auth](docs/FREE_AUTH.md): separate local Auth realm with an atomic account guard, private credentials, real-provider tests and a cutover checklist. The existing hosted realm is not migrated yet.
 
 ## Repository layout
 

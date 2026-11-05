@@ -29,5 +29,6 @@ artifacts/
 # Local services and logs
 .supabase/
 supabase/.temp/
+supabase/.branches/
 *.log
 .DS_Store
