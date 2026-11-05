@@ -14,9 +14,10 @@ PROJECT = "a" * 20
 
 
 def row(**changes):
+    at = changes.pop("timestamp", (datetime.now(UTC) - timedelta(seconds=10)).isoformat())
     return {
         "id": str(uuid4()),
-        "timestamp": (datetime.now(UTC) - timedelta(seconds=10)).isoformat(),
+        "observed_at": at,
         "error_code": "invalid_credentials",
         "grant_type": "password",
         "method": "POST",

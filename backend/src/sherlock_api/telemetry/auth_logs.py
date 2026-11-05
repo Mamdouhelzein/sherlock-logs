@@ -27,7 +27,7 @@ def failure_event(row: dict, project: str) -> LoginEvent:
         raise ValueError("Not a verified invalid-password credential attempt")
     # Request IDs deduplicate repeated provider records, independently of log-row ID.
     request_id = str(UUID(row["request_id"]))
-    at = datetime.fromisoformat(row["timestamp"].replace("Z", "+00:00"))
+    at = datetime.fromisoformat(row["observed_at"].replace("Z", "+00:00"))
     return LoginEvent(
         event_id=uuid5(NAMESPACE_URL, f"supabase-auth-failure:{project}:{request_id}"),
         occurred_at=at,
@@ -48,7 +48,7 @@ def logs_query(after: tuple[datetime, UUID] | None, start: datetime, end: dateti
     cursor = ""
     if after:
         cursor = f"and (timestamp,id) > ({timestamp(after[0])},'{UUID(str(after[1]))}')"
-    return f"""select id,toString(timestamp) as timestamp,
+    return f"""select id,toString(timestamp) as observed_at,
       JSONExtractString(event_message,'error_code') as error_code,
       JSONExtractString(event_message,'grant_type') as grant_type,
       JSONExtractString(event_message,'method') as method,
@@ -109,7 +109,7 @@ def collect_failures(token: str, project: str, store, *, progress, max_pages=10,
             for row in rows:
                 # A malformed cursor could loop, skip records, or poison a whole window.
                 try:
-                    at = datetime.fromisoformat(row["timestamp"].replace("Z", "+00:00"))
+                    at = datetime.fromisoformat(row["observed_at"].replace("Z", "+00:00"))
                     if at.tzinfo is None:
                         at = at.replace(tzinfo=UTC)  # ClickHouse DateTime64 is documented UTC.
                     position = (at.astimezone(UTC), UUID(row["id"]))
@@ -120,7 +120,7 @@ def collect_failures(token: str, project: str, store, *, progress, max_pages=10,
                 previous = position
                 report.scanned += 1
                 try:
-                    event = failure_event({**row, "timestamp": position[0].isoformat()}, project)
+                    event = failure_event({**row, "observed_at": position[0].isoformat()}, project)
                     event.validate_time(end, store.retention_days)
                     valid.append(event)
                 except (KeyError, ValidationError, ValueError, TypeError):
