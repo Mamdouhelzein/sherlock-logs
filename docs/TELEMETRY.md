@@ -1,6 +1,6 @@
 # Step 4: trusted login telemetry
 
-Status: the private event store, strict contract, service-signed ingestion, admin-only API, audit adapter, and retention command are implemented. A development Supabase project is connected locally with separate restricted API and collector logins. On 2026-11-03, database audit writing was enabled and a fresh real login was captured: the first run inserted one event; the retry inserted none and reported one duplicate, with zero rejections. **Successful-login capture and retry deduplication are verified; failed-login coverage is still unavailable.** See [development verification](DEVELOPMENT_VERIFICATION.md).
+Status: the private event store, strict contract, service-signed ingestion, admin-only API, audit adapter, and retention command are implemented. A development Supabase project is connected locally with separate restricted API and collector logins. On 2026-11-03, database audit writing was enabled and a fresh real login was captured: the first run inserted one event; the retry inserted none and reported one duplicate, with zero rejections. **Successful-login capture and retry deduplication are verified.** On 2026-11-05, approved scoped provider-log reads were activated for recent-hour invalid-password coverage. Timed reads and a historical import of two real controlled failures are verified; fresh post-activation delivery through the daemon remains unverified. See [failed-login scope and limits](FAILED_LOGINS.md). See [development verification](DEVELOPMENT_VERIFICATION.md).
 
 ## Coverage decision
 
@@ -11,7 +11,8 @@ Supabase's [password-grant implementation](https://github.com/supabase/auth/blob
 | Source | Implemented support | Gaps |
 | --- | --- | --- |
 | Supabase database audit `login` rows | Successful logins with stable audit ID and timestamp; user ID/IP/user agent when present | Failed passwords and unknown-account attempts are not covered; IP/user agent may be missing |
-| Signed trusted server adapter | Accepts explicit success/failure events from an authorized publisher | No provider-specific failed-login publisher is connected yet |
+| Provider Auth log adapter | Active recent-hour reads of explicit invalid-password failures; bounded historical ingestion and retry deduplication verified | Attempted account/browser unavailable; fresh scheduled delivery unverified; outages beyond the lookback can leave gaps |
+| Signed trusted server adapter | Accepts explicit success/failure events from an authorized publisher | Requires its own trusted source and coverage verification |
 | Browser callbacks or user/admin bearer tokens | Cannot ingest events | Browser claims never establish login outcomes |
 
 Supabase documents optional [database audit storage](https://supabase.com/docs/guides/auth/audit-logs). Check that it is enabled before using the database collector. Its [Password Verification Hook](https://supabase.com/docs/guides/auth/auth-hooks/password-verification-hook) supplies a known user ID and password-validity flag; the [hook availability table](https://supabase.com/docs/guides/auth/auth-hooks) currently lists it for Teams/Enterprise. This release does not enable a paid hook or add a synchronous authentication hook. Unknown-account attempts require additional verified telemetry even with that hook.
@@ -126,6 +127,6 @@ After connecting a development project:
 3. Check which events and fields exist in database audit logs versus external Auth logs. Record the hosted version, test times, source semantics, and gaps without copying secrets into the repository.
 4. Run the collector twice: the second run must report duplicates and preserve original records.
 5. Verify member/anonymous event reads and writes are denied. Promote/revoke an administrator and check API reads.
-6. Attach and verify a real failed-login publisher before claiming brute-force/password-spraying coverage. Test malformed events, retries, conflicts, outage recovery, and the retention schedule.
+6. Verify a fresh invalid-password failure through the scheduled provider-log reader and assess missing-account/source context before claiming brute-force/password-spraying coverage. Test malformed events, retries, conflicts, outage recovery, and the retention schedule.
 
 CI covers transaction rollback, concurrent duplicates, keyset pagination with timestamp ties, late source rows, secret exclusion, retention, SQL privileges, invalid signatures, body bounds, and administrator authorization using disposable PostgreSQL and controlled fixtures. Synthetic tests are not live telemetry.

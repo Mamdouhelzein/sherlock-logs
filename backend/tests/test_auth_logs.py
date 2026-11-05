@@ -79,6 +79,8 @@ def test_collection_uses_fixed_destination_narrow_projection_and_retry_deduplica
         requests.append(request)
         assert request.url.host == "api.supabase.com"
         assert request.headers["authorization"] == "Bearer private-token"
+        assert request.url.params["iso_timestamp_start"].endswith("Z")
+        assert request.url.params["iso_timestamp_end"].endswith("Z")
         query = request.url.params["sql"]
         assert "select *" not in query.lower()
         assert "source='auth_logs'" in query

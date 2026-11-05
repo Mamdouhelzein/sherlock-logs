@@ -8,11 +8,13 @@ An ML-powered website security monitoring project that learns login behavior, fl
 
 The investigation dashboard and background scoring worker are implemented, tested, and connected locally to development Supabase. Automatic successful-login collection runs locally every 30 seconds after a cycle completes. An owner-approved Supabase Cron job performs hourly cleanup of collected records older than 30 days. Local collection and scoring pause when the laptop sleeps; an always-on deployment remains pending. Identity integration includes registration, login, confirmation/recovery, private profiles, and server-enforced administrator access. The worker uses leased jobs, pinned model versions, retry-safe results, and shadow incident grouping.
 
-A development Supabase project is connected locally: schemas, exact local Auth redirects, and restricted server database credentials are configured. Real password sign-in, private profile loading/saving, session restoration, and the member-only UI boundary were checked against the hosted service. With database audit writing enabled, the collector stored one real login; a retry inserted nothing and reported one duplicate. Recovery, two-account isolation, direct member/admin API checks, and per-account brute-force protection remain outstanding; see the [verification record](docs/DEVELOPMENT_VERIFICATION.md). Local configuration is untracked, so new clones still require the [setup guide](supabase/README.md). The collector supports successful `login` rows; failed-login coverage needs a verified server publisher. An offline model is trained and its background adapter is built; a local shadow worker has scored the real collected login once, with no duplicate result on retry. The administrator investigation desk is connected at `/investigations`. After explicit owner approval, a real hosted administrator session loaded the retained event, scoring evidence, model record, server-filtered account history, and empty incident state. No fabricated activity is shown.
+Development Supabase is connected locally with restricted server roles, private schemas, and exact local Auth redirects. Real sign-in, profile loading/saving, session restoration, and the member-only UI boundary were checked. Successful-login capture and retry deduplication are verified. After owner approval, a project-scoped Logs Read token enabled provider-confirmed password-failure collection from the recent hour. Timed reads are healthy; a bounded historical import of two controlled failures inserted each once, produced two model results, and grouped them into a source incident. Fresh post-activation failure delivery by the scheduled reader remains unverified. The source does not identify attempted accounts, and longer outages can leave coverage gaps. See the [failed-login guide](docs/FAILED_LOGINS.md).
+
+The administrator investigation desk at `/investigations` displays the real retained records and their evidence. The model's flags on controlled failures are not proof of attacks or real-world accuracy. Recovery, two-account isolation, direct member/admin API checks, role revocation, per-account brute-force protection, and always-on deployment remain outstanding; see the [verification record](docs/DEVELOPMENT_VERIFICATION.md). Local credentials are untracked, so new clones still require the [setup guide](supabase/README.md).
 
 ## Project guide
 
-Steps 5–6 include a reproducible dataset generator, 15 chronological features, rule/statistical baselines, and trained Isolation Forest experiments. Three synthetic evaluations and their limitations are documented in the [model card](ml/reports/iforest-v1.md). The model was trained offline; the separate background worker reuses its feature code and frozen calibration. Neither the experiments nor shadow scoring change live authentication or supply missing failed-login coverage.
+Steps 5–6 include a reproducible dataset generator, 15 chronological features, rule/statistical baselines, and trained Isolation Forest experiments. Three synthetic evaluations and their limitations are documented in the [model card](ml/reports/iforest-v1.md). The model was trained offline; the separate background worker reuses its feature code and frozen calibration. Neither the experiments nor shadow scoring change live authentication.
 
 - [Architecture](ARCHITECTURE.md): components, event flow, and access boundaries.
 - [Roadmap](ROADMAP.md): implementation milestones and acceptance criteria.
@@ -24,7 +26,7 @@ Steps 5–6 include a reproducible dataset generator, 15 chronological features,
 - [Supabase](supabase/README.md): project creation, migration, email setup, and administrator assignment.
 - [Telemetry](docs/TELEMETRY.md): trusted event sources, coverage gaps, service signatures, collector, and retention.
 - [Background inference](docs/INFERENCE.md): worker setup, model pinning, leases, shadow incidents, and administrator reads.
-- [Failed-login adapter](docs/FAILED_LOGINS.md): provider-confirmed password failures, recent-hour scope, and pending restricted-token activation.
+- [Failed-login adapter](docs/FAILED_LOGINS.md): provider-confirmed password failures, recent-hour scope, restricted access, and verification limits.
 - [Automatic collection](docs/AUTOMATIC_COLLECTION.md): scheduled collection, operational monitoring, and approved physical retention.
 
 ## Repository layout
@@ -91,7 +93,8 @@ Anomaly scores are not probabilities of account compromise. Synthetic benchmarks
 - [x] Provision development Supabase, apply schemas, and connect restricted server logins.
 - [ ] Verify hosted sign-in, recovery, and rate limits.
 - [x] Implement private event storage, signed ingestion, deduplication, and the audit collector.
-- [ ] Verify hosted event coverage and connect a trusted failed-login publisher.
+- [x] Connect restricted provider failure-log reads and verify historical failure ingestion, deduplication, scoring and investigation.
+- [ ] Verify a fresh failure through the scheduled reader and remaining hosted security checks.
 - [x] Build synthetic normal activity and local attack scenarios.
 - [x] Implement historical features and security-rule/statistical baselines.
 - [x] Train, validate, and evaluate an offline synthetic-data anomaly detector.

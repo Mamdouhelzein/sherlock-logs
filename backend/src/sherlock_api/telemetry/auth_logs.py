@@ -89,8 +89,8 @@ def collect_failures(token: str, project: str, store, *, progress, max_pages=10,
                     headers={"Authorization": f"Bearer {token}"},
                     params={
                         "sql": logs_query(after, start, end),
-                        "iso_timestamp_start": start.isoformat(),
-                        "iso_timestamp_end": end.isoformat(),
+                        "iso_timestamp_start": start.isoformat().replace("+00:00", "Z"),
+                        "iso_timestamp_end": end.isoformat().replace("+00:00", "Z"),
                     },
                 ) as response:
                     if response.status_code != 200:

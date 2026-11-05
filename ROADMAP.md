@@ -1,6 +1,6 @@
 # Implementation roadmap
 
-Repository, application, identity integration, telemetry infrastructure, and offline dataset/model experiments are built. Isolation Forest has been trained, calibrated, and evaluated on synthetic data, including frozen evaluations on other seeds. Development Supabase is connected; real sign-in and successful-login collection/deduplication are verified. Remaining authorization checks, per-account brute-force protection, and the failed-login publisher remain pending. The leased background worker and private investigation records are implemented and tested. A restricted local worker is active against development Supabase and has scored the real collected login once. Synthetic results do not establish production effectiveness.
+Repository, application, identity integration, telemetry infrastructure, and offline dataset/model experiments are built. Isolation Forest has been trained, calibrated, and evaluated on synthetic data, including frozen evaluations on other seeds. Development Supabase is connected; real sign-in and successful-login collection/deduplication are verified. Restricted provider failure-log reads are active; two earlier controlled failures were imported, deduplicated, scored and grouped in the live dashboard. Fresh post-activation delivery by the scheduled reader remains unverified. Remaining authorization checks and per-account brute-force protection are pending. The leased background worker and private investigation records are implemented and tested. A restricted local worker is active against development Supabase and has scored the real collected login once. Synthetic results do not establish production effectiveness.
 
 ## 1. Repository foundation
 
@@ -44,7 +44,8 @@ Done when sign-in works and authorization checks pass independently of the ML se
 - [x] Capture a real successful login and verify that collecting it again inserts no duplicate.
 - [ ] Inspect controlled successes, wrong passwords, and unknown accounts in the hosted project.
 - [x] Implement a bounded provider-log adapter for explicitly confirmed password failures with private health metadata and honest coverage limits.
-- [ ] Activate the restricted log token and verify hosted failed-login ingestion, deduplication, scoring and alert behavior before claiming attack-attempt coverage.
+- [x] Activate single-project Logs Read access and verify timed reads plus historical failure ingestion, deduplication, scoring and incident display.
+- [ ] Verify a fresh controlled failure through the scheduled reader and assess false alerts before claiming detection effectiveness.
 - [x] Activate and verify local scheduled collection and monitored hourly hosted 30-day cleanup after owner approval.
 - [ ] Move collection to an always-on deployment and verify its outage recovery.
 
