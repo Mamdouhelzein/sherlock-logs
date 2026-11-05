@@ -36,6 +36,7 @@ jobs:
       - run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202611040001_inference.sql
       - run: psql -v ON_ERROR_STOP=1 -f supabase/tests/inference.sql
       - run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202611050001_telemetry_operations.sql
+      - run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202611050002_failed_login_collection.sql
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'

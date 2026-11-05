@@ -116,11 +116,34 @@ export function OperationsHealth({
             <dt>Expired events deleted in last cleanup</dt>
             <dd>{r.deleted}</dd>
           </div>
+          <div>
+            <dt>Failed-login source</dt>
+            <dd>
+              {data.failed_login_coverage === "provider_logs_recent_window"
+                ? "Provider Auth logs · recent hour"
+                : data.failed_login_coverage === "provider_logs_unhealthy"
+                  ? "Provider Auth logs · overdue or incomplete"
+                  : "Not connected"}
+            </dd>
+          </div>
+          {data.failure_source?.last_success_at && (
+            <>
+              <div>
+                <dt>Last successful failure scan</dt>
+                <dd>{date(data.failure_source.last_success_at)}</dd>
+              </div>
+              <div>
+                <dt>Failure records scanned</dt>
+                <dd>{data.failure_source.scanned ?? "Not recorded"}</dd>
+              </div>
+            </>
+          )}
         </dl>
         <p>
-          Collection does not capture failed logins yet. Full rescans are due
-          every six hours to find late records. This panel reflects the last
-          check.
+          Successful-login full rescans are due every six hours to find late
+          records. Provider failure scans cover the recent hour; longer outages
+          can leave gaps. Invalid credentials do not identify the attempted
+          account. This panel reflects the last check.
         </p>
       </details>
     </section>

@@ -182,3 +182,36 @@ test("keeps collection and cleanup health separate from model readiness", async 
     operations.getByText("Cleanup not enabled", { exact: true }),
   ).toBeVisible();
 });
+
+test("distinguishes provider-confirmed recent-hour failure coverage from missing or stale collection", async ({
+  page,
+}) => {
+  const state = await investigationFixture(page);
+  await investigationLogin(page);
+  await expect(
+    page.getByText("Failed-login collection is not connected.", {
+      exact: false,
+    }),
+  ).toBeVisible();
+  state.failureCoverage = "provider_logs_recent_window";
+  await page.getByRole("button", { name: "Refresh", exact: true }).click();
+  await expect(
+    page.getByText(
+      /Provider-confirmed password failures are collected from the recent hour/,
+    ),
+  ).toBeVisible();
+  await page
+    .getByText("Collection and cleanup details", { exact: true })
+    .click();
+  await expect(
+    page.getByText("Provider Auth logs · recent hour", { exact: true }),
+  ).toBeVisible();
+  state.failureCoverage = "provider_logs_unhealthy";
+  await page.getByRole("button", { name: "Refresh", exact: true }).click();
+  await expect(
+    page.getByText(/Failed-login collection is overdue or incomplete/),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Ready at last check", { exact: true }),
+  ).toBeVisible();
+});

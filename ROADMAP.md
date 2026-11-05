@@ -43,7 +43,8 @@ Done when sign-in works and authorization checks pass independently of the ML se
 - [x] Enable database audit writing in the development project and verify the setting persists.
 - [x] Capture a real successful login and verify that collecting it again inserts no duplicate.
 - [ ] Inspect controlled successes, wrong passwords, and unknown accounts in the hosted project.
-- [ ] Connect and verify a trusted failed-login publisher before claiming attack-attempt coverage.
+- [x] Implement a bounded provider-log adapter for explicitly confirmed password failures with private health metadata and honest coverage limits.
+- [ ] Activate the restricted log token and verify hosted failed-login ingestion, deduplication, scoring and alert behavior before claiming attack-attempt coverage.
 - [x] Activate and verify local scheduled collection and monitored hourly hosted 30-day cleanup after owner approval.
 - [ ] Move collection to an always-on deployment and verify its outage recovery.
 

@@ -430,9 +430,13 @@ export default function InvestigationDashboard() {
         <p>
           <strong>Shadow mode.</strong> Flags support investigation and do not
           block sign-ins.{" "}
-          {data?.failed_login_coverage === "not_connected"
-            ? "Failed-login collection is not connected."
-            : "Coverage could not be verified."}
+          {(operations.data?.failed_login_coverage ??
+            data?.failed_login_coverage) === "provider_logs_recent_window"
+            ? "Provider-confirmed password failures are collected from the recent hour. Attempted accounts are unavailable."
+            : (operations.data?.failed_login_coverage ??
+                  data?.failed_login_coverage) === "provider_logs_unhealthy"
+              ? "Failed-login collection is overdue or incomplete. Current coverage could not be verified."
+              : "Failed-login collection is not connected."}
         </p>
       </div>
       <div className="desk-toolbar">

@@ -60,6 +60,11 @@ export const timelineEventSchema = z.object({
   context_warnings: z.array(z.string()),
   model_version_id: z.string(),
 });
+export const failureCoverageSchema = z.enum([
+  "not_connected",
+  "provider_logs_recent_window",
+  "provider_logs_unhealthy",
+]);
 export const statusSchema = z.object({
   mode: z.literal("shadow"),
   worker_ready: z.boolean(),
@@ -75,7 +80,7 @@ export const statusSchema = z.object({
   queue: z.record(z.string(), z.number().int().nonnegative()),
   scored: z.number().int().nonnegative(),
   flagged: z.number().int().nonnegative(),
-  failed_login_coverage: z.literal("not_connected"),
+  failed_login_coverage: failureCoverageSchema,
 });
 export const pageSchema = <T extends z.ZodType>(schema: T) =>
   z.object({
@@ -161,7 +166,19 @@ export const operationsSchema = z.object({
     backlog: z.boolean(),
     error_code: nullableText,
   }),
-  failed_login_coverage: z.literal("not_connected"),
+  failed_login_coverage: failureCoverageSchema,
+  failure_source: z
+    .object({
+      coverage: failureCoverageSchema,
+      status: z.enum(["not_configured", "ready", "partial", "error"]),
+      healthy: z.boolean(),
+      checked_at: timestamp.nullable().optional(),
+      last_success_at: timestamp.nullable().optional(),
+      window_start: timestamp.nullable().optional(),
+      window_end: timestamp.nullable().optional(),
+      scanned: z.number().int().nonnegative().optional(),
+    })
+    .optional(),
   retention_schedule: z.literal("hourly"),
 });
 export type OperationsStatus = z.infer<typeof operationsSchema>;

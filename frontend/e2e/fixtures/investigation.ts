@@ -57,6 +57,10 @@ export async function investigationFixture(
     revoked: false,
     unavailable: false,
     workerReady: true,
+    failureCoverage: "not_connected" as
+      | "not_connected"
+      | "provider_logs_recent_window"
+      | "provider_logs_unhealthy",
     collectionStale: false,
     cleanupStale: false,
     cleanupEnabled: true,
@@ -160,7 +164,18 @@ export async function investigationFixture(
             backlog: false,
             error_code: null,
           },
-          failed_login_coverage: "not_connected",
+          failed_login_coverage: state.failureCoverage,
+          failure_source: {
+            coverage: state.failureCoverage,
+            status:
+              state.failureCoverage === "not_connected"
+                ? "not_configured"
+                : "ready",
+            healthy: state.failureCoverage === "provider_logs_recent_window",
+            last_success_at:
+              state.failureCoverage === "not_connected" ? null : recent,
+            scanned: 2,
+          },
           retention_schedule: "hourly",
         },
       });

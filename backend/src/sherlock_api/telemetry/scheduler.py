@@ -8,9 +8,10 @@ from threading import Event
 from uuid import uuid4
 
 import psycopg
-from pydantic import Field, ValidationError
+from pydantic import Field, SecretStr, ValidationError, model_validator
 
 from sherlock_api.config import Settings
+from sherlock_api.telemetry.auth_logs import AuthLogsUnavailable, collect_failures
 from sherlock_api.telemetry.collector import CollectionInterrupted, collect_once
 from sherlock_api.telemetry.operations import CollectionOperations
 from sherlock_api.telemetry.store import EventConflict, EventStore
@@ -19,6 +20,24 @@ from sherlock_api.telemetry.store import EventConflict, EventStore
 class CollectorSettings(Settings):
     collection_interval_seconds: int = Field(default=30, ge=10, le=900)
     collection_max_pages: int = Field(default=1000, ge=1, le=100000)
+    auth_logs_token: SecretStr = SecretStr("")
+    auth_logs_project_ref: str = Field(default="", pattern=r"^$|^[a-z]{20}$")
+    auth_logs_max_pages: int = Field(default=10, ge=1, le=100)
+
+    @model_validator(mode="after")
+    def validate_log_access(self):
+        token = self.auth_logs_token.get_secret_value()
+        if bool(token) != bool(self.auth_logs_project_ref):
+            raise ValueError("Set both Auth log settings, or neither")
+        if token and (
+            not token.startswith("sbp_fc")
+            or not 20 <= len(token) <= 512
+            or any(char.isspace() for char in token)
+        ):
+            raise ValueError("Use a scoped read-only Supabase token")
+        if token and self.supabase_url != f"https://{self.auth_logs_project_ref}.supabase.co":
+            raise ValueError("Auth log project must match the configured Auth project")
+        return self
 
 
 class Collector:
@@ -68,6 +87,32 @@ class Collector:
                     progress=progress,
                 )
                 counts = report.model_dump(include=set(counts))
+                if self.settings.auth_logs_token.get_secret_value():
+                    try:
+                        failures, start, end = collect_failures(
+                            self.settings.auth_logs_token.get_secret_value(),
+                            self.settings.auth_logs_project_ref,
+                            self.store,
+                            progress=progress,
+                            max_pages=self.settings.auth_logs_max_pages,
+                        )
+                        complete = failures.complete and not failures.rejected
+                        accepted = self.operations.record_failures(
+                            run, "ready" if complete else "partial", start, end, failures.scanned
+                        )
+                        for name in counts:
+                            counts[name] += getattr(failures, name)
+                        if not complete:
+                            status, error = "partial", "incomplete_scan"
+                        result["failed_login_coverage"] = (
+                            "provider_logs_recent_window" if complete else "provider_logs_unhealthy"
+                        )
+                    except AuthLogsUnavailable:
+                        accepted = self.operations.record_failures(run, "error", None, None, 0)
+                        status, error = "partial", "incomplete_scan"
+                        result["failed_login_coverage"] = "provider_logs_unhealthy"
+                    if not accepted:
+                        raise CollectionInterrupted()
                 if not report.complete or report.rejected:
                     status, error = "partial", "incomplete_scan"
             except CollectionInterrupted:

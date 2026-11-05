@@ -116,3 +116,49 @@ def test_unconfigured_startup_does_not_connect_or_echo_settings(monkeypatch, cap
     monkeypatch.setattr("sherlock_api.telemetry.scheduler.CollectorSettings", settings)
     assert main(["collect-once"]) == 2
     assert capsys.readouterr().out.strip() == '{"status": "configuration_required"}'
+
+
+def test_verified_failure_collection_and_provider_outage_keep_honest_status(monkeypatch):
+    from datetime import UTC, datetime, timedelta
+
+    from sherlock_api.telemetry.auth_logs import AuthLogsUnavailable
+
+    operations = Operations()
+    recorded = []
+    operations.record_failures = lambda *args: recorded.append(args) or True
+    config = CollectorSettings(
+        _env_file=None,
+        auth_logs_token="sbp_fc" + "x" * 32,
+        auth_logs_project_ref="a" * 20,
+        supabase_url="https://" + "a" * 20 + ".supabase.co",
+        supabase_publishable_key="sb_publishable_public",
+    )
+    end = datetime.now(UTC)
+    monkeypatch.setattr(
+        "sherlock_api.telemetry.scheduler.collect_failures",
+        lambda *args, **kwargs: (
+            CollectionReport(scanned=2, inserted=2, complete=True),
+            end - timedelta(hours=1),
+            end,
+        ),
+    )
+    collector = Collector(
+        config,
+        operations=operations,
+        store=SimpleNamespace(),
+        collect=lambda *args, **kwargs: CollectionReport(scanned=1, duplicates=1, complete=True),
+    )
+    result = collector.cycle(Event())
+    assert result["status"] == "ready" and result["scanned"] == 3 and result["inserted"] == 2
+    assert result["failed_login_coverage"] == "provider_logs_recent_window"
+    assert recorded[-1][1] == "ready"
+
+    def failed(*args, **kwargs):
+        raise AuthLogsUnavailable()
+
+    monkeypatch.setattr("sherlock_api.telemetry.scheduler.collect_failures", failed)
+    result = collector.cycle(Event())
+    assert result["status"] == "partial" and result["duplicates"] == 1
+    assert result["failed_login_coverage"] == "provider_logs_unhealthy"
+    assert recorded[-1][1] == "error" and recorded[-1][-1] == 0
+    assert operations.finished[-1][1] == "partial"

@@ -10,6 +10,7 @@ from psycopg import IsolationLevel
 from psycopg.errors import SerializationFailure
 from psycopg.types.json import Jsonb
 
+from sherlock_api.telemetry.operations import failure_source_status
 from sherlock_api.telemetry.store import connect
 
 
@@ -166,6 +167,7 @@ class DetectionReader:
                   where e.occurred_at > %s""",
                 (cutoff,),
             ).fetchone()
+            failures = failure_source_status(connection)
         fresh = worker is not None and worker["last_seen"] > datetime.now(UTC) - timedelta(
             seconds=90
         )
@@ -176,7 +178,7 @@ class DetectionReader:
             "worker_ready": fresh and worker["status"] == "ready",
             "queue": {row["state"]: row["count"] for row in queue},
             **result,
-            "failed_login_coverage": "not_connected",
+            "failed_login_coverage": failures["coverage"],
         }
 
     def event(self, event_id: UUID) -> dict | None:

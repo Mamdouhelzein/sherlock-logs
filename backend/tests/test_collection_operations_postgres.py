@@ -120,3 +120,36 @@ def test_invalid_summaries_and_wider_than_active_retention_are_rejected(operatio
         c.execute("update private.retention_state set enabled=true where singleton")
     with pytest.raises(psycopg.errors.InvalidParameterValue):
         operations.begin(uuid4(), 60, 30)
+
+
+def test_failure_source_metadata_is_fenced_private_and_expires(operations):
+    from sherlock_api.telemetry.operations import failure_source_status
+
+    run = uuid4()
+    other = uuid4()
+    operations.begin(run, 30, 30)
+    now = datetime.now(UTC)
+    assert not operations.record_failures(other, "ready", now - timedelta(hours=1), now, 2)
+    assert operations.record_failures(run, "ready", now - timedelta(hours=1), now, 2)
+    with connect(DSN) as c:
+        result = failure_source_status(c)
+        assert result["healthy"] and result["coverage"] == "provider_logs_recent_window"
+        assert result["scanned"] == 2
+        for role in ("anon", "authenticated", "sherlock_reader", "sherlock_worker"):
+            assert not c.execute(
+                "select has_function_privilege(%s, "
+                "'private.record_failure_collection(uuid,text,timestamptz,timestamptz,integer)',"
+                "'execute') as allowed",
+                (role,),
+            ).fetchone()["allowed"]
+        c.execute(
+            "update private.collection_state set failure_last_success_at=now()-interval '3 minutes'"
+        )
+        assert failure_source_status(c)["coverage"] == "provider_logs_unhealthy"
+        c.execute("update private.collection_state set lease_until=now()-interval '1 second'")
+    assert not operations.record_failures(run, "ready", now - timedelta(hours=1), now, 2)
+    operations.begin(other, 30, 30)
+    with pytest.raises(psycopg.errors.InvalidParameterValue):
+        operations.record_failures(other, "ready", None, None, 2)
+    with pytest.raises(psycopg.errors.InvalidParameterValue):
+        operations.record_failures(other, "ready", now - timedelta(days=1), now, 2)
