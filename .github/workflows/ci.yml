@@ -173,6 +173,9 @@ jobs:
       - name: Verify real confirmation, account cooldown, and recovery in the browser
         run: npx playwright test --config playwright.free-auth.config.ts
         working-directory: frontend
+      - name: Gateway startup diagnostics (contains no signing or database credentials)
+        if: failure()
+        run: docker compose --project-name sherlock-free-auth --env-file .env.free-auth.local -f compose.auth.yaml logs --no-color proxy
       - name: Preserve local volume on shutdown
         if: always()
         run: backend/.venv/bin/python tools/free_auth.py down
