@@ -61,7 +61,7 @@ The optional installed equivalent is `sherlock-telemetry`. Inspection reports pr
 
 Each run scans the configured retention window in stable `(created_at,id)` order. Re-scanning catches late-committing source rows, and unique source IDs make retries safe. This prototype favors correctness over polling efficiency. Batches are bounded; `--max-pages` bounds a run (default 1,000 pages of 100). Exit 2 means incomplete scanning or rejected rows, and requires operator investigation. Raising the page limit may be needed for a backfill. Exit 1 means a configuration, database, schema, or data-conflict error. Commands never print exception details containing connection secrets.
 
-Run collection periodically as a separate process in your deployment. The repository does not install a scheduler. Review collection cost and capacity before shortening the interval or using a large retention window.
+For scheduled collection, use the separate fenced daemon described in [automatic collection](AUTOMATIC_COLLECTION.md). It is active locally against the development project with a 30-second interval after each cycle. It is not installed as a boot service or always-on cloud deployment. Review collection cost and capacity before shortening the interval or using a large retention window.
 
 ## Signed service ingestion
 
@@ -109,13 +109,13 @@ The publisher must establish outcomes from the authentication server and verify 
 
 `GET /api/v1/admin/events?limit=50` requires the existing server-verified administrator role. Maximum page size is 100; pass the returned `next_cursor` for the next page. Results use descending `(occurred_at,id)` order and exclude payload digests. Browser accounts have no direct SQL/Data API access, including accounts whose UI says administrator. The API authorizes each read before using its server database connection.
 
-All immutable event facts retain the legacy `pending` ingestion field; authoritative scoring state is stored separately in scoring jobs. See [background inference](INFERENCE.md). The default retention is **30 days by observation time**, configurable from 1–365 days. Reads exclude expired events, and ingestion rejects them. To physically remove expired rows, run daily with the dedicated retention connection:
+All immutable event facts retain the legacy `pending` ingestion field; authoritative scoring state is stored separately in scoring jobs. See [background inference](INFERENCE.md). The default read/ingestion retention is **30 days by observation time**, configurable from 1–365 days. Reads exclude expired events, and ingestion rejects them. The development project uses approved owner-only hourly physical cleanup with a 30-day policy. The collector refuses a wider collection window while that policy is enabled. A separate deployment can instead use the legacy manual cleanup command with its dedicated retention connection:
 
 ```bash
 backend/.venv/bin/python -m sherlock_api.telemetry.cli purge-expired
 ```
 
-The approved owner-only hourly cleanup and separate collection daemon are described in [automatic collection](AUTOMATIC_COLLECTION.md). The schedule is disabled until explicitly approved and activated; expired rows otherwise remain in the database even though API reads hide them. Cleanup uses bounded transactions. Historical `user_id` values intentionally have no foreign key to `auth.users`, so account deletion does not silently erase investigation history. For an approved account-data deletion, remove matching event rows using trusted maintenance access; also handle source logs and backups under the project's retention policy. Raw IPs and user agents are sensitive and must not be exposed in public demo artifacts.
+The approved owner-only hourly cleanup and separate collection daemon are described in [automatic collection](AUTOMATIC_COLLECTION.md). Cleanup is disabled by default on new installations until explicitly approved and activated; expired rows otherwise remain in the database even though API reads hide them. Cleanup uses bounded transactions. Historical `user_id` values intentionally have no foreign key to `auth.users`, so account deletion does not silently erase investigation history. For an approved account-data deletion, remove matching event rows using trusted maintenance access; also handle source logs and backups under the project's retention policy. Raw IPs and user agents are sensitive and must not be exposed in public demo artifacts.
 
 ## Live verification still required
 

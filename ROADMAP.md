@@ -44,7 +44,8 @@ Done when sign-in works and authorization checks pass independently of the ML se
 - [x] Capture a real successful login and verify that collecting it again inserts no duplicate.
 - [ ] Inspect controlled successes, wrong passwords, and unknown accounts in the hosted project.
 - [ ] Connect and verify a trusted failed-login publisher before claiming attack-attempt coverage.
-- [ ] Schedule and monitor collection and physical retention cleanup in the deployment.
+- [x] Activate and verify local scheduled collection and monitored hourly hosted 30-day cleanup after owner approval.
+- [ ] Move collection to an always-on deployment and verify its outage recovery.
 
 Done when controlled login successes and failures produce trustworthy event records.
 
@@ -90,7 +91,7 @@ Done when an administrator can follow the full event-to-investigation flow.
 
 ## 9. Portfolio release
 
-- [ ] Add backend, frontend, integration, and authorization checks to CI.
+- [x] Add backend, frontend, integration, and authorization checks to CI.
 - [ ] Document staging deployment and production settings.
 - [ ] Add screenshots, a demo recording, and benchmark reports.
 - [ ] Verify a clean setup from scratch.

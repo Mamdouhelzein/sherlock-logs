@@ -1,10 +1,10 @@
 # Automatic collection and physical retention
 
-Status: implemented in source; hosted operations migration, collector daemon activation, and approved cleanup scheduling are pending verification. Existing scoring and sign-in continue independently.
+Status: activated and verified in the development project on 2026-11-05 after owner approval. A local collector runs every 30 seconds after each cycle; Supabase Cron runs 30-day cleanup hourly. The first cleanup deleted zero expired records and preserved the existing login. See [development verification](DEVELOPMENT_VERIFICATION.md) for evidence and remaining limits. Existing scoring and sign-in continue independently.
 
 ## Collection
 
-The separate `sherlock-collector` / `python -m sherlock_api.telemetry.scheduler run` process uses the existing read-only audit projection login and restricted event-ingestion login. It does not receive the scoring worker credential, an administrator database password, or access to Auth accounts. No new login credential is required.
+The separate `sherlock-collector` / `python -m sherlock_api.telemetry.scheduler run` process connects only through the existing read-only audit projection login and restricted event-ingestion login. Neither role can read Auth accounts. No new login credential or administrator database password is required. The local processes read shared private configuration; this is not operating-system credential isolation. The Compose collector receives only its required database credentials.
 
 The default interval is 30 seconds **after a cycle completes**. A database-fenced 120-second lease prevents overlapping scheduled collectors. Progress renews the lease before/after each bounded page. Only the current unexpired run can finish; an expired run cannot overwrite a newer result. Event IDs and original facts retain transactional deduplication across retries and manual collection. Stops are checked between pages; a finished batch can commit before shutdown, then the next run safely rescans it.
 

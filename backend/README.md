@@ -1,6 +1,6 @@
 # Backend
 
-FastAPI system endpoints, Supabase identity verification, private event storage, signed service ingestion, and audit collection. Hosted setup and coverage verification are pending. The detection worker remains planned.
+FastAPI system endpoints, Supabase identity verification, private event storage, signed service ingestion, scheduled audit collection, and administrator investigations. A separate shadow-scoring worker and collector are active locally against development Supabase. Successful-login capture is verified; failed-login coverage and an always-on deployment remain pending. See the [verification record](../docs/DEVELOPMENT_VERIFICATION.md).
 
 ## Run
 
@@ -17,6 +17,7 @@ Follow the repository-root README to create `backend/.venv`, install the develop
 | GET | `/api/v1/admin/status` | Requires a verified account with a current admin assignment |
 | POST | `/api/v1/internal/events` | Service-signed, bounded event batches; user/admin bearer tokens cannot ingest |
 | GET | `/api/v1/admin/events` | Administrator-only event reads with bounded keyset pagination |
+| GET | `/api/v1/admin/telemetry/status` | Administrator-only collection and cleanup health, timestamps, and aggregate counters |
 
 A healthy process does not establish database or model readiness. Status endpoints are public; account/admin endpoints require bearer authentication. CORS is not authorization. The server validates tokens through Supabase Auth, then reads roles from SQL using the same user token. Metadata never grants admin. Auth/Data API failures deny access. See the [Supabase setup guide](../supabase/README.md).
 
@@ -30,7 +31,9 @@ Settings read environment variables and the optional repository-root `.env`:
 - `DATABASE_URL`: optional server-only event database connection. Use the dedicated ingest/read groups.
 - `COLLECTOR_DATABASE_URL`: separate read-only Auth audit connection for the collector command.
 - `INGESTION_SIGNING_KEY`: separate random service secret, at least 32 bytes. Required with the event database for HTTP ingestion.
-- `EVENT_RETENTION_DAYS`: 1–365, default 30. Schedule the maintenance command for physical cleanup.
+- `EVENT_RETENTION_DAYS`: 1–365, default 30. Keep collection/read retention consistent with the owner-approved physical cleanup policy; see [automatic collection](../docs/AUTOMATIC_COLLECTION.md).
+- `COLLECTION_INTERVAL_SECONDS`: 10–900, default 30, measured after each collection cycle.
+- `COLLECTION_MAX_PAGES`: 1–100000, default 1000, bounds each collection scan.
 
 For telemetry roles, signatures, collection commands, coverage limits, and integration tests, read [the telemetry guide](../docs/TELEMETRY.md). Production database connections require `sslmode=verify-full` with the appropriate trusted root certificate. Event settings are optional and do not affect native Supabase sign-in.
 
