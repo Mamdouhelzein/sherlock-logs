@@ -57,6 +57,9 @@ export async function investigationFixture(
     revoked: false,
     unavailable: false,
     workerReady: true,
+    collectionStale: false,
+    cleanupStale: false,
+    cleanupEnabled: true,
     requests: [] as string[],
   };
   const user = {
@@ -129,6 +132,39 @@ export async function investigationFixture(
           failed_login_coverage: "not_connected",
         },
       });
+    if (path === "/telemetry/status") {
+      const recent = new Date().toISOString();
+      const old = new Date(Date.now() - 3 * 3600_000).toISOString();
+      return route.fulfill({
+        json: {
+          collection: {
+            status: "ready",
+            healthy: !state.collectionStale,
+            lease_fresh: null,
+            last_success_at: state.collectionStale ? old : recent,
+            last_full_scan_at: recent,
+            next_run_at: recent,
+            interval_seconds: 30,
+            scan_full: false,
+            full_scan_overdue: false,
+            counts: { scanned: 1, inserted: 0, duplicates: 1, rejected: 0 },
+            error_code: null,
+          },
+          retention: {
+            enabled: state.cleanupEnabled,
+            keep_days: 30,
+            status: "ready",
+            healthy: state.cleanupEnabled && !state.cleanupStale,
+            last_success_at: state.cleanupStale ? old : recent,
+            deleted: 0,
+            backlog: false,
+            error_code: null,
+          },
+          failed_login_coverage: "not_connected",
+          retention_schedule: "hourly",
+        },
+      });
+    }
     if (path === "/investigation/events") {
       let rows = empty ? [] : events;
       if (url.searchParams.has("user_id"))

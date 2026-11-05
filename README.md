@@ -24,6 +24,7 @@ Steps 5–6 include a reproducible dataset generator, 15 chronological features,
 - [Supabase](supabase/README.md): project creation, migration, email setup, and administrator assignment.
 - [Telemetry](docs/TELEMETRY.md): trusted event sources, coverage gaps, service signatures, collector, and retention.
 - [Background inference](docs/INFERENCE.md): worker setup, model pinning, leases, shadow incidents, and administrator reads.
+- [Automatic collection](docs/AUTOMATIC_COLLECTION.md): scheduled collection, operational monitoring, and approved physical retention.
 
 ## Repository layout
 

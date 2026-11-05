@@ -109,13 +109,13 @@ The publisher must establish outcomes from the authentication server and verify 
 
 `GET /api/v1/admin/events?limit=50` requires the existing server-verified administrator role. Maximum page size is 100; pass the returned `next_cursor` for the next page. Results use descending `(occurred_at,id)` order and exclude payload digests. Browser accounts have no direct SQL/Data API access, including accounts whose UI says administrator. The API authorizes each read before using its server database connection.
 
-All events start as `pending`; inference and processing leases come later. The default retention is **30 days by observation time**, configurable from 1–365 days. Reads exclude expired events, and ingestion rejects them. To physically remove expired rows, run daily with the dedicated retention connection:
+All immutable event facts retain the legacy `pending` ingestion field; authoritative scoring state is stored separately in scoring jobs. See [background inference](INFERENCE.md). The default retention is **30 days by observation time**, configurable from 1–365 days. Reads exclude expired events, and ingestion rejects them. To physically remove expired rows, run daily with the dedicated retention connection:
 
 ```bash
 backend/.venv/bin/python -m sherlock_api.telemetry.cli purge-expired
 ```
 
-No cleanup schedule is installed automatically. An operator must schedule and monitor it; expired rows otherwise remain in the database even though API reads hide them. Cleanup uses bounded transactions. Historical `user_id` values intentionally have no foreign key to `auth.users`, so account deletion does not silently erase investigation history. For an approved account-data deletion, remove matching event rows using trusted maintenance access; also handle source logs and backups under the project's retention policy. Raw IPs and user agents are sensitive and must not be exposed in public demo artifacts.
+The approved owner-only hourly cleanup and separate collection daemon are described in [automatic collection](AUTOMATIC_COLLECTION.md). The schedule is disabled until explicitly approved and activated; expired rows otherwise remain in the database even though API reads hide them. Cleanup uses bounded transactions. Historical `user_id` values intentionally have no foreign key to `auth.users`, so account deletion does not silently erase investigation history. For an approved account-data deletion, remove matching event rows using trusted maintenance access; also handle source logs and backups under the project's retention policy. Raw IPs and user agents are sensitive and must not be exposed in public demo artifacts.
 
 ## Live verification still required
 

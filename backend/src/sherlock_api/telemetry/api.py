@@ -14,6 +14,7 @@ from starlette.concurrency import run_in_threadpool
 
 from sherlock_api.auth import Identity, require_admin
 from sherlock_api.telemetry.models import EventBatch, EventPage, IngestionResult
+from sherlock_api.telemetry.operations import CollectionOperations
 from sherlock_api.telemetry.store import EventConflict, EventStore, decode_cursor
 
 router = APIRouter(prefix="/api/v1", tags=["Telemetry"])
@@ -95,3 +96,19 @@ def events(
         return store.list(limit, cursor)
     except psycopg.Error:
         raise HTTPException(503, "Event storage is unavailable. Try again shortly.") from None
+
+
+@router.get("/admin/telemetry/status")
+def telemetry_status(
+    request: Request,
+    _identity: Annotated[Identity, Depends(require_admin)],
+):
+    config = request.app.state.settings
+    if not config.events_configured:
+        raise HTTPException(503, "Collection monitoring is not configured.")
+    try:
+        return CollectionOperations(config.database_url.get_secret_value()).status()
+    except psycopg.Error:
+        raise HTTPException(
+            503, "Collection monitoring is unavailable. Check the operations migration."
+        ) from None

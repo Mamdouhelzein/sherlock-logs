@@ -35,12 +35,13 @@ jobs:
       - run: psql -v ON_ERROR_STOP=1 -f supabase/tests/telemetry.sql
       - run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202611040001_inference.sql
       - run: psql -v ON_ERROR_STOP=1 -f supabase/tests/inference.sql
+      - run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202611050001_telemetry_operations.sql
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
       - run: python -m pip install -r backend/requirements-dev.lock
       - run: python -m pip install --no-deps -e backend
-      - run: pytest backend/tests/test_telemetry_postgres.py backend/tests/test_detection_postgres.py -q
+      - run: pytest backend/tests/test_telemetry_postgres.py backend/tests/test_detection_postgres.py backend/tests/test_collection_operations_postgres.py -q
         env:
           TEST_DATABASE_URL: postgresql://postgres:ci-only-password@127.0.0.1:5432/sherlock_test
   backend:
@@ -123,6 +124,12 @@ jobs:
       - run: docker compose up --build -d --wait
       - run: curl --fail --retry 5 --retry-delay 2 --retry-connrefused http://127.0.0.1:5173/architecture
       - run: curl --fail http://127.0.0.1:8000/api/v1/system
+      - name: Check collector exits safely without configuration
+        run: |
+          docker compose run --rm --no-deps api python -c '
+          from sherlock_api.telemetry.scheduler import main
+          assert main(["collect-once"]) == 2
+          '
       - run: docker compose logs
         if: failure()
       - run: docker compose down

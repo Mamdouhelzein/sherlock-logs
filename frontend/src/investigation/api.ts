@@ -131,3 +131,37 @@ export async function investigationRequest<T>(
     );
   return parsed.data;
 }
+
+export const operationsSchema = z.object({
+  collection: z.object({
+    status: z.enum(["idle", "running", "ready", "partial", "error", "stopped"]),
+    healthy: z.boolean(),
+    lease_fresh: z.boolean().nullable(),
+    last_success_at: timestamp.nullable(),
+    last_full_scan_at: timestamp.nullable(),
+    next_run_at: timestamp.nullable(),
+    interval_seconds: z.number().int().min(10).max(900),
+    scan_full: z.boolean(),
+    full_scan_overdue: z.boolean(),
+    counts: z.object({
+      scanned: z.number().int().nonnegative(),
+      inserted: z.number().int().nonnegative(),
+      duplicates: z.number().int().nonnegative(),
+      rejected: z.number().int().nonnegative(),
+    }),
+    error_code: nullableText,
+  }),
+  retention: z.object({
+    enabled: z.boolean(),
+    keep_days: z.number().int().min(30).max(365),
+    status: z.enum(["disabled", "ready", "partial", "error"]),
+    healthy: z.boolean(),
+    last_success_at: timestamp.nullable(),
+    deleted: z.number().int().nonnegative(),
+    backlog: z.boolean(),
+    error_code: nullableText,
+  }),
+  failed_login_coverage: z.literal("not_connected"),
+  retention_schedule: z.literal("hourly"),
+});
+export type OperationsStatus = z.infer<typeof operationsSchema>;

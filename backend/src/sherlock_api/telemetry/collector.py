@@ -4,6 +4,7 @@ Invalid-credential attempts are not represented by this adapter. Never infer
 failure from a missing success, or an actual source IP from a proxy address.
 """
 
+from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
@@ -21,6 +22,10 @@ class CollectionReport(BaseModel):
     rejected: int = 0
     complete: bool = False
     failed_login_coverage: str = "unavailable_from_audit_adapter"
+
+
+class CollectionInterrupted(Exception):
+    """Lease loss or graceful shutdown: do not publish a successful scan."""
 
 
 def audit_event(row: dict) -> LoginEvent:
@@ -68,16 +73,28 @@ def collect_once(
     *,
     batch_size: int = 100,
     max_pages: int = 1000,
+    window_start: datetime | None = None,
+    progress: Callable[[], bool] | None = None,
 ) -> CollectionReport:
+    if not 1 <= batch_size <= 100 or not 1 <= max_pages <= 100000:
+        raise ValueError("Use bounded collection pages")
+    if window_start is not None and window_start.tzinfo is None:
+        raise ValueError("Use timezone-aware collection windows")
     schema = inspect_audit_schema(source_dsn)
     report = CollectionReport()
     now = datetime.now(UTC)
     cutoff = now - timedelta(days=store.retention_days)
+    if window_start is not None:
+        if window_start > now:
+            raise ValueError("Collection window starts in the future")
+        cutoff = max(cutoff, window_start)
     # Re-scan the retention window each run. A timestamp watermark alone can
     # permanently miss transactions which commit late with an earlier timestamp.
     after: tuple[datetime, UUID] | None = None
     ip_column = sql.SQL("ip_address") if schema["ip_column_available"] else sql.SQL("null::text")
     for _ in range(max_pages):
+        if progress is not None and not progress():
+            raise CollectionInterrupted()
         with connect(source_dsn) as connection:
             where_cursor = sql.SQL("and (created_at,id) > (%s,%s)") if after else sql.SQL("")
             query = sql.SQL("""select id, created_at, action, actor_id, user_agent,
@@ -86,15 +103,21 @@ def collect_once(
                 {} order by created_at,id limit %s""").format(ip_column, where_cursor)
             parameters = (cutoff, now, *(after or ()), batch_size)
             rows = connection.execute(query, parameters).fetchall()
+        valid = []
         for row in rows:
             report.scanned += 1
             try:
                 event = audit_event(row)
-                result = store.insert([event], "supabase_audit")
-                report.inserted += result.inserted
-                report.duplicates += result.duplicates
+                event.validate_time(now, store.retention_days)
+                valid.append(event)
             except (ValidationError, ValueError):
                 report.rejected += 1
+        if valid:
+            result = store.insert(valid, "supabase_audit")
+            report.inserted += result.inserted
+            report.duplicates += result.duplicates
+        if progress is not None and not progress():
+            raise CollectionInterrupted()
         if len(rows) < batch_size:
             report.complete = True
             return report

@@ -30,6 +30,7 @@ import {
   eventSchema,
   incidentSchema,
   investigationRequest,
+  operationsSchema,
   pageSchema,
   statusSchema,
   timelineEventSchema,
@@ -38,6 +39,7 @@ import {
   type InvestigationEvent,
 } from "./api";
 import "./investigation.css";
+import { OperationsHealth } from "./OperationsHealth";
 
 const signals: Record<string, [string, string]> = {
   ml_outlier: [
@@ -181,6 +183,18 @@ export default function InvestigationDashboard() {
     queryFn: ({ signal }) =>
       investigationRequest("/detection/status", token, statusSchema, signal),
   });
+  const operations = useQuery({
+    queryKey: ["investigation", ...identityKey, "operations"],
+    meta: { private: true },
+    retry: false,
+    queryFn: ({ signal }) =>
+      investigationRequest(
+        "/telemetry/status",
+        token,
+        operationsSchema,
+        signal,
+      ),
+  });
   const events = useInfiniteQuery({
     queryKey: ["investigation", ...identityKey, "events", filters.toString()],
     meta: { private: true },
@@ -253,6 +267,7 @@ export default function InvestigationDashboard() {
   }, [selectedEvent, detail.data?.id]);
   const accessError = [
     status.error,
+    operations.error,
     events.error,
     incidents.error,
     timeline.error,
@@ -325,7 +340,7 @@ export default function InvestigationDashboard() {
       v.toLowerCase().includes(needle),
     ),
   );
-  const busy = [status, events, incidents, timeline, detail].some(
+  const busy = [status, operations, events, incidents, timeline, detail].some(
     (q) => q.isFetching,
   );
   const pending = data
@@ -404,6 +419,12 @@ export default function InvestigationDashboard() {
       {status.isError && (
         <Failure error={status.error} retry={() => void status.refetch()} />
       )}
+      <OperationsHealth
+        data={operations.data}
+        error={operations.error}
+        pending={operations.isPending}
+        retry={() => void operations.refetch()}
+      />
       <div className="desk-coverage">
         <ShieldCheck size={18} aria-hidden="true" />
         <p>

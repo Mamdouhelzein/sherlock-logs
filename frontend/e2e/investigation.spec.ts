@@ -149,3 +149,36 @@ test("removes previously visible evidence after authorization is revoked", async
   );
   await expect(page.getByText("192.0.2.25", { exact: true })).not.toBeVisible();
 });
+
+test("keeps collection and cleanup health separate from model readiness", async ({
+  page,
+}) => {
+  const state = await investigationFixture(page);
+  await investigationLogin(page);
+  const operations = page.getByRole("region", {
+    name: "Collection and retention",
+  });
+  await expect(
+    operations.getByText("Automatic collection healthy", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    operations.getByText("Cleanup healthy", { exact: true }),
+  ).toBeVisible();
+  state.collectionStale = true;
+  state.cleanupStale = true;
+  await page.getByRole("button", { name: "Refresh", exact: true }).click();
+  await expect(
+    operations.getByText("Collector overdue", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    operations.getByText("Cleanup overdue", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Ready at last check", { exact: true }),
+  ).toBeVisible();
+  state.cleanupEnabled = false;
+  await page.getByRole("button", { name: "Refresh", exact: true }).click();
+  await expect(
+    operations.getByText("Cleanup not enabled", { exact: true }),
+  ).toBeVisible();
+});

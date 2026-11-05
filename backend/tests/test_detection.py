@@ -182,6 +182,7 @@ def test_api_guard_is_server_enforced_before_storage_and_rechecks_revocation():
         "/api/v1/admin/incidents",
         f"/api/v1/admin/incidents/{uuid4()}",
         "/api/v1/admin/investigation/events",
+        "/api/v1/admin/telemetry/status",
         f"/api/v1/admin/events/{uuid4()}/detection",
     ]
     headers = {"Authorization": "Bearer opaque-fixture"}

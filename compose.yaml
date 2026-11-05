@@ -1,5 +1,21 @@
 # Connects to an optional external Supabase project; does not provision one.
 services:
+  collector:
+    profiles: ["telemetry"]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: ["python", "-m", "sherlock_api.telemetry.scheduler", "run"]
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      DATABASE_URL: ${INGEST_CONTAINER_DATABASE_URL:-${DATABASE_URL:-}}
+      COLLECTOR_DATABASE_URL: ${COLLECTOR_CONTAINER_DATABASE_URL:-${COLLECTOR_DATABASE_URL:-}}
+      EVENT_RETENTION_DAYS: ${EVENT_RETENTION_DAYS:-30}
+      COLLECTION_INTERVAL_SECONDS: ${COLLECTION_INTERVAL_SECONDS:-30}
+      COLLECTION_MAX_PAGES: ${COLLECTION_MAX_PAGES:-1000}
+    volumes:
+      - ${SUPABASE_CA_CERT_PATH:-./.supabase/prod-ca-2021.crt}:/certs/root.crt:ro
+    restart: unless-stopped
   worker:
     profiles: ["inference"]
     build:

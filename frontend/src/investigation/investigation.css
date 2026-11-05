@@ -879,3 +879,106 @@
     background: #151d2b;
   }
 }
+.operations-health {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 24px;
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid var(--desk-line);
+  border-radius: 7px;
+  background: #141e2e;
+}
+.operations-health > div {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  min-width: 0;
+}
+.operations-health svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.operation-ready > svg,
+.operation-ready strong {
+  color: var(--desk-blue);
+}
+.operation-attention > svg,
+.operation-attention strong {
+  color: var(--desk-amber);
+}
+.operations-health strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.operations-health p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 4px 0;
+}
+.operations-health small {
+  color: var(--muted);
+  font-size: 11px;
+  display: block;
+}
+.operations-health details {
+  grid-column: 1/-1;
+  border-top: 1px solid var(--desk-line);
+  padding-top: 6px;
+}
+.operations-health summary {
+  font-size: 12px;
+  color: #c4d7f4;
+  min-height: 44px;
+  padding-block: 12px;
+  cursor: pointer;
+}
+.operations-health summary:focus-visible {
+  outline: 3px solid var(--desk-blue);
+  outline-offset: 3px;
+}
+.operations-health dl {
+  font-size: 12px;
+  margin: 0;
+}
+.operations-health dl > div {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) 2fr;
+  gap: 15px;
+  padding-block: 7px;
+}
+.operations-health dt {
+  color: var(--muted);
+}
+.operations-health dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.operations-notice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: 15px;
+  font-size: 12px;
+  color: var(--desk-amber);
+}
+.operations-notice button {
+  min-height: 44px;
+  background: transparent;
+  color: var(--desk-blue);
+  border: 1px solid var(--desk-line);
+  border-radius: 5px;
+  padding: 8px 12px;
+}
+@media (max-width: 700px) {
+  .operations-health {
+    grid-template-columns: 1fr;
+  }
+  .operations-health dl > div {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+}

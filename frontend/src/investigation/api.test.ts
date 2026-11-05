@@ -15,13 +15,11 @@ it("rejects malformed worker status instead of inventing readiness", () => {
 it("keeps raw storage error bodies out of the UI", async () => {
   vi.stubGlobal(
     "fetch",
-    vi
-      .fn()
-      .mockResolvedValue({
-        ok: false,
-        status: 503,
-        json: async () => ({ detail: "private-connection-secret" }),
-      }),
+    vi.fn().mockResolvedValue({
+      ok: false,
+      status: 503,
+      json: async () => ({ detail: "private-connection-secret" }),
+    }),
   );
   await expect(
     investigationRequest("/detection/status", "fixture-token", statusSchema),
