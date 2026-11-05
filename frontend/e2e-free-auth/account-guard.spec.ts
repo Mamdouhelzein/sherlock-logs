@@ -83,9 +83,18 @@ test("confirms a new account, enforces cooldown, and recovers through real PKCE"
   await expect(page).toHaveURL(/\/login$/);
   await page.getByRole("link", { name: "Forgot password?" }).click();
   await page.getByLabel("Email address").fill(email);
+  const recoveryResponse = page.waitForResponse((response) =>
+    response.url().includes("/auth/v1/recover"),
+  );
   await page
     .getByRole("button", { name: "Send recovery link", exact: true })
     .click();
+  const recovery = await recoveryResponse;
+  const recoveryBody = await recovery.json();
+  expect(
+    recovery.status(),
+    `Recovery code: ${recoveryBody.code ?? "none"}`,
+  ).toBe(200);
   await expect(page.getByText(/If an account exists/)).toBeVisible();
   await page.goto(await emailLink(request, email, /reset|recover/i));
   await expect(page).toHaveURL(/\/reset-password/);
