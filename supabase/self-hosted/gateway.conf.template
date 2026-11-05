@@ -1,4 +1,5 @@
 # Only the public publishable key enters this configuration. Signing stays in Auth/REST.
+map_hash_bucket_size 128;
 map $http_apikey $valid_api_key {
     default 0;
     "${LOCAL_PUBLIC_KEY}" 1;

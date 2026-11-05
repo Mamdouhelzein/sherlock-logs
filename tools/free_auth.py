@@ -6,6 +6,7 @@ configuration. The production migration/cutover is a separate operation.
 
 import argparse
 import os
+import re
 import secrets
 import subprocess
 import sys
@@ -101,6 +102,12 @@ def configuration(*, create=False):
             )
     if values.get("SUPABASE_URL") != "http://127.0.0.1:54421":
         raise ValueError("This utility supports only the isolated local Auth realm")
+    public_key = values.get("LOCAL_PUBLIC_KEY") or ""
+    if not re.fullmatch(r"sb_publishable_[A-Za-z0-9_-]{24,64}", public_key) or any(
+        values.get(name) != public_key
+        for name in ("VITE_SUPABASE_PUBLISHABLE_KEY", "SUPABASE_PUBLISHABLE_KEY")
+    ):
+        raise ValueError("Local publishable-key configuration is inconsistent")
     return values
 
 
