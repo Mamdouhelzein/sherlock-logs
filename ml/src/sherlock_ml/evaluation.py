@@ -10,7 +10,7 @@ from sherlock_ml.baselines import (
     calibrate,
     rule_signals,
 )
-from sherlock_ml.events import Label
+from sherlock_ml.events import Event, Label
 from sherlock_ml.features import Snapshot
 from sherlock_ml.synthetic import Config
 
@@ -23,7 +23,9 @@ def partition(row: Snapshot, config: Config) -> str:
     return "validation" if row.occurred_at < config.validation_end else "test"
 
 
-def metrics(rows: list[Snapshot], labels: dict[str, Label], decisions: list[bool]) -> dict:
+def metrics(
+    rows: list[Snapshot] | list[Event], labels: dict[str, Label], decisions: list[bool]
+) -> dict:
     if len(rows) != len(decisions):
         raise ValueError("Predictions must align with events")
     positives = sum(labels[row.event_id].is_attack for row in rows)

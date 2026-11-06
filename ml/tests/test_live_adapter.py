@@ -22,6 +22,11 @@ def test_online_adapter_uses_the_same_features_and_scores_as_offline(tmp_path):
     path = tmp_path / "model"
     save_experiment(path, experiment, {})
     version = artifact_version(path)
+    import json
+
+    from sherlock_ml.stress import bundle_version
+
+    assert bundle_version(json.loads((path / "metadata.json").read_text())) == version
     with pytest.raises(ValueError):
         ModelRuntime(path, version, trusted=False)
     with pytest.raises(ValueError):
