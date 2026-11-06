@@ -12,6 +12,8 @@ Development Supabase is connected locally with restricted server roles, private 
 
 The administrator investigation desk at `/investigations` displays the real retained records and their evidence. The model's flags on controlled failures are not proof of attacks or real-world accuracy. Recovery, two-account isolation, direct member/admin API checks, role revocation, per-account brute-force protection, and always-on deployment remain outstanding; see the [verification record](docs/DEVELOPMENT_VERIFICATION.md). Local credentials are untracked, so new clones still require the [setup guide](supabase/README.md).
 
+A separate [free self-hosted Auth environment](docs/FREE_AUTH.md) now implements a provider-enforced per-account password cooldown with durable private state. Real database, Auth HTTP, and desktop/mobile confirmation/recovery tests are included and verified in CI. It is a separate development realm; the existing hosted account and monitoring database have not been migrated, and its protection is not applied to the hosted password endpoint.
+
 ## Project guide
 
 Steps 5–6 include a reproducible dataset generator, 15 chronological features, rule/statistical baselines, and trained Isolation Forest experiments. Three synthetic evaluations and their limitations are documented in the [model card](ml/reports/iforest-v1.md). The model was trained offline; the separate background worker reuses its feature code and frozen calibration. Neither the experiments nor shadow scoring change live authentication.

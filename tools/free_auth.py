@@ -238,7 +238,7 @@ def main():
         bootstrap(values)
         compose(values, "up", "-d", "--wait", "auth")
         application_schema(values)
-        compose(values, "up", "-d", "--wait", "rest", "proxy")
+        compose(values, "up", "-d", "--build", "--wait", "rest", "proxy")
         print(
             "Free Auth ready: app port 5180, Auth 54421, local inbox 54324. Hosted realm unchanged."
         )
