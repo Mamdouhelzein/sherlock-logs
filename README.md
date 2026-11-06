@@ -16,7 +16,7 @@ A separate [free self-hosted Auth environment](docs/FREE_AUTH.md) now implements
 
 ## Project guide
 
-Steps 5–6 include a reproducible dataset generator, 15 chronological features, rule/statistical baselines, and trained Isolation Forest experiments. Three synthetic evaluations and their limitations are documented in the [model card](ml/reports/iforest-v1.md). The model was trained offline; the separate background worker reuses its feature code and frozen calibration. Neither the experiments nor shadow scoring change live authentication.
+Steps 5–6 include a reproducible dataset generator, 15 chronological features, rule/statistical baselines, and trained Isolation Forest experiments. Three synthetic evaluations and their limitations are documented in the [model card](ml/reports/iforest-v1.md). The model was trained offline; the separate background worker reuses its feature code and frozen calibration. Neither the experiments nor shadow scoring change live authentication. A later [frozen-model stress evaluation](ml/reports/stress-v1.md) covers legitimate bursts, evasive attacks and missing telemetry across 54 paired runs. It fails the false-alert checks; this remains an experimental monitoring model.
 
 - [Architecture](ARCHITECTURE.md): components, event flow, and access boundaries.
 - [Roadmap](ROADMAP.md): implementation milestones and acceptance criteria.

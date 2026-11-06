@@ -25,7 +25,7 @@ Report precision, recall, false alerts per 1,000 benign events, incident recall,
 
 Each trained release should contain `model.joblib`, `metadata.json`, `feature_schema.json`, and `metrics.json`. Record package versions, data configuration, feature version, seed, date ranges, and threshold. Generated artifacts belong outside Git; publish a model card with actual results when available.
 
-Steps 5 and 6 are implemented: seeded events, separate labels, causal features, rule/statistical baselines, and trained Isolation Forest experiments. **The trained model is offline and not connected to live authentication.** See the [model card](reports/iforest-v1.md). Hugging Face publication remains optional.
+Steps 5 and 6 are implemented: seeded events, separate labels, causal features, rule/statistical baselines, and trained Isolation Forest experiments. The separate [background worker](../docs/INFERENCE.md) uses the frozen model to score collected development login events in shadow mode. It does not block authentication. See the original [model card](reports/iforest-v1.md) and the later [stress evaluation](reports/stress-v1.md), which fails the false-alert operating checks. Hugging Face publication remains optional.
 
 ## Reproduce step 5
 
@@ -59,7 +59,7 @@ Default generation uses 200 users over 90 days. Individual habits include daily 
 
 The 15 features cover current failure status; preceding account failures/attempts over 15 minutes; source attempts, distinct accounts, and failure ratio over 5 minutes; account history/successes over 30 days; browser novelty relative to prior successful browser families; circular deviation from past successful UTC hours; previous-event gap/history availability; and account/source/browser missing-context flags.
 
-Order is `(occurred_at, event_id)`, including deterministic ties. Windows exclude their left boundary, and state updates after the current snapshot. Cold starts use zero history/deviation/novelty/gap plus explicit flags. Missing accounts/sources do not share a catch-all history. Browser family is not device identity. Context-loss behavior is tested but real provider-specific loss rates are not simulated. This is offline code; no live feature worker is running.
+Order is `(occurred_at, event_id)`, including deterministic ties. Windows exclude their left boundary, and state updates after the current snapshot. Cold starts use zero history/deviation/novelty/gap plus explicit flags. Missing accounts/sources do not share a catch-all history. Browser family is not device identity. The later stress suite rebuilds features under three paired observation contracts; actual provider field-loss rates remain unmeasured. Offline experiment commands stay isolated from the separately configured live worker.
 
 The statistical baseline fits medians and median absolute deviations on training features only, with a unit scale floor. Its score is the maximum positive standardized deviation across account failures, source attempts/accounts, and hour deviation. Calibration uses benign validation scores only; `score > threshold` handles ties conservatively. The validation budget is not guaranteed on later traffic. Rules have fixed configurable thresholds and are not optimized to that budget.
 
@@ -78,7 +78,7 @@ PYTHONPATH=ml/src python3 -m sherlock_ml baseline \
   --output artifacts/baselines/seed-43/results
 ```
 
-See [actual baseline results and limitations](reports/baseline-v1.md). Step 6 now compares detectors under a common validation false-alert cap and records inference latency separately from time to alert. Real failed-login capture and per-account protection remain separate unfinished security tasks. Synthetic results cannot establish real-world effectiveness.
+See [actual baseline results and limitations](reports/baseline-v1.md). Step 6 now compares detectors under a common validation false-alert cap and records inference latency separately from time to alert. Trusted failure capture and deterministic per-account protection have separate implementations and coverage limits; see the [failed-login adapter](../docs/FAILED_LOGINS.md) and [free local Auth realm](../docs/FREE_AUTH.md). Synthetic results cannot establish real-world effectiveness.
 
 ## Train and evaluate Isolation Forest
 
@@ -109,7 +109,21 @@ PYTHONPATH=ml/src ml/.venv/bin/python -m sherlock_ml evaluate \
 
 `--trust-local-artifact` is required because **joblib loading can execute code**. Only load artifacts you created or fully trust. Hashes detect corruption, not malicious replacement of both a model and manifest. Dependency versions, Python major/minor, feature schema/order/code, and hashes are checked before deserialization. There is no model upload or HTTP loading endpoint. Binaries stay Git-ignored; a fresh clone must reproduce training locally.
 
-To reproduce the fresh-seed evaluation, generate seed 44 with defaults, extract features into a new directory, and evaluate the same artifact with new output paths. See the [model card](reports/iforest-v1.md) for actual results on all three datasets. The background inference worker is the next milestone and is not built by these offline commands.
+To reproduce the fresh-seed evaluation, generate seed 44 with defaults, extract features into a new directory, and evaluate the same artifact with new output paths. See the [model card](reports/iforest-v1.md) for actual results on all three datasets. The background inference worker is configured separately; these offline commands do not activate it or replace its pinned artifact.
+
+## Frozen-model stress evaluation
+
+The independently implemented [stress protocol](../docs/ML_STRESS_PROTOCOL.md) was committed before inspecting its full results. It evaluates six workloads, three fresh seeds and three paired observation contracts without fitting or changing thresholds. Events and labels are separate; features use only visible prior observations. Unknown-account attempts absent from the local hook count as unalerted attacks in end-to-end recall, not safe classifications.
+
+```sh
+PYTHONPATH=ml/src ml/.venv/bin/python -m sherlock_ml.stress \
+  --artifact artifacts/models/iforest-v1 \
+  --expected-model-version deafc493f2d8f5507885534f2bfc3ddb09f3ccd171104c0968deec7519f0ea7c \
+  --trust-local-artifact \
+  --output artifacts/evaluations/stress-v1-20261106
+```
+
+The explicit pin above identifies the evaluated v1 bundle; deliberately reproduced replacement bundles require their own verified pin. Keep output paths fresh. Exit code zero means evaluation completed; consult `operating_checks.passed` for the diagnostic outcome. Full generated rows and predictions stay ignored. [Published aggregate results](reports/stress-v1.md) show excess benign alerts under legitimate bursts and gaps on evasive attacks. The current model remains in shadow mode, with no retraining or automatic ML blocking. Any candidate selected using these findings needs a newly reserved evaluation set.
 
 ## Development checks
 
