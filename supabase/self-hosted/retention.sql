@@ -4,6 +4,9 @@ do $$ begin
   if not exists(select 1 from pg_roles where rolname='sherlock_local_cleanup') then
     create role sherlock_local_cleanup nologin;
   end if;
+  if not exists(select 1 from pg_roles where rolname='sherlock_cleanup_owner') then
+    create role sherlock_cleanup_owner nologin;
+  end if;
 end $$;
 -- Keep each bounded provider-log batch indexable as history grows.
 create index if not exists sherlock_audit_expiry_idx on auth.audit_log_entries(created_at,id);
@@ -24,6 +27,63 @@ grant select on private.local_retention_state to sherlock_reader;
 drop policy if exists local_retention_server_read on private.local_retention_state;
 create policy local_retention_server_read on private.local_retention_state
   for select to sherlock_reader using(true);
+
+-- The definer is not postgres: provider-owned audit triggers must never run as
+-- a database superuser. Grant only the columns and metadata this routine needs.
+grant usage on schema private,auth,auth_guard to sherlock_cleanup_owner;
+grant select on private.retention_state,private.local_retention_state to sherlock_cleanup_owner;
+grant update(status,last_started_at,last_finished_at,last_success_at,deleted,backlog,error_code)
+  on private.retention_state to sherlock_cleanup_owner;
+grant update(last_attempt_at,last_success_at,next_run_at,journal_deleted,audit_deleted,incidents_deleted)
+  on private.local_retention_state to sherlock_cleanup_owner;
+-- FOR UPDATE SKIP LOCKED requires UPDATE privilege; only the identifier column
+-- is granted, with expired-row policies on protected source tables.
+grant select(id,created_at),update(id),delete on auth.audit_log_entries,auth_guard.password_rejections
+  to sherlock_cleanup_owner;
+grant select(id,last_seen),update(id),delete on private.incidents to sherlock_cleanup_owner;
+grant select(incident_id) on private.incident_events to sherlock_cleanup_owner;
+grant execute on function private.run_retention_cleanup() to sherlock_cleanup_owner;
+drop policy if exists cleanup_owner_read on private.retention_state;
+create policy cleanup_owner_read on private.retention_state for select
+  to sherlock_cleanup_owner using(true);
+drop policy if exists cleanup_owner_update on private.retention_state;
+create policy cleanup_owner_update on private.retention_state for update
+  to sherlock_cleanup_owner using(true) with check(true);
+drop policy if exists cleanup_owner_read on private.local_retention_state;
+create policy cleanup_owner_read on private.local_retention_state for select
+  to sherlock_cleanup_owner using(true);
+drop policy if exists cleanup_owner_update on private.local_retention_state;
+create policy cleanup_owner_update on private.local_retention_state for update
+  to sherlock_cleanup_owner using(true) with check(true);
+do $$ declare target text; begin
+  foreach target in array array['auth.audit_log_entries','auth_guard.password_rejections'] loop
+    execute 'drop policy if exists cleanup_owner_expired_read on '||target;
+    execute 'create policy cleanup_owner_expired_read on '||target||
+      ' for select to sherlock_cleanup_owner using(created_at<now()-interval ''30 days'')';
+    execute 'drop policy if exists cleanup_owner_expired_delete on '||target;
+    execute 'create policy cleanup_owner_expired_delete on '||target||
+      ' for delete to sherlock_cleanup_owner using(created_at<now()-interval ''30 days'')';
+    execute 'drop policy if exists cleanup_owner_expired_lock on '||target;
+    execute 'create policy cleanup_owner_expired_lock on '||target||
+      ' for update to sherlock_cleanup_owner using(created_at<now()-interval ''30 days'')'||
+      ' with check(created_at<now()-interval ''30 days'')';
+  end loop;
+end $$;
+drop policy if exists cleanup_owner_incident_read on private.incidents;
+create policy cleanup_owner_incident_read on private.incidents for select
+  to sherlock_cleanup_owner using(true);
+drop policy if exists cleanup_owner_incident_delete on private.incidents;
+create policy cleanup_owner_incident_delete on private.incidents for delete
+  to sherlock_cleanup_owner using(not exists(select 1 from private.incident_events e
+    where e.incident_id=private.incidents.id));
+drop policy if exists cleanup_owner_incident_lock on private.incidents;
+create policy cleanup_owner_incident_lock on private.incidents for update
+  to sherlock_cleanup_owner using(not exists(select 1 from private.incident_events e
+    where e.incident_id=private.incidents.id)) with check(not exists(
+      select 1 from private.incident_events e where e.incident_id=private.incidents.id));
+drop policy if exists cleanup_owner_memberships on private.incident_events;
+create policy cleanup_owner_memberships on private.incident_events for select
+  to sherlock_cleanup_owner using(true);
 
 create or replace function private.run_local_retention_cleanup() returns jsonb
 language plpgsql security definer set search_path='' set lock_timeout='2s' as $$
@@ -78,7 +138,7 @@ begin
       get diagnostics n=row_count; incident_count:=incident_count+n;
       exit when n<1000;
     end loop;
-    remaining:=exists(select 1 from private.security_events where occurred_at<cutoff)
+    remaining:=(select backlog from private.retention_state where singleton)
       or exists(select 1 from auth_guard.password_rejections where created_at<cutoff)
       or exists(select 1 from auth.audit_log_entries where created_at<cutoff)
       or exists(select 1 from private.incidents i where not exists(
@@ -106,6 +166,7 @@ begin
     return jsonb_build_object('status','error');
   end;
 end $$;
+alter function private.run_local_retention_cleanup() owner to sherlock_cleanup_owner;
 
 create or replace function private.local_retention_healthy() returns boolean
 language sql stable security definer set search_path='' as $$

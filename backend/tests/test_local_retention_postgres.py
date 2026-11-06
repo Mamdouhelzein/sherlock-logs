@@ -279,3 +279,39 @@ def test_model_results_cascade_and_only_empty_incident_groups_are_removed():
             c.execute("select event_id from private.incident_events").fetchone()["event_id"]
             == fresh_event
         )
+
+
+def test_provider_owned_trigger_cannot_expand_cleanup_into_account_permissions():
+    with connect() as c:
+        identity = seed(c)
+        c.execute("update private.retention_state set enabled=true")
+        owner = c.execute("""select r.rolname,r.rolsuper,r.rolcanlogin,r.rolcreaterole,
+          r.rolcreatedb,r.rolbypassrls from pg_proc p join pg_roles r on r.oid=p.proowner
+          where p.oid='private.run_local_retention_cleanup()'::regprocedure""").fetchone()
+        assert owner["rolname"] == "sherlock_cleanup_owner"
+        assert not any(
+            owner[key]
+            for key in ("rolsuper", "rolcanlogin", "rolcreaterole", "rolcreatedb", "rolbypassrls")
+        )
+        c.execute("""create function private.try_cleanup_escalation() returns trigger
+          language plpgsql security invoker set search_path='' as $$ begin
+          insert into private.user_roles(user_id,role) values(tg_argv[0]::uuid,'admin');
+          return old; end $$""")
+        c.execute(
+            "create trigger try_cleanup_escalation before delete on auth.audit_log_entries "
+            f"for each row execute function private.try_cleanup_escalation('{identity}')"
+        )
+    try:
+        assert run()["status"] == "error"
+        with connect() as c:
+            assert not c.execute(
+                "select role from private.user_roles where user_id=%s", (identity,)
+            ).fetchone()
+            assert (
+                c.execute("select count(*) as n from auth.audit_log_entries").fetchone()["n"] == 2
+            )
+    finally:
+        with connect() as c:
+            c.execute("drop trigger try_cleanup_escalation on auth.audit_log_entries")
+            c.execute("drop function private.try_cleanup_escalation()")
+            c.execute("delete from auth.users where id=%s", (identity,))
