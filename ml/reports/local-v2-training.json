@@ -1,0 +1,4269 @@
+{
+  "artifact_sha256": {
+    "experiment.json": "2ed296e28e3c82067d2ad5db957fb1f43115096ba32d3576eb0eeaa26ced8e8c",
+    "feature_schema.json": "dd9f8abd2369e7a3bc226df8a6ad444312b370396d7f211aa390c06da9287b32",
+    "model.joblib": "bc9ae015430df135e991ae4a46279ba001c5d0bff052b27817c490c4186c99b3"
+  },
+  "candidate_bundle_version": "5f45dcd4ab882c56f46fe5b967edef120a65e039f7549d104b38496eaed9ced7",
+  "holdout_generated": false,
+  "live_model_changed": false,
+  "model_id": "iforest-bc9ae015430df135",
+  "options": {
+    "false_alert_budget": 5.0,
+    "sample_sizes": [
+      128,
+      256,
+      512
+    ],
+    "seed": 42,
+    "trees": 200
+  },
+  "protocol": "local-observation-candidate-v2",
+  "protocol_commit": "328753d",
+  "provenance": {
+    "calibration": "maximum benign validation quantile over all six workloads",
+    "candidate_code_sha256": "afad39e66ca3fded82a42ac0ef61b41e4c1af8fffd908b6822eb5804f066904e",
+    "datasets": [
+      {
+        "config": {
+          "evaluation_days": 21,
+          "history_days": 35,
+          "phase": "train",
+          "profile": "routine",
+          "seed": 2201,
+          "users": 100
+        },
+        "end": "2026-08-26T00:00:00+00:00",
+        "events_sha256": "1d19e595c0bb100f464fb22140d4aedd02eee2dd37961c6cde1257f1a95801df",
+        "labels_sha256": "d486eda5c1e91a0ea00d4bbd3cf0dedf82668d4583164509f845ee7b9a4842e8",
+        "measured_start": "2026-08-05T00:00:00+00:00",
+        "start": "2026-07-01T00:00:00+00:00"
+      },
+      {
+        "config": {
+          "evaluation_days": 21,
+          "history_days": 35,
+          "phase": "train",
+          "profile": "legitimate_bursts",
+          "seed": 2201,
+          "users": 100
+        },
+        "end": "2026-08-26T00:00:00+00:00",
+        "events_sha256": "099e1fadb0610a4e90387bf97dea88bc7a32806a525110f3f9842678db47acc4",
+        "labels_sha256": "2b0234a9fe7a57bb89d9a4d72264fdef846a790fe64723dd166c7e4610cc4308",
+        "measured_start": "2026-08-05T00:00:00+00:00",
+        "start": "2026-07-01T00:00:00+00:00"
+      },
+      {
+        "config": {
+          "evaluation_days": 21,
+          "history_days": 35,
+          "phase": "train",
+          "profile": "behavior_drift",
+          "seed": 2201,
+          "users": 100
+        },
+        "end": "2026-08-26T00:00:00+00:00",
+        "events_sha256": "d36f5104a06871ecfb1a4882c1d0ff04892b20f8e45a7b408492fec656203136",
+        "labels_sha256": "212f9949389b4f6e9b491215c9885646a652e3ce8a5f92ff16eb32228709857e",
+        "measured_start": "2026-08-05T00:00:00+00:00",
+        "start": "2026-07-01T00:00:00+00:00"
+      },
+      {
+        "config": {
+          "evaluation_days": 21,
+          "history_days": 35,
+          "phase": "validation",
+          "profile": "routine",
+          "seed": 2202,
+          "users": 100
+        },
+        "end": "2026-10-27T00:00:00+00:00",
+        "events_sha256": "090393644c6387d6708799293078e197ead924d2388766f909309b59d64df0e8",
+        "labels_sha256": "b6aa02956983396531727f971fac7c259b1062db97f9168e88ba19b586b977a6",
+        "measured_start": "2026-10-06T00:00:00+00:00",
+        "start": "2026-09-01T00:00:00+00:00"
+      },
+      {
+        "config": {
+          "evaluation_days": 21,
+          "history_days": 35,
+          "phase": "validation",
+          "profile": "legitimate_bursts",
+          "seed": 2202,
+          "users": 100
+        },
+        "end": "2026-10-27T00:00:00+00:00",
+        "events_sha256": "15d6b6a6136796ffb3fd773e48a34a366f2809ae05fb3f5bad5215da3ff94880",
+        "labels_sha256": "070b1f156cf8ce8416145b13ca8f6df103856683d46d6bc549734cfb759b8eae",
+        "measured_start": "2026-10-06T00:00:00+00:00",
+        "start": "2026-09-01T00:00:00+00:00"
+      },
+      {
+        "config": {
+          "evaluation_days": 21,
+          "history_days": 35,
+          "phase": "validation",
+          "profile": "behavior_drift",
+          "seed": 2202,
+          "users": 100
+        },
+        "end": "2026-10-27T00:00:00+00:00",
+        "events_sha256": "c615450a338e2286b46fe03198f7ab3aab358de0aa71f85cd1cfdc18d4e009e2",
+        "labels_sha256": "7ee01f5a265d2feff69945b453670b7b6677fd02d1d6aa93e98f1fd8a407b59a",
+        "measured_start": "2026-10-06T00:00:00+00:00",
+        "start": "2026-09-01T00:00:00+00:00"
+      },
+      {
+        "config": {
+          "evaluation_days": 21,
+          "history_days": 35,
+          "phase": "validation",
+          "profile": "fast_guessing",
+          "seed": 2202,
+          "users": 100
+        },
+        "end": "2026-10-27T00:00:00+00:00",
+        "events_sha256": "d31cb45bdb68cdd74110de65d835f8cc819d6c751c38351a7cb92a8358624629",
+        "labels_sha256": "23cd1b0293db2a8a0db0d3b99b2caa82fa144fed91cae9c5591011a6fee3c8d8",
+        "measured_start": "2026-10-06T00:00:00+00:00",
+        "start": "2026-09-01T00:00:00+00:00"
+      },
+      {
+        "config": {
+          "evaluation_days": 21,
+          "history_days": 35,
+          "phase": "validation",
+          "profile": "evasive",
+          "seed": 2202,
+          "users": 100
+        },
+        "end": "2026-10-27T00:00:00+00:00",
+        "events_sha256": "0b25e5a7e547d44b52ad1a9ae124fc617f51e4b8c17e72511615f757d15ec48b",
+        "labels_sha256": "a13c1012470305dd2804f9b0bb8e2abd6b20d74fd35c1237cc4fa54d5c38f618",
+        "measured_start": "2026-10-06T00:00:00+00:00",
+        "start": "2026-09-01T00:00:00+00:00"
+      },
+      {
+        "config": {
+          "evaluation_days": 21,
+          "history_days": 35,
+          "phase": "validation",
+          "profile": "mixed",
+          "seed": 2202,
+          "users": 100
+        },
+        "end": "2026-10-27T00:00:00+00:00",
+        "events_sha256": "579f983926648b63fd5844e2edd0cdc4d1e2f06d97d3f7acf9520af912a40598",
+        "labels_sha256": "9b40165fb72f5ef9297f584df0cfe3149ad09aacdc104842f4f2145a5c1d4e1c",
+        "measured_start": "2026-10-06T00:00:00+00:00",
+        "start": "2026-09-01T00:00:00+00:00"
+      }
+    ],
+    "generator_sha256": "4713d4e91ef16afbc3bcc539046c13bc19bb71fc55eb9fc01e37aab700dd58e9",
+    "observation_contract": "local_guard",
+    "protocol": "local-observation-candidate-v2",
+    "training_range": [
+      "2026-08-05T06:28:25+00:00",
+      "2026-08-25T22:55:39+00:00"
+    ],
+    "training_rows": 8261,
+    "validation_range": [
+      "2026-10-06T01:00:00+00:00",
+      "2026-10-26T23:50:43+00:00"
+    ],
+    "validation_rows": 18630
+  },
+  "selected_samples": 512,
+  "selection": [
+    {
+      "max_samples": 128,
+      "selection_key": [
+        0.21031746031746032,
+        0.0725242634127277,
+        -24,
+        -128
+      ],
+      "thresholds": {
+        "combined_ml": 0.7409928421954228,
+        "combined_rules": 1.6,
+        "ml": 0.7317720373593626,
+        "rules": 1.4,
+        "statistical": 8.116340818360154
+      },
+      "validation_by_workload": {
+        "behavior_drift": {
+          "combined": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          },
+          "fixed_rules_reference": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          },
+          "ml": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          },
+          "rules": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          },
+          "statistical": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          }
+        },
+        "evasive": {
+          "combined": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 651,
+            "false_positives": 0,
+            "incident_recall": 0.0,
+            "incidents": 63,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": 0.0,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "fixed_rules_reference": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 651,
+            "false_positives": 0,
+            "incident_recall": 0.0,
+            "incidents": 63,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": 0.0,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "ml": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 651,
+            "false_positives": 0,
+            "incident_recall": 0.0,
+            "incidents": 63,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": 0.0,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "rules": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 651,
+            "false_positives": 0,
+            "incident_recall": 0.0,
+            "incidents": 63,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": 0.0,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "statistical": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 3,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 119,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 21,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 529,
+            "false_positives": 0,
+            "incident_recall": 0.3333333333333333,
+            "incidents": 63,
+            "median_time_to_alert_seconds": 0.0,
+            "precision": 1.0,
+            "recall": 0.18740399385560677,
+            "true_negatives": 2514,
+            "true_positives": 122
+          }
+        },
+        "fast_guessing": {
+          "combined": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 36,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 2,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 17,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.7955449482895783,
+            "false_negatives": 176,
+            "false_positives": 2,
+            "incident_recall": 0.8095238095238095,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 180.0,
+            "precision": 0.9473684210526315,
+            "recall": 0.16981132075471697,
+            "true_negatives": 2512,
+            "true_positives": 36
+          },
+          "fixed_rules_reference": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 107,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 2,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 21,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.7955449482895783,
+            "false_negatives": 105,
+            "false_positives": 2,
+            "incident_recall": 1.0,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 100.0,
+            "precision": 0.981651376146789,
+            "recall": 0.5047169811320755,
+            "true_negatives": 2512,
+            "true_positives": 107
+          },
+          "ml": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 31,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 10,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 181,
+            "false_positives": 0,
+            "incident_recall": 0.47619047619047616,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 140.0,
+            "precision": 1.0,
+            "recall": 0.14622641509433962,
+            "true_negatives": 2514,
+            "true_positives": 31
+          },
+          "rules": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 44,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 2,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 17,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.7955449482895783,
+            "false_negatives": 168,
+            "false_positives": 2,
+            "incident_recall": 0.8095238095238095,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 160.0,
+            "precision": 0.9565217391304348,
+            "recall": 0.20754716981132076,
+            "true_negatives": 2512,
+            "true_positives": 44
+          },
+          "statistical": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 27,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 2,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 14,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.7955449482895783,
+            "false_negatives": 185,
+            "false_positives": 2,
+            "incident_recall": 0.6666666666666666,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 180.0,
+            "precision": 0.9310344827586207,
+            "recall": 0.12735849056603774,
+            "true_negatives": 2512,
+            "true_positives": 27
+          }
+        },
+        "legitimate_bursts": {
+          "combined": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 5,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 1.4632718759145449,
+            "false_negatives": 0,
+            "false_positives": 5,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3412,
+            "true_positives": 0
+          },
+          "fixed_rules_reference": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 58,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 16.973953760608723,
+            "false_negatives": 0,
+            "false_positives": 58,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3359,
+            "true_positives": 0
+          },
+          "ml": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 7,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 2.048580626280363,
+            "false_negatives": 0,
+            "false_positives": 7,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3410,
+            "true_positives": 0
+          },
+          "rules": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 13,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 3.804506877377817,
+            "false_negatives": 0,
+            "false_positives": 13,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3404,
+            "true_positives": 0
+          },
+          "statistical": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 4,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 1.170617500731636,
+            "false_negatives": 0,
+            "false_positives": 4,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3413,
+            "true_positives": 0
+          }
+        },
+        "mixed": {
+          "combined": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 61,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 11,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 18,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 3.225806451612903,
+            "false_negatives": 808,
+            "false_positives": 11,
+            "incident_recall": 0.21428571428571427,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 150.0,
+            "precision": 0.8472222222222222,
+            "recall": 0.07019562715765247,
+            "true_negatives": 3399,
+            "true_positives": 61
+          },
+          "fixed_rules_reference": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 113,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 61,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 21,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 17.88856304985337,
+            "false_negatives": 756,
+            "false_positives": 61,
+            "incident_recall": 0.25,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 100.0,
+            "precision": 0.6494252873563219,
+            "recall": 0.13003452243958574,
+            "true_negatives": 3349,
+            "true_positives": 113
+          },
+          "ml": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 62,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 16,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 1,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 13,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 4.9853372434017595,
+            "false_negatives": 807,
+            "false_positives": 17,
+            "incident_recall": 0.15476190476190477,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 100.0,
+            "precision": 0.7848101265822784,
+            "recall": 0.0713463751438435,
+            "true_negatives": 3393,
+            "true_positives": 62
+          },
+          "rules": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 50,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 12,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 18,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 3.5190615835777126,
+            "false_negatives": 819,
+            "false_positives": 12,
+            "incident_recall": 0.21428571428571427,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 160.0,
+            "precision": 0.8064516129032258,
+            "recall": 0.05753739930955121,
+            "true_negatives": 3398,
+            "true_positives": 50
+          },
+          "statistical": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 2,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 32,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 122,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 4,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 5,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 3,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 3,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 2,
+                "events": 313
+              }
+            },
+            "detected_incidents": 34,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 4.9853372434017595,
+            "false_negatives": 713,
+            "false_positives": 17,
+            "incident_recall": 0.40476190476190477,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 180.0,
+            "precision": 0.9017341040462428,
+            "recall": 0.17951668584579977,
+            "true_negatives": 3393,
+            "true_positives": 156
+          }
+        },
+        "routine": {
+          "combined": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "fixed_rules_reference": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "ml": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "rules": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "statistical": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          }
+        }
+      }
+    },
+    {
+      "max_samples": 256,
+      "selection_key": [
+        0.2857142857142857,
+        0.09331010125134798,
+        -29,
+        -256
+      ],
+      "thresholds": {
+        "combined_ml": 0.7600525176053283,
+        "combined_rules": 1.6,
+        "ml": 0.7463751431978048,
+        "rules": 1.4,
+        "statistical": 8.116340818360154
+      },
+      "validation_by_workload": {
+        "behavior_drift": {
+          "combined": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          },
+          "fixed_rules_reference": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          },
+          "ml": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          },
+          "rules": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          },
+          "statistical": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          }
+        },
+        "evasive": {
+          "combined": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 651,
+            "false_positives": 0,
+            "incident_recall": 0.0,
+            "incidents": 63,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": 0.0,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "fixed_rules_reference": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 651,
+            "false_positives": 0,
+            "incident_recall": 0.0,
+            "incidents": 63,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": 0.0,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "ml": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 651,
+            "false_positives": 0,
+            "incident_recall": 0.0,
+            "incidents": 63,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": 0.0,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "rules": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 651,
+            "false_positives": 0,
+            "incident_recall": 0.0,
+            "incidents": 63,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": 0.0,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "statistical": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 3,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 119,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 21,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 529,
+            "false_positives": 0,
+            "incident_recall": 0.3333333333333333,
+            "incidents": 63,
+            "median_time_to_alert_seconds": 0.0,
+            "precision": 1.0,
+            "recall": 0.18740399385560677,
+            "true_negatives": 2514,
+            "true_positives": 122
+          }
+        },
+        "fast_guessing": {
+          "combined": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 35,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 2,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 16,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.7955449482895783,
+            "false_negatives": 177,
+            "false_positives": 2,
+            "incident_recall": 0.7619047619047619,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 180.0,
+            "precision": 0.9459459459459459,
+            "recall": 0.1650943396226415,
+            "true_negatives": 2512,
+            "true_positives": 35
+          },
+          "fixed_rules_reference": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 107,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 2,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 21,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.7955449482895783,
+            "false_negatives": 105,
+            "false_positives": 2,
+            "incident_recall": 1.0,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 100.0,
+            "precision": 0.981651376146789,
+            "recall": 0.5047169811320755,
+            "true_negatives": 2512,
+            "true_positives": 107
+          },
+          "ml": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 43,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 14,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 169,
+            "false_positives": 0,
+            "incident_recall": 0.6666666666666666,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 140.0,
+            "precision": 1.0,
+            "recall": 0.2028301886792453,
+            "true_negatives": 2514,
+            "true_positives": 43
+          },
+          "rules": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 44,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 2,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 17,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.7955449482895783,
+            "false_negatives": 168,
+            "false_positives": 2,
+            "incident_recall": 0.8095238095238095,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 160.0,
+            "precision": 0.9565217391304348,
+            "recall": 0.20754716981132076,
+            "true_negatives": 2512,
+            "true_positives": 44
+          },
+          "statistical": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 27,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 2,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 14,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.7955449482895783,
+            "false_negatives": 185,
+            "false_positives": 2,
+            "incident_recall": 0.6666666666666666,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 180.0,
+            "precision": 0.9310344827586207,
+            "recall": 0.12735849056603774,
+            "true_negatives": 2512,
+            "true_positives": 27
+          }
+        },
+        "legitimate_bursts": {
+          "combined": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 4,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 1.170617500731636,
+            "false_negatives": 0,
+            "false_positives": 4,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3413,
+            "true_positives": 0
+          },
+          "fixed_rules_reference": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 58,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 16.973953760608723,
+            "false_negatives": 0,
+            "false_positives": 58,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3359,
+            "true_positives": 0
+          },
+          "ml": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 12,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 3.5118525021949076,
+            "false_negatives": 0,
+            "false_positives": 12,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3405,
+            "true_positives": 0
+          },
+          "rules": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 13,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 3.804506877377817,
+            "false_negatives": 0,
+            "false_positives": 13,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3404,
+            "true_positives": 0
+          },
+          "statistical": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 4,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 1.170617500731636,
+            "false_negatives": 0,
+            "false_positives": 4,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3413,
+            "true_positives": 0
+          }
+        },
+        "mixed": {
+          "combined": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 49,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 11,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 17,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 3.225806451612903,
+            "false_negatives": 820,
+            "false_positives": 11,
+            "incident_recall": 0.20238095238095238,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 180.0,
+            "precision": 0.8166666666666667,
+            "recall": 0.05638665132336018,
+            "true_negatives": 3399,
+            "true_positives": 49
+          },
+          "fixed_rules_reference": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 113,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 61,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 21,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 17.88856304985337,
+            "false_negatives": 756,
+            "false_positives": 61,
+            "incident_recall": 0.25,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 100.0,
+            "precision": 0.6494252873563219,
+            "recall": 0.13003452243958574,
+            "true_negatives": 3349,
+            "true_positives": 113
+          },
+          "ml": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 67,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 16,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 1,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 16,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 4.9853372434017595,
+            "false_negatives": 802,
+            "false_positives": 17,
+            "incident_recall": 0.19047619047619047,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 120.0,
+            "precision": 0.7976190476190477,
+            "recall": 0.07710011507479862,
+            "true_negatives": 3393,
+            "true_positives": 67
+          },
+          "rules": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 50,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 12,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 18,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 3.5190615835777126,
+            "false_negatives": 819,
+            "false_positives": 12,
+            "incident_recall": 0.21428571428571427,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 160.0,
+            "precision": 0.8064516129032258,
+            "recall": 0.05753739930955121,
+            "true_negatives": 3398,
+            "true_positives": 50
+          },
+          "statistical": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 2,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 32,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 122,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 4,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 5,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 3,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 3,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 2,
+                "events": 313
+              }
+            },
+            "detected_incidents": 34,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 4.9853372434017595,
+            "false_negatives": 713,
+            "false_positives": 17,
+            "incident_recall": 0.40476190476190477,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 180.0,
+            "precision": 0.9017341040462428,
+            "recall": 0.17951668584579977,
+            "true_negatives": 3393,
+            "true_positives": 156
+          }
+        },
+        "routine": {
+          "combined": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "fixed_rules_reference": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "ml": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "rules": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "statistical": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          }
+        }
+      }
+    },
+    {
+      "max_samples": 512,
+      "selection_key": [
+        0.32539682539682535,
+        0.09603317628156416,
+        -29,
+        -512
+      ],
+      "thresholds": {
+        "combined_ml": 0.7450414034726139,
+        "combined_rules": 1.6,
+        "ml": 0.7377886644135815,
+        "rules": 1.4,
+        "statistical": 8.116340818360154
+      },
+      "validation_by_workload": {
+        "behavior_drift": {
+          "combined": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          },
+          "fixed_rules_reference": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          },
+          "ml": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          },
+          "rules": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          },
+          "statistical": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2529,
+            "by_scenario": {
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2529,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2529,
+            "true_positives": 0
+          }
+        },
+        "evasive": {
+          "combined": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 651,
+            "false_positives": 0,
+            "incident_recall": 0.0,
+            "incidents": 63,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": 0.0,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "fixed_rules_reference": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 651,
+            "false_positives": 0,
+            "incident_recall": 0.0,
+            "incidents": 63,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": 0.0,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "ml": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 651,
+            "false_positives": 0,
+            "incident_recall": 0.0,
+            "incidents": 63,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": 0.0,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "rules": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 651,
+            "false_positives": 0,
+            "incident_recall": 0.0,
+            "incidents": 63,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": 0.0,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "statistical": {
+            "attack_events": 651,
+            "attack_prevalence": 0.20568720379146918,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 3,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_slow_guessing": {
+                "alerts": 119,
+                "events": 210
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 21,
+            "events": 3165,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 529,
+            "false_positives": 0,
+            "incident_recall": 0.3333333333333333,
+            "incidents": 63,
+            "median_time_to_alert_seconds": 0.0,
+            "precision": 1.0,
+            "recall": 0.18740399385560677,
+            "true_negatives": 2514,
+            "true_positives": 122
+          }
+        },
+        "fast_guessing": {
+          "combined": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 40,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 2,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 17,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.7955449482895783,
+            "false_negatives": 172,
+            "false_positives": 2,
+            "incident_recall": 0.8095238095238095,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 160.0,
+            "precision": 0.9523809523809523,
+            "recall": 0.18867924528301888,
+            "true_negatives": 2512,
+            "true_positives": 40
+          },
+          "fixed_rules_reference": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 107,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 2,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 21,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.7955449482895783,
+            "false_negatives": 105,
+            "false_positives": 2,
+            "incident_recall": 1.0,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 100.0,
+            "precision": 0.981651376146789,
+            "recall": 0.5047169811320755,
+            "true_negatives": 2512,
+            "true_positives": 107
+          },
+          "ml": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 44,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 16,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 168,
+            "false_positives": 0,
+            "incident_recall": 0.7619047619047619,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 140.0,
+            "precision": 1.0,
+            "recall": 0.20754716981132076,
+            "true_negatives": 2514,
+            "true_positives": 44
+          },
+          "rules": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 44,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 2,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 17,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.7955449482895783,
+            "false_negatives": 168,
+            "false_positives": 2,
+            "incident_recall": 0.8095238095238095,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 160.0,
+            "precision": 0.9565217391304348,
+            "recall": 0.20754716981132076,
+            "true_negatives": 2512,
+            "true_positives": 44
+          },
+          "statistical": {
+            "attack_events": 212,
+            "attack_prevalence": 0.07776962582538519,
+            "benign_events": 2514,
+            "by_scenario": {
+              "attack_fast_guessing": {
+                "alerts": 27,
+                "events": 212
+              },
+              "benign_routine": {
+                "alerts": 2,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 14,
+            "events": 2726,
+            "false_alerts_per_1000_benign": 0.7955449482895783,
+            "false_negatives": 185,
+            "false_positives": 2,
+            "incident_recall": 0.6666666666666666,
+            "incidents": 21,
+            "median_time_to_alert_seconds": 180.0,
+            "precision": 0.9310344827586207,
+            "recall": 0.12735849056603774,
+            "true_negatives": 2512,
+            "true_positives": 27
+          }
+        },
+        "legitimate_bursts": {
+          "combined": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 7,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 2.048580626280363,
+            "false_negatives": 0,
+            "false_positives": 7,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3410,
+            "true_positives": 0
+          },
+          "fixed_rules_reference": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 58,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 16.973953760608723,
+            "false_negatives": 0,
+            "false_positives": 58,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3359,
+            "true_positives": 0
+          },
+          "ml": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 12,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 3.5118525021949076,
+            "false_negatives": 0,
+            "false_positives": 12,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3405,
+            "true_positives": 0
+          },
+          "rules": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 13,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 3.804506877377817,
+            "false_negatives": 0,
+            "false_positives": 13,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3404,
+            "true_positives": 0
+          },
+          "statistical": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 3417,
+            "by_scenario": {
+              "benign_cooldown_retry": {
+                "alerts": 4,
+                "events": 58
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 719
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 3417,
+            "false_alerts_per_1000_benign": 1.170617500731636,
+            "false_negatives": 0,
+            "false_positives": 4,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": 0.0,
+            "recall": null,
+            "true_negatives": 3413,
+            "true_positives": 0
+          }
+        },
+        "mixed": {
+          "combined": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 59,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 11,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 19,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 3.225806451612903,
+            "false_negatives": 810,
+            "false_positives": 11,
+            "incident_recall": 0.2261904761904762,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 160.0,
+            "precision": 0.8428571428571429,
+            "recall": 0.06789413118527042,
+            "true_negatives": 3399,
+            "true_positives": 59
+          },
+          "fixed_rules_reference": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 113,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 61,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 21,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 17.88856304985337,
+            "false_negatives": 756,
+            "false_positives": 61,
+            "incident_recall": 0.25,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 100.0,
+            "precision": 0.6494252873563219,
+            "recall": 0.13003452243958574,
+            "true_negatives": 3349,
+            "true_positives": 113
+          },
+          "ml": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 70,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 17,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 18,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 4.9853372434017595,
+            "false_negatives": 799,
+            "false_positives": 17,
+            "incident_recall": 0.21428571428571427,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 140.0,
+            "precision": 0.8045977011494253,
+            "recall": 0.0805523590333717,
+            "true_negatives": 3393,
+            "true_positives": 70
+          },
+          "rules": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 0,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 50,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 0,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 12,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 0,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 0,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 313
+              }
+            },
+            "detected_incidents": 18,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 3.5190615835777126,
+            "false_negatives": 819,
+            "false_positives": 12,
+            "incident_recall": 0.21428571428571427,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 160.0,
+            "precision": 0.8064516129032258,
+            "recall": 0.05753739930955121,
+            "true_negatives": 3398,
+            "true_positives": 50
+          },
+          "statistical": {
+            "attack_events": 869,
+            "attack_prevalence": 0.20308483290488433,
+            "benign_events": 3410,
+            "by_scenario": {
+              "attack_distributed_spray": {
+                "alerts": 2,
+                "events": 420
+              },
+              "attack_familiar_credential": {
+                "alerts": 0,
+                "events": 21
+              },
+              "attack_fast_guessing": {
+                "alerts": 32,
+                "events": 218
+              },
+              "attack_slow_guessing": {
+                "alerts": 122,
+                "events": 210
+              },
+              "benign_cooldown_retry": {
+                "alerts": 4,
+                "events": 61
+              },
+              "benign_new_account": {
+                "alerts": 0,
+                "events": 249
+              },
+              "benign_office_wave": {
+                "alerts": 5,
+                "events": 694
+              },
+              "benign_recovery": {
+                "alerts": 0,
+                "events": 21
+              },
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1126
+              },
+              "benign_second_session": {
+                "alerts": 3,
+                "events": 550
+              },
+              "benign_shift": {
+                "alerts": 3,
+                "events": 291
+              },
+              "benign_stale_password": {
+                "alerts": 0,
+                "events": 105
+              },
+              "benign_typo": {
+                "alerts": 2,
+                "events": 313
+              }
+            },
+            "detected_incidents": 34,
+            "events": 4279,
+            "false_alerts_per_1000_benign": 4.9853372434017595,
+            "false_negatives": 713,
+            "false_positives": 17,
+            "incident_recall": 0.40476190476190477,
+            "incidents": 84,
+            "median_time_to_alert_seconds": 180.0,
+            "precision": 0.9017341040462428,
+            "recall": 0.17951668584579977,
+            "true_negatives": 3393,
+            "true_positives": 156
+          }
+        },
+        "routine": {
+          "combined": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "fixed_rules_reference": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "ml": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "rules": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          },
+          "statistical": {
+            "attack_events": 0,
+            "attack_prevalence": 0.0,
+            "benign_events": 2514,
+            "by_scenario": {
+              "benign_routine": {
+                "alerts": 0,
+                "events": 1637
+              },
+              "benign_second_session": {
+                "alerts": 0,
+                "events": 571
+              },
+              "benign_typo": {
+                "alerts": 0,
+                "events": 306
+              }
+            },
+            "detected_incidents": 0,
+            "events": 2514,
+            "false_alerts_per_1000_benign": 0.0,
+            "false_negatives": 0,
+            "false_positives": 0,
+            "incident_recall": null,
+            "incidents": 0,
+            "median_time_to_alert_seconds": null,
+            "precision": null,
+            "recall": null,
+            "true_negatives": 2514,
+            "true_positives": 0
+          }
+        }
+      }
+    }
+  ],
+  "synthetic_only": true,
+  "thresholds": {
+    "combined_ml": 0.7450414034726139,
+    "combined_rules": 1.6,
+    "ml": 0.7377886644135815,
+    "rules": 1.4,
+    "statistical": 8.116340818360154
+  },
+  "training_report_sha256": "4edf89a237c8e3b61f3c52d98e9e677d7d9470d2c89b47628fefa2e835029ffe"
+}
