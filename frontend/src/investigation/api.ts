@@ -8,8 +8,16 @@ export const eventSchema = z.object({
   id: z.uuid(),
   occurred_at: timestamp,
   received_at: timestamp,
-  source: z.enum(["supabase_audit", "trusted_auth_adapter"]),
+  source: z.enum([
+    "supabase_audit",
+    "trusted_auth_adapter",
+    "self_hosted_guard",
+  ]),
   outcome: z.enum(["success", "failure"]),
+  rejection_reason: z
+    .enum(["invalid_password", "cooldown_rejected"])
+    .nullable()
+    .optional(),
   user_id: z.uuid().nullable(),
   account_key: nullableText,
   source_ip: nullableText,
@@ -50,6 +58,10 @@ export const timelineEventSchema = z.object({
   id: z.uuid(),
   occurred_at: timestamp,
   outcome: z.enum(["success", "failure"]),
+  rejection_reason: z
+    .enum(["invalid_password", "cooldown_rejected"])
+    .nullable()
+    .optional(),
   user_id: z.uuid().nullable(),
   account_key: nullableText,
   source_ip: nullableText,
@@ -64,6 +76,8 @@ export const failureCoverageSchema = z.enum([
   "not_connected",
   "provider_logs_recent_window",
   "provider_logs_unhealthy",
+  "self_hosted_guard",
+  "self_hosted_guard_unhealthy",
 ]);
 export const statusSchema = z.object({
   mode: z.literal("shadow"),

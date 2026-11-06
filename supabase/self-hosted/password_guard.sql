@@ -20,6 +20,23 @@ drop policy if exists auth_service_only on auth_guard.password_attempts;
 create policy auth_service_only on auth_guard.password_attempts
   for all to supabase_auth_admin using (true) with check (true);
 
+-- Durable, minimal provider evidence. No submitted identifier, password, token,
+-- email, browser payload or guessed source address enters this journal.
+create table if not exists auth_guard.password_rejections (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default clock_timestamp(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  reason text not null check (reason in ('invalid_password','cooldown_rejected'))
+);
+create index if not exists password_rejections_time_idx
+  on auth_guard.password_rejections(created_at,id);
+alter table auth_guard.password_rejections enable row level security;
+revoke all on auth_guard.password_rejections from public,anon,authenticated;
+grant insert on auth_guard.password_rejections to supabase_auth_admin;
+drop policy if exists auth_rejection_append on auth_guard.password_rejections;
+create policy auth_rejection_append on auth_guard.password_rejections
+  for insert to supabase_auth_admin with check (true);
+
 create or replace function auth_guard.check_password_attempt(event jsonb)
 returns jsonb language plpgsql security invoker
 set search_path = '' set lock_timeout = '500ms' as $$
@@ -52,6 +69,8 @@ begin
 
   if state.blocked_until > observed_at then
     -- Fixed deadline: a hostile request cannot prolong this cooldown.
+    insert into auth_guard.password_rejections(user_id,reason)
+      values(account_id,'cooldown_rejected');
     return jsonb_build_object('decision', 'reject',
       'message', 'Invalid login credentials', 'should_logout_user', false);
   end if;
@@ -63,6 +82,8 @@ begin
     return jsonb_build_object('decision', 'continue');
   end if;
 
+  insert into auth_guard.password_rejections(user_id,reason)
+    values(account_id,'invalid_password');
   if state.blocked_until is not null
     or state.window_started_at + interval '15 minutes' <= observed_at then
     failure_count := 1;

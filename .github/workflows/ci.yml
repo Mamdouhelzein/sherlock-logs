@@ -37,6 +37,8 @@ jobs:
       - run: psql -v ON_ERROR_STOP=1 -f supabase/tests/inference.sql
       - run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202611050001_telemetry_operations.sql
       - run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202611050002_failed_login_collection.sql
+      - run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202611060001_guard_telemetry.sql
+      - run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/202611060002_guard_evidence.sql
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
@@ -156,13 +158,14 @@ jobs:
           python-version: '3.13'
       - run: python -m venv backend/.venv
       - run: backend/.venv/bin/python -m pip install -r backend/requirements-dev.lock
+      - run: backend/.venv/bin/python -m pip install --require-hashes -r ml/requirements.lock
       - name: Start isolated Auth with the account guard
         run: backend/.venv/bin/python tools/free_auth.py up
       - name: Verify real password decisions, sessions, roles, and RLS
         run: backend/.venv/bin/python -m pytest backend/tests/test_free_auth_integration.py -q
         env:
           TEST_FREE_AUTH: '1'
-          PYTHONPATH: backend/src
+          PYTHONPATH: backend/src:ml/src
       - uses: actions/setup-node@v4
         with:
           node-version: '24'

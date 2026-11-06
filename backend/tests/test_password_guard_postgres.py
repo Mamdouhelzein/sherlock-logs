@@ -30,6 +30,7 @@ def install_guard():
             "end if; end $$"
         )
         c.execute(GUARD.read_text())
+        c.execute(GUARD.with_name("guard_telemetry.sql").read_text())
         # Setup is rerunnable and must not clear existing account state.
         c.execute(GUARD.read_text())
 
@@ -200,3 +201,47 @@ def test_row_lock_timeout_fails_closed_without_mutating_state(account):
         with pytest.raises(psycopg.errors.LockNotAvailable):
             attempt(account, True)
     assert state(account) == before
+
+
+def test_journal_distinguishes_wrong_passwords_from_any_cooldown_rejection(account):
+    for _ in range(5):
+        attempt(account)
+    attempt(account, True)
+    attempt(account, False)
+    with connect() as c:
+        rows = c.execute(
+            "select reason from auth_guard.password_rejections "
+            "where user_id=%s order by created_at,id",
+            (account,),
+        ).fetchall()
+    assert [row["reason"] for row in rows] == ["invalid_password"] * 5 + ["cooldown_rejected"] * 2
+
+
+def test_rejection_journal_and_projection_keep_narrow_privileges(account):
+    attempt(account)
+    with connect() as c:
+        for role in (
+            "anon",
+            "authenticated",
+            "sherlock_ingest",
+            "sherlock_reader",
+            "sherlock_worker",
+            "sherlock_audit_source",
+        ):
+            for privilege in ("SELECT", "INSERT", "UPDATE", "DELETE"):
+                assert not c.execute(
+                    "select has_table_privilege(%s,'auth_guard.password_rejections',%s) as allowed",
+                    (role, privilege),
+                ).fetchone()["allowed"]
+        assert not c.execute(
+            "select has_table_privilege('supabase_auth_admin',"
+            "'auth_guard.password_rejections','SELECT') as allowed"
+        ).fetchone()["allowed"]
+        c.execute("set local role sherlock_audit_source")
+        assert (
+            c.execute(
+                "select reason from private.password_rejection_source where user_id=%s",
+                (account,),
+            ).fetchone()["reason"]
+            == "invalid_password"
+        )

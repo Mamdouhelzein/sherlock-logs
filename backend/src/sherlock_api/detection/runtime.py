@@ -93,6 +93,7 @@ class ModelRuntime:
                 ("cold_start", values["has_previous"] == 0),
                 ("limited_account_history", values["account_successes_30d"] < 5),
                 ("truncated_retention_history", claim.retention_truncated),
+                ("cooldown_rejection", claim.event.get("rejection_reason") == "cooldown_rejected"),
             )
             if condition
         ]

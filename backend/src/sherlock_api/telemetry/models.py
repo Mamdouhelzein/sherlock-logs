@@ -8,7 +8,8 @@ from uuid import UUID
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, IPvAnyAddress, field_validator
 
-Source = Literal["supabase_audit", "trusted_auth_adapter"]
+Source = Literal["supabase_audit", "trusted_auth_adapter", "self_hosted_guard"]
+RejectionReason = Literal["invalid_password", "cooldown_rejected"]
 
 
 class LoginEvent(BaseModel):
@@ -18,6 +19,7 @@ class LoginEvent(BaseModel):
     event_id: UUID
     occurred_at: AwareDatetime
     outcome: Literal["success", "failure"]
+    rejection_reason: RejectionReason | None = None
     user_id: UUID | None = None
     account_key: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     source_ip: IPvAnyAddress | None = None
@@ -58,7 +60,11 @@ class LoginEvent(BaseModel):
             raise ValueError("Event timestamp is outside the collection window")
 
     def digest(self) -> str:
-        canonical = json.dumps(self.model_dump(mode="json"), sort_keys=True, separators=(",", ":"))
+        # Preserve the digest of existing version-1 events without this optional field.
+        body = self.model_dump(mode="json")
+        if self.rejection_reason is None:
+            body.pop("rejection_reason")
+        canonical = json.dumps(body, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(canonical.encode()).hexdigest()
 
 
@@ -74,6 +80,7 @@ class StoredEvent(BaseModel):
     occurred_at: AwareDatetime
     received_at: AwareDatetime
     outcome: Literal["success", "failure"]
+    rejection_reason: RejectionReason | None = None
     user_id: UUID | None
     account_key: str | None
     source_ip: str | None

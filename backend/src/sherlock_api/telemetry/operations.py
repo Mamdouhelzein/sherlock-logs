@@ -18,8 +18,13 @@ class CollectionOperations:
                 "select private.begin_collection_run(%s,%s,%s) as run", (run, days, interval)
             ).fetchone()["run"]
 
-    def record_failures(self, run, status, start, end, seen):
+    def record_failures(self, run, status, start, end, seen, *, source="provider_logs"):
         with connect(self.dsn) as connection:
+            if source != "provider_logs":
+                return connection.execute(
+                    "select private.record_failure_collection(%s,%s,%s,%s,%s,%s) as accepted",
+                    (run, status, start, end, seen, source),
+                ).fetchone()["accepted"]
             return connection.execute(
                 "select private.record_failure_collection(%s,%s,%s,%s,%s) as accepted",
                 (run, status, start, end, seen),
@@ -87,7 +92,13 @@ def failure_source_status(connection) -> dict:
       and attname='failure_status' and not attisdropped) as installed""").fetchone()["installed"]
     if not installed:
         return {"coverage": "not_connected", "status": "not_configured", "healthy": False}
-    row = connection.execute("""select failure_status as status,
+    has_kind = connection.execute("""select exists(select 1 from pg_attribute
+      where attrelid=to_regclass('private.collection_state')
+      and attname='failure_source_kind' and not attisdropped) as installed""").fetchone()[
+        "installed"
+    ]
+    kind = "failure_source_kind" if has_kind else "'provider_logs'::text"
+    row = connection.execute(f"""select failure_status as status,{kind} as source_kind,
       failure_checked_at as checked_at,failure_last_success_at as last_success_at,
       failure_window_start as window_start,failure_window_end as window_end,
       failure_seen as scanned,interval_seconds,
@@ -105,9 +116,14 @@ def failure_source_status(connection) -> dict:
         and row["window_end"] is not None
         and row["window_end"] > now - timedelta(seconds=fresh_seconds)
     )
+    source = row["source_kind"]
     coverage = (
         "not_connected"
         if row["status"] == "not_configured"
+        else "self_hosted_guard"
+        if healthy and source == "self_hosted_guard"
+        else "self_hosted_guard_unhealthy"
+        if source == "self_hosted_guard"
         else "provider_logs_recent_window"
         if healthy
         else "provider_logs_unhealthy"

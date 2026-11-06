@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { expect, test, type APIRequestContext } from "@playwright/test";
 
 async function emailLink(
@@ -111,6 +112,7 @@ test("confirms a new account, enforces cooldown, and recovers through real PKCE"
     page.getByText("Password updated. You can return to your account."),
   ).toBeVisible();
   await page.getByRole("link", { name: "Go to your account" }).click();
+  await expect(page).toHaveURL(/\/account$/);
   await expect(
     page.getByRole("heading", { name: "Identity, verified." }),
   ).toBeVisible();
@@ -119,4 +121,50 @@ test("confirms a new account, enforces cooldown, and recovers through real PKCE"
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  const fixture = (action: "admin" | "member") =>
+    execFileSync(
+      "../backend/.venv/bin/python",
+      ["../tools/free_auth_fixture.py", action, email],
+      {
+        env: { ...process.env, TEST_FREE_AUTH: "1" },
+        timeout: 30_000,
+        stdio: "pipe",
+      },
+    );
+  try {
+    fixture("admin");
+    const ledger = page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/v1/admin/investigation/events") &&
+        response.status() === 200,
+    );
+    await page.goto("/investigations");
+    await expect(page).toHaveURL(/\/investigations$/);
+    await expect(
+      page.getByRole("heading", { name: "Investigation desk." }),
+    ).toBeVisible({ timeout: 15_000 });
+    const body = await (await ledger).json();
+    const blocked = body.items.find(
+      (row: { rejection_reason?: string }) =>
+        row.rejection_reason === "cooldown_rejected",
+    );
+    expect(blocked).toBeTruthy();
+    await page.goto(`/investigations?event=${blocked.id}`);
+    await expect(
+      page.getByText(
+        "Blocked by account cooldown; password correctness is not reported.",
+      ),
+    ).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await page.screenshot({
+      path: `../.supabase/guard-dashboard-${test.info().project.name}.png`,
+      fullPage: true,
+    });
+  } finally {
+    fixture("member");
+  }
 });

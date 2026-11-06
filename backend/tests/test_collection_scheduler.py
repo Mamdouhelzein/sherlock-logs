@@ -162,3 +162,53 @@ def test_verified_failure_collection_and_provider_outage_keep_honest_status(monk
     assert result["failed_login_coverage"] == "provider_logs_unhealthy"
     assert recorded[-1][1] == "error" and recorded[-1][-1] == 0
     assert operations.finished[-1][1] == "partial"
+
+
+def test_local_guard_scans_retained_history_and_reports_outage(monkeypatch):
+    from datetime import UTC, datetime, timedelta
+
+    config = CollectorSettings(
+        _env_file=None,
+        self_hosted_guard=True,
+        supabase_url="http://127.0.0.1:54421",
+        supabase_publishable_key="sb_publishable_local",
+    )
+    operations = Operations()
+    recorded = []
+    operations.record_failures = lambda *args, **kwargs: recorded.append((args, kwargs)) or True
+    end = datetime.now(UTC)
+    monkeypatch.setattr(
+        "sherlock_api.telemetry.scheduler.collect_guard_rejections",
+        lambda *args, **kwargs: (
+            CollectionReport(scanned=2, inserted=2, complete=True),
+            end - timedelta(days=30),
+            end,
+        ),
+    )
+    collector = Collector(
+        config,
+        operations=operations,
+        store=SimpleNamespace(),
+        collect=lambda *args, **kwargs: CollectionReport(complete=True),
+    )
+    assert collector.cycle(Event())["failed_login_coverage"] == "self_hosted_guard"
+    assert recorded[-1][1] == {"source": "self_hosted_guard"}
+
+    def unavailable(*args, **kwargs):
+        raise psycopg.OperationalError("private details")
+
+    monkeypatch.setattr("sherlock_api.telemetry.scheduler.collect_guard_rejections", unavailable)
+    result = collector.cycle(Event())
+    assert result["status"] == "partial"
+    assert result["failed_login_coverage"] == "self_hosted_guard_unhealthy"
+    assert recorded[-1][0][1] == "error"
+
+
+def test_guard_source_cannot_be_enabled_for_a_hosted_realm():
+    with pytest.raises(ValueError):
+        CollectorSettings(
+            _env_file=None,
+            self_hosted_guard=True,
+            supabase_url="https://example.supabase.co",
+            supabase_publishable_key="sb_publishable_local",
+        )

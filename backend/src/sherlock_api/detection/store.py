@@ -185,7 +185,8 @@ class DetectionReader:
         cutoff = datetime.now(UTC) - timedelta(days=self.retention_days)
         with connect(self.dsn) as connection:
             return connection.execute(
-                """select e.id,e.occurred_at,e.received_at,e.source,e.outcome,e.user_id,
+                """select e.id,e.occurred_at,e.received_at,e.source,e.outcome,
+                  e.rejection_reason,e.user_id,
                   e.account_key,host(e.source_ip) as source_ip,e.user_agent,
                   j.state as job_state,j.attempts,j.last_error,
                   r.model_version_id,m.artifact_label,m.mode,r.features,r.feature_version,
@@ -216,7 +217,8 @@ class DetectionReader:
                 values.extend(parameters)
         with connect(self.dsn) as connection:
             rows = connection.execute(
-                f"""select e.id,e.occurred_at,e.received_at,e.source,e.outcome,e.user_id,
+                f"""select e.id,e.occurred_at,e.received_at,e.source,e.outcome,
+                  e.rejection_reason,e.user_id,
                   e.account_key,host(e.source_ip) as source_ip,e.user_agent,
                   j.state as job_state,j.attempts,j.last_error,r.flagged,
                   r.ml_score,r.rule_score,r.signals,r.context_warnings,
@@ -251,7 +253,7 @@ class DetectionReader:
         conditions = "and (e.occurred_at,e.id) < (%s,%s)" if before else ""
         with connect(self.dsn) as connection:
             rows = connection.execute(
-                f"""select e.id,e.occurred_at,e.outcome,e.user_id,e.account_key,
+                f"""select e.id,e.occurred_at,e.outcome,e.rejection_reason,e.user_id,e.account_key,
                   host(e.source_ip) as source_ip,e.user_agent,r.model_version_id,r.feature_version,
                   r.features,r.ml_score,r.rule_score,r.flagged,r.signals,r.context_warnings,
                   r.history_as_of,r.scored_at

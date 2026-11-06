@@ -13,6 +13,7 @@ from pydantic import Field, SecretStr, ValidationError, model_validator
 from sherlock_api.config import Settings
 from sherlock_api.telemetry.auth_logs import AuthLogsUnavailable, collect_failures
 from sherlock_api.telemetry.collector import CollectionInterrupted, collect_once
+from sherlock_api.telemetry.guard import collect_guard_rejections
 from sherlock_api.telemetry.operations import CollectionOperations
 from sherlock_api.telemetry.store import EventConflict, EventStore
 
@@ -23,10 +24,13 @@ class CollectorSettings(Settings):
     auth_logs_token: SecretStr = SecretStr("")
     auth_logs_project_ref: str = Field(default="", pattern=r"^$|^[a-z]{20}$")
     auth_logs_max_pages: int = Field(default=10, ge=1, le=100)
+    self_hosted_guard: bool = False
 
     @model_validator(mode="after")
     def validate_log_access(self):
         token = self.auth_logs_token.get_secret_value()
+        if self.self_hosted_guard and (token or self.supabase_url != "http://127.0.0.1:54421"):
+            raise ValueError("The local guard source requires the isolated local Auth realm")
         if bool(token) != bool(self.auth_logs_project_ref):
             raise ValueError("Set both Auth log settings, or neither")
         if token and (
@@ -87,6 +91,43 @@ class Collector:
                     progress=progress,
                 )
                 counts = report.model_dump(include=set(counts))
+                if self.settings.self_hosted_guard:
+                    try:
+                        failures, start, end = collect_guard_rejections(
+                            self.settings.collector_database_url.get_secret_value(),
+                            self.store,
+                            progress=progress,
+                            max_pages=self.settings.collection_max_pages,
+                        )
+                        complete = failures.complete and not failures.rejected
+                        accepted = self.operations.record_failures(
+                            run,
+                            "ready" if complete else "partial",
+                            start,
+                            end,
+                            failures.scanned,
+                            source="self_hosted_guard",
+                        )
+                        for name in counts:
+                            counts[name] += getattr(failures, name)
+                        if not complete:
+                            status, error = "partial", "incomplete_scan"
+                        result["failed_login_coverage"] = (
+                            "self_hosted_guard" if complete else "self_hosted_guard_unhealthy"
+                        )
+                    except psycopg.Error:
+                        accepted = self.operations.record_failures(
+                            run,
+                            "error",
+                            None,
+                            None,
+                            0,
+                            source="self_hosted_guard",
+                        )
+                        status, error = "partial", "incomplete_scan"
+                        result["failed_login_coverage"] = "self_hosted_guard_unhealthy"
+                    if not accepted:
+                        raise CollectionInterrupted()
                 if self.settings.auth_logs_token.get_secret_value():
                     try:
                         failures, start, end = collect_failures(

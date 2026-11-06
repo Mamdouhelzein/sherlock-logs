@@ -73,7 +73,7 @@ async def ingest(request: Request) -> IngestionResult:
             409, "An event ID was reused with different facts; no events were saved."
         ) from None
     except ValueError:
-        raise HTTPException(422, "Event timestamp is outside the collection window.") from None
+        raise HTTPException(422, "Event facts do not match the ingestion contract.") from None
     except psycopg.Error:
         raise HTTPException(
             503, "Event storage is unavailable. Retry the same event IDs."

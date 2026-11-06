@@ -208,3 +208,110 @@ def test_gateway_checks_key_origin_and_private_routes(realm):
             "/auth/v1/settings", headers={"Origin": "https://untrusted.example"}
         ).headers
     )
+
+
+def test_rejections_flow_through_collection_scoring_and_admin_api(realm, tmp_path):
+    from threading import Event
+
+    from fastapi.testclient import TestClient
+    from sherlock_ml.artifacts import save_experiment
+    from sherlock_ml.features import build_features
+    from sherlock_ml.synthetic import Config, generate
+    from sherlock_ml.training import TrainingOptions, fit_from_partitions
+
+    from sherlock_api.config import Settings
+    from sherlock_api.detection.config import WorkerSettings
+    from sherlock_api.detection.runtime import artifact_version
+    from sherlock_api.detection.worker import Worker
+    from sherlock_api.main import create_app
+    from sherlock_api.telemetry.guard import collect_guard_rejections
+    from sherlock_api.telemetry.scheduler import Collector, CollectorSettings
+    from sherlock_api.telemetry.store import EventStore
+
+    client, db, create = realm
+    identity, email, password = create()
+    token = login(client, email, password).json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+    for _ in range(5):
+        assert login(client, email, "incorrect-fixture-password").status_code == 400
+    assert login(client, email, password).status_code == 400
+    journal = db.execute(
+        "select id,reason from auth_guard.password_rejections "
+        "where user_id=%s order by created_at,id",
+        (identity,),
+    ).fetchall()
+    assert [row["reason"] for row in journal] == ["invalid_password"] * 5 + ["cooldown_rejected"]
+    values = dotenv_values(ROOT / ".env.free-auth.local")
+    config = {
+        "supabase_url": values["SUPABASE_URL"],
+        "supabase_publishable_key": values["LOCAL_PUBLIC_KEY"],
+        "database_url": values["DATABASE_URL"],
+        "collector_database_url": values["COLLECTOR_DATABASE_URL"],
+        "worker_database_url": values["WORKER_DATABASE_URL"],
+    }
+    settings = CollectorSettings(_env_file=None, **config, self_hosted_guard=True)
+    collector = Collector(settings)
+    report = collector.cycle(Event())
+    assert report["status"] == "ready", report
+    assert report["failed_login_coverage"] == "self_hosted_guard"
+    store = EventStore(values["DATABASE_URL"], 30)
+    repeated, _, _ = collect_guard_rejections(values["COLLECTOR_DATABASE_URL"], store)
+    assert repeated.complete and repeated.inserted == 0 and repeated.duplicates >= 6
+    rows = db.execute(
+        "select id,outcome,rejection_reason from private.security_events "
+        "where user_id=%s and source='self_hosted_guard' order by occurred_at,id",
+        (identity,),
+    ).fetchall()
+    assert len(rows) == 6 and all(row["outcome"] == "failure" for row in rows)
+    assert {row["rejection_reason"] for row in rows} == {"invalid_password", "cooldown_rejected"}
+    assert (
+        db.execute(
+            "select count(*) as n from private.security_events "
+            "where user_id=%s and outcome='success'",
+            (identity,),
+        ).fetchone()["n"]
+        >= 1
+    )
+
+    # A small deterministic CI artifact exercises real inference; it is never the deployment pin.
+    scenario = Config(users=20, days=12, train_days=6, validation_days=3, attack_episodes=18)
+    events, labels = generate(scenario)
+    experiment = fit_from_partitions(
+        build_features(events),
+        labels,
+        scenario,
+        TrainingOptions(seed=7, trees=16, sample_sizes=(16,), false_alert_budget=5),
+    )
+    artifact = tmp_path / "model"
+    save_experiment(artifact, experiment, {"purpose": "disposable pipeline test"})
+    worker = Worker(
+        WorkerSettings(
+            _env_file=None,
+            **config,
+            model_artifact_dir=str(artifact),
+            worker_model_version=artifact_version(artifact),
+            worker_trust_local_artifact=True,
+        )
+    )
+    result = worker.cycle(1000)
+    assert result.status == "ready" and result.processed >= 7
+    with TestClient(create_app(Settings(_env_file=None, **config))) as api:
+        assert api.get("/api/v1/admin/investigation/events").status_code == 401
+        assert api.get("/api/v1/admin/investigation/events", headers=headers).status_code == 403
+        db.execute("insert into private.user_roles(user_id,role) values(%s,'admin')", (identity,))
+        response = api.get(
+            "/api/v1/admin/investigation/events", headers=headers, params={"user_id": identity}
+        )
+        assert response.status_code == 200
+        evidence = response.json()["items"]
+        assert len(evidence) >= 7
+        assert all(row["job_state"] == "processed" for row in evidence)
+        blocked = next(row for row in evidence if row["rejection_reason"] == "cooldown_rejected")
+        detail = api.get(f"/api/v1/admin/events/{blocked['id']}/detection", headers=headers).json()
+        assert "cooldown_rejection" in detail["context_warnings"]
+        health = api.get("/api/v1/admin/telemetry/status", headers=headers).json()
+        assert health["failed_login_coverage"] == "self_hosted_guard"
+        db.execute("delete from private.user_roles where user_id=%s", (identity,))
+        assert api.get("/api/v1/admin/investigation/events", headers=headers).status_code == 403
+    worker.stop()
+    collector.stop()

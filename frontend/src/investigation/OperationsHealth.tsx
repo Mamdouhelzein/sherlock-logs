@@ -119,11 +119,15 @@ export function OperationsHealth({
           <div>
             <dt>Failed-login source</dt>
             <dd>
-              {data.failed_login_coverage === "provider_logs_recent_window"
-                ? "Provider Auth logs · recent hour"
-                : data.failed_login_coverage === "provider_logs_unhealthy"
-                  ? "Provider Auth logs · overdue or incomplete"
-                  : "Not connected"}
+              {data.failed_login_coverage === "self_hosted_guard"
+                ? "Protected Auth journal · retained history"
+                : data.failed_login_coverage === "self_hosted_guard_unhealthy"
+                  ? "Protected Auth journal · overdue or incomplete"
+                  : data.failed_login_coverage === "provider_logs_recent_window"
+                    ? "Provider Auth logs · recent hour"
+                    : data.failed_login_coverage === "provider_logs_unhealthy"
+                      ? "Provider Auth logs · overdue or incomplete"
+                      : "Not connected"}
             </dd>
           </div>
           {data.failure_source?.last_success_at && (
@@ -141,9 +145,11 @@ export function OperationsHealth({
         </dl>
         <p>
           Successful-login full rescans are due every six hours to find late
-          records. Provider failure scans cover the recent hour; longer outages
-          can leave gaps. Invalid credentials do not identify the attempted
-          account. This panel reflects the last check.
+          records.
+          {data.failed_login_coverage.startsWith("self_hosted_guard")
+            ? " The protected Auth journal identifies existing accounts and distinguishes incorrect passwords from cooldown rejections. Unknown-account and pre-hook IP-limit rejections are unavailable. Journal scans cover retained history."
+            : " Provider failure scans cover the recent hour; longer outages can leave gaps. Attempted accounts are unavailable."}{" "}
+          This panel reflects the last check.
         </p>
       </details>
     </section>

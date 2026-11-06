@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 import psycopg
-from dotenv import dotenv_values
+from dotenv import dotenv_values, set_key
 from psycopg import sql
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -102,12 +102,30 @@ def configuration(*, create=False):
             )
     if values.get("SUPABASE_URL") != "http://127.0.0.1:54421":
         raise ValueError("This utility supports only the isolated local Auth realm")
+    for setting, role_name, password in (
+        ("DATABASE_URL", "sl_local_api", "LOCAL_API_DB_PASSWORD"),
+        ("COLLECTOR_DATABASE_URL", "sl_local_audit", "LOCAL_AUDIT_DB_PASSWORD"),
+        ("WORKER_DATABASE_URL", "sl_local_worker", "LOCAL_WORKER_DB_PASSWORD"),
+    ):
+        expected = (
+            f"postgresql://{role_name}:{values[password]}@127.0.0.1:54322/sherlock"
+        )
+        if values.get(setting) != expected:
+            raise ValueError("Local runtime connections must match this isolated realm")
     public_key = values.get("LOCAL_PUBLIC_KEY") or ""
     if not re.fullmatch(r"sb_publishable_[A-Za-z0-9_-]{24,64}", public_key) or any(
         values.get(name) != public_key
         for name in ("VITE_SUPABASE_PUBLISHABLE_KEY", "SUPABASE_PUBLISHABLE_KEY")
     ):
         raise ValueError("Local publishable-key configuration is inconsistent")
+    values["SELF_HOSTED_GUARD"] = "true"
+    # Explicitly override Settings' optional hosted .env fallback for model settings.
+    for name, default in (
+        ("MODEL_ARTIFACT_DIR", ""),
+        ("WORKER_MODEL_VERSION", ""),
+        ("WORKER_TRUST_LOCAL_ARTIFACT", "false"),
+    ):
+        values.setdefault(name, default)
     return values
 
 
@@ -208,6 +226,7 @@ def application_schema(values):
             c.execute(body + record.as_string(c))
         c.execute((ROOT / "supabase/setup/collector_access.sql").read_text())
         c.execute((ROOT / "supabase/self-hosted/password_guard.sql").read_text())
+        c.execute((ROOT / "supabase/self-hosted/guard_telemetry.sql").read_text())
         for name, password, groups in (
             (
                 "sl_local_api",
@@ -230,7 +249,21 @@ def application_schema(values):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["up", "down", "status", "api", "frontend"])
+    parser.add_argument(
+        "action",
+        choices=[
+            "up",
+            "down",
+            "status",
+            "api",
+            "frontend",
+            "collector",
+            "worker",
+            "pin-model",
+        ],
+    )
+    parser.add_argument("--artifact-dir", type=Path)
+    parser.add_argument("--model-version", default="")
     args = parser.parse_args()
     values = configuration(create=args.action == "up")
     if args.action == "up":
@@ -246,6 +279,51 @@ def main():
         compose(values, "down")  # Deliberately preserve the database volume.
     elif args.action == "status":
         compose(values, "ps")
+    elif args.action == "pin-model":
+        if not args.artifact_dir or not re.fullmatch(
+            r"[a-f0-9]{64}", args.model_version
+        ):
+            parser.error(
+                "Provide your trusted artifact directory and its bundle fingerprint"
+            )
+        artifact = args.artifact_dir.resolve()
+        sys.path.insert(0, str(ROOT / "backend/src"))
+        from sherlock_api.detection.runtime import artifact_version
+
+        if artifact_version(artifact) != args.model_version:
+            raise ValueError("Artifact fingerprint does not match the explicit pin")
+        for key, value in {
+            "MODEL_ARTIFACT_DIR": str(artifact),
+            "WORKER_MODEL_VERSION": args.model_version,
+            "WORKER_TRUST_LOCAL_ARTIFACT": "true",
+            "DETECTION_ENABLED": "true",
+        }.items():
+            set_key(ENV_FILE, key, value, quote_mode="always")
+        os.chmod(ENV_FILE, 0o600)
+        print(
+            "Local shadow model pinned. Restart only the local API/worker to apply it."
+        )
+    elif args.action in {"collector", "worker"}:
+        os.chdir(ROOT)
+        python = (
+            ROOT / "ml/.venv/bin/python"
+            if args.action == "worker"
+            else Path(sys.executable)
+        )
+        if not python.exists():
+            python = Path(sys.executable)
+        module = "detection.cli" if args.action == "worker" else "telemetry.scheduler"
+        os.execve(
+            python,
+            [str(python), "-m", f"sherlock_api.{module}", "run"],
+            {
+                **os.environ,
+                **values,
+                "PYTHONPATH": os.pathsep.join(
+                    (str(ROOT / "backend/src"), str(ROOT / "ml/src"))
+                ),
+            },
+        )
     elif args.action == "api":
         os.chdir(ROOT)
         os.execve(

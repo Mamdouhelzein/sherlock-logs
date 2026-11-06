@@ -67,6 +67,8 @@ const warnings: Record<string, string> = {
   missing_account: "No account identifier was available.",
   missing_source_ip: "The source did not provide an IP address.",
   missing_browser: "The source did not provide browser information.",
+  cooldown_rejection:
+    "Auth blocked this attempt during cooldown. The score describes a denied sign-in; it does not establish an incorrect password or an attack.",
   cold_start: "No earlier account activity was available for comparison.",
   limited_account_history:
     "Fewer than five earlier successful logins were available.",
@@ -431,12 +433,19 @@ export default function InvestigationDashboard() {
           <strong>Shadow mode.</strong> Flags support investigation and do not
           block sign-ins.{" "}
           {(operations.data?.failed_login_coverage ??
-            data?.failed_login_coverage) === "provider_logs_recent_window"
-            ? "Provider-confirmed password failures are collected from the recent hour. Attempted accounts are unavailable."
+            data?.failed_login_coverage) === "self_hosted_guard"
+            ? "Protected Auth rejections are collected with account IDs and rejection reasons. Unknown accounts and pre-hook IP-limit rejections are unavailable."
             : (operations.data?.failed_login_coverage ??
-                  data?.failed_login_coverage) === "provider_logs_unhealthy"
-              ? "Failed-login collection is overdue or incomplete. Current coverage could not be verified."
-              : "Failed-login collection is not connected."}
+                  data?.failed_login_coverage) === "self_hosted_guard_unhealthy"
+              ? "Protected Auth rejection collection is overdue or incomplete."
+              : (operations.data?.failed_login_coverage ??
+                    data?.failed_login_coverage) ===
+                  "provider_logs_recent_window"
+                ? "Provider-confirmed password failures are collected from the recent hour. Attempted accounts are unavailable."
+                : (operations.data?.failed_login_coverage ??
+                      data?.failed_login_coverage) === "provider_logs_unhealthy"
+                  ? "Failed-login collection is overdue or incomplete. Current coverage could not be verified."
+                  : "Failed-login collection is not connected."}
         </p>
       </div>
       <div className="desk-toolbar">
@@ -827,6 +836,16 @@ function EventEvidence({
         </span>
       </header>
       <dl className="evidence-facts">
+        {e.rejection_reason && (
+          <div>
+            <dt>Authentication decision</dt>
+            <dd>
+              {e.rejection_reason === "cooldown_rejected"
+                ? "Blocked by account cooldown; password correctness is not reported."
+                : "Incorrect password reported by Auth."}
+            </dd>
+          </div>
+        )}
         <div>
           <dt>Account</dt>
           <dd>{short(e.user_id || e.account_key)}</dd>
@@ -840,7 +859,9 @@ function EventEvidence({
           <dd>
             {e.source === "supabase_audit"
               ? "Supabase audit"
-              : "Trusted server adapter"}
+              : e.source === "self_hosted_guard"
+                ? "Protected Auth guard"
+                : "Trusted server adapter"}
           </dd>
         </div>
         <div>

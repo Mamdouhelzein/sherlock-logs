@@ -64,6 +64,10 @@ class EventStore:
         now = datetime.now(UTC)
         for event in events:
             event.validate_time(now, self.retention_days)
+            if event.rejection_reason and (
+                source != "self_hosted_guard" or event.outcome != "failure"
+            ):
+                raise ValueError("Rejection context requires the self-hosted guard source")
         inserted = 0
         with connect(self.dsn) as connection:
             for event in events:
@@ -71,8 +75,8 @@ class EventStore:
                 row = connection.execute(
                     """insert into private.security_events
                     (source, source_event_id, occurred_at, outcome, user_id, account_key,
-                     source_ip, user_agent, payload_digest)
-                    values (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                     source_ip, user_agent, payload_digest, rejection_reason)
+                    values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                     on conflict (source, source_event_id) do nothing returning id""",
                     (
                         source,
@@ -84,6 +88,7 @@ class EventStore:
                         str(event.source_ip) if event.source_ip else None,
                         event.user_agent,
                         digest,
+                        event.rejection_reason,
                     ),
                 ).fetchone()
                 if row:
@@ -102,7 +107,8 @@ class EventStore:
         before = decode_cursor(cursor) if cursor else None
         cutoff = datetime.now(UTC) - timedelta(days=self.retention_days)
         columns = """id, source, source_event_id, occurred_at, received_at, outcome,
-            user_id, account_key, host(source_ip) as source_ip, user_agent, processing_status"""
+            user_id, account_key, host(source_ip) as source_ip, user_agent, processing_status,
+            rejection_reason"""
         with connect(self.dsn) as connection:
             if before:
                 rows = connection.execute(
