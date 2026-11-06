@@ -58,6 +58,13 @@ class CollectionOperations:
               last_finished_at,last_success_at,deleted,backlog,error_code
               from private.retention_state where singleton""").fetchone()
             failures = failure_source_status(connection)
+            local_cleanup = None
+            if connection.execute(
+                "select to_regclass('private.local_retention_state') as installed"
+            ).fetchone()["installed"]:
+                local_cleanup = connection.execute("""select last_attempt_at,last_success_at,
+                  next_run_at,journal_deleted,audit_deleted,incidents_deleted
+                  from private.local_retention_state where singleton""").fetchone()
         now = datetime.now(UTC)
         collection["full_scan_overdue"] = (
             collection["last_full_scan_at"] is None
@@ -77,6 +84,12 @@ class CollectionOperations:
             and retention["last_success_at"] is not None
             and retention["last_success_at"] > now - timedelta(hours=2)
         )
+        if local_cleanup is not None:
+            retention["local_sources"] = local_cleanup
+            retention["healthy"] = retention["healthy"] and (
+                local_cleanup["last_success_at"] is not None
+                and local_cleanup["last_success_at"] > now - timedelta(hours=2)
+            )
         return {
             "collection": collection,
             "retention": retention,

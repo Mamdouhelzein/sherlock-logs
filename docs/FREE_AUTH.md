@@ -64,7 +64,24 @@ Successful sign-ins come from the provider audit view. A second private journal 
 
 In the ledger, both rejection types are failed **sign-ins**. `invalid_password` reports an incorrect password observed by Auth; `cooldown_rejected` reports a policy block and makes no claim about password correctness. The evidence pane shows the distinction. The model uses denied-sign-in features for both, with an explicit cooldown context warning. Its synthetic calibration has not established accuracy for policy-rejected traffic. Source IP and browser context remain missing because the hook does not supply trusted values. Unknown-account, pre-hook rate-limit and other provider rejections are outside this journal's coverage.
 
-The journal append and cooldown update share the provider transaction. A journal write failure denies that password attempt; it does not bypass protection. The separate collector/model can be stopped without removing the hook or changing the provider decision. The local realm currently limits reads to 30 days but has no automatic physical cleanup or journal-pruning timer; configure and verify that before prolonged operation. The hosted cleanup timer does not run against this database.
+The journal append and cooldown update share the provider transaction. A journal write failure denies that password attempt; it does not bypass protection. The separate collector/model can be stopped without removing the hook or changing the provider decision. The local realm limits reads to 30 days. Its separate opt-in cleanup service can also remove expired stored events, linked model results, empty incident groups, provider audit entries and guard-journal records; see below. The hosted cleanup timer does not run against this database.
+
+## Automatic local cleanup
+
+Inspect counts before activation:
+
+```bash
+backend/.venv/bin/python tools/free_auth.py cleanup-plan
+backend/.venv/bin/python tools/free_auth.py enable-cleanup
+```
+
+Activation keeps 30 days of login history. It generates one separate private cleanup credential in ignored `.env.free-auth.local` (0600), installs the restricted routine, explicitly enables the local policy and starts the Docker maintenance service. Installation through ordinary `up` alone does not enable deletion. Once activated, `up` resumes that service and `down` stops it with the rest of this project; the database volume remains intact.
+
+The container checks a durable database schedule every minute. A successful pass is due hourly, and a backlog/error is retried after one minute. A restart or wake from sleep rechecks the persisted deadline. Each transaction handles at most 10,000 expired rows from each source plus 10,000 empty incident groups. Expired event deletion cascades to linked jobs, scores and incident memberships. A failure rolls back the whole pass and publishes a generic error. Locked rows are skipped and reported as a backlog rather than waiting indefinitely. Cleanup has statement and lock time limits; logs contain bounded aggregate results only.
+
+The execute-only cleanup login cannot read raw records, delete directly, change retention settings, invoke the password hook or modify accounts, sessions, profiles, roles or cooldowns. The container runs as the image's non-root PostgreSQL user, drops capabilities, uses a read-only filesystem and publishes no ports. The normal administrator-only telemetry status includes separate journal/audit/empty-incident counts and the persisted next due time; Members do not gain dashboard access.
+
+Cleanup removes rows from the working database, not from existing backups or Mailpit messages. PostgreSQL autovacuum makes deleted space reusable; database files need not shrink immediately. No blocking `VACUUM FULL` is scheduled. See [PostgreSQL 17 maintenance behavior](https://www.postgresql.org/docs/17/sql-vacuum.html). Backup expiry, real SMTP and always-on hosting remain separate work. This timer runs while Docker and the laptop are awake.
 
 ## Account policy
 
@@ -102,7 +119,7 @@ The hosted app on port 5173 and its monitoring database are a different realm. U
 
 Before moving real accounts, take and test a private backup, select a documented compatible Auth export/import or owner-led recovery migration, preserve UUID/profile/role relationships, and inventory all session issuers and API origins. Imported password hashes and token/session material are credentials, must never enter Git, and require a deliberate private migration. Do not point a second Auth service at the hosted Auth schema or disable the old service as a shortcut. Verify identity isolation, restoration and rollback before changing the live app configuration.
 
-Local audit and guard-rejection collection, current-role API checks, shadow inference and investigation evidence are connected. The hosted Management API failure-log token does not apply here and is explicitly empty. Migration of historical hosted records, owner account/profile reconciliation, local physical retention, and broader provider rejection coverage remain separate work. Applying these application changes to the hosted environment also requires the new event/evidence migrations before restarting its API; the local setup does not apply them remotely.
+Local audit and guard-rejection collection, current-role API checks, shadow inference and investigation evidence are connected. The hosted Management API failure-log token does not apply here and is explicitly empty. Migration of historical hosted records, owner account/profile reconciliation and broader provider rejection coverage remain separate work. Local physical retention is available through its explicit activation command. Applying these application changes to the hosted environment also requires the new event/evidence migrations before restarting its API; the local setup does not apply them remotely.
 
 This configuration is for an awake local machine, not an always-on production service. A public deployment requires an actual hosting target, HTTPS, private database/service networks, real SMTP, backups/restore checks, key management, trusted-proxy configuration, health monitoring, and security updates. Free software does not guarantee zero-cost production infrastructure.
 

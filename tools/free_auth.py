@@ -119,6 +119,10 @@ def configuration(*, create=False):
     ):
         raise ValueError("Local publishable-key configuration is inconsistent")
     values["SELF_HOSTED_GUARD"] = "true"
+    if values.get("LOCAL_CLEANUP_DB_PASSWORD") is not None and not re.fullmatch(
+        r"[a-f0-9]{64}", values["LOCAL_CLEANUP_DB_PASSWORD"]
+    ):
+        raise ValueError("Local cleanup credential is incomplete")
     # Explicitly override Settings' optional hosted .env fallback for model settings.
     for name, default in (
         ("MODEL_ARTIFACT_DIR", ""),
@@ -227,6 +231,7 @@ def application_schema(values):
         c.execute((ROOT / "supabase/setup/collector_access.sql").read_text())
         c.execute((ROOT / "supabase/self-hosted/password_guard.sql").read_text())
         c.execute((ROOT / "supabase/self-hosted/guard_telemetry.sql").read_text())
+        c.execute((ROOT / "supabase/self-hosted/retention.sql").read_text())
         for name, password, groups in (
             (
                 "sl_local_api",
@@ -247,6 +252,38 @@ def application_schema(values):
                 )
 
 
+def enable_cleanup(values):
+    # A new narrow credential is generated only by explicit activation, never by normal up.
+    password = values.get("LOCAL_CLEANUP_DB_PASSWORD")
+    if password is None:
+        password = secrets.token_hex(32)
+        set_key(ENV_FILE, "LOCAL_CLEANUP_DB_PASSWORD", password, quote_mode="always")
+        os.chmod(ENV_FILE, 0o600)
+    if not re.fullmatch(r"[a-f0-9]{64}", password):
+        raise ValueError(
+            "Local cleanup credential is corrupt; restore its private configuration"
+        )
+    values["LOCAL_CLEANUP_DB_PASSWORD"] = password
+    with owner_connection(values) as c:
+        c.execute((ROOT / "supabase/self-hosted/retention.sql").read_text())
+        role(c, "sl_local_cleanup", password)
+        c.execute("alter role sl_local_cleanup inherit")
+        c.execute("grant sherlock_local_cleanup to sl_local_cleanup")
+        # Rerunning activation never weakens a different existing retention policy.
+        days = c.execute(
+            "select keep_days from private.retention_state where singleton"
+        ).fetchone()[0]
+        if days != 30:
+            raise ValueError(
+                "Existing retention policy differs from the 30-day local policy"
+            )
+        c.execute("update private.retention_state set enabled=true where singleton")
+    compose(
+        values, "--profile", "maintenance", "up", "-d", "--build", "--wait", "cleanup"
+    )
+    print("Local 30-day cleanup is enabled. Only aggregate counts are logged.")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -260,6 +297,8 @@ def main():
             "collector",
             "worker",
             "pin-model",
+            "enable-cleanup",
+            "cleanup-plan",
         ],
     )
     parser.add_argument("--artifact-dir", type=Path)
@@ -272,13 +311,64 @@ def main():
         compose(values, "up", "-d", "--wait", "auth")
         application_schema(values)
         compose(values, "up", "-d", "--build", "--wait", "rest", "proxy")
+        with owner_connection(values) as c:
+            cleanup_enabled = c.execute(
+                "select enabled from private.retention_state where singleton"
+            ).fetchone()[0]
+        if cleanup_enabled:
+            if not values.get("LOCAL_CLEANUP_DB_PASSWORD"):
+                raise ValueError(
+                    "Restore the cleanup credential before starting its timer"
+                )
+            compose(
+                values,
+                "--profile",
+                "maintenance",
+                "up",
+                "-d",
+                "--build",
+                "--wait",
+                "cleanup",
+            )
         print(
             "Free Auth ready: app port 5180, Auth 54421, local inbox 54324. Hosted realm unchanged."
         )
     elif args.action == "down":
-        compose(values, "down")  # Deliberately preserve the database volume.
+        # Include an activated cleanup service; deliberately preserve the volume.
+        compose(values, "--profile", "maintenance", "down")
     elif args.action == "status":
-        compose(values, "ps")
+        compose(values, "--profile", "maintenance", "ps")
+    elif args.action == "enable-cleanup":
+        enable_cleanup(values)
+    elif args.action == "cleanup-plan":
+        import json
+
+        with owner_connection(values) as c:
+            counts = c.execute("""select
+              (select count(*) from private.security_events
+                where occurred_at<now()-interval '30 days'),
+              (select count(*) from auth_guard.password_rejections
+                where created_at<now()-interval '30 days'),
+              (select count(*) from auth.audit_log_entries
+                where created_at<now()-interval '30 days'),
+              (select count(*) from private.incidents i where not exists(
+                select 1 from private.incident_events e where e.incident_id=i.id))""").fetchone()
+        print(
+            json.dumps(
+                dict(
+                    zip(
+                        (
+                            "expired_events",
+                            "expired_rejections",
+                            "expired_audits",
+                            "empty_incidents",
+                        ),
+                        counts,
+                        strict=True,
+                    )
+                )
+            )
+        )
     elif args.action == "pin-model":
         if not args.artifact_dir or not re.fullmatch(
             r"[a-f0-9]{64}", args.model_version

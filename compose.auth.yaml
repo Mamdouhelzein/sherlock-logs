@@ -94,5 +94,36 @@ services:
       interval: 2s
       timeout: 3s
       retries: 30
+  cleanup:
+    profiles: [maintenance]
+    build:
+      context: ./supabase/self-hosted
+      dockerfile: Cleanup.Dockerfile
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGDATABASE: sherlock
+      PGUSER: sl_local_cleanup
+      PGPASSWORD: ${LOCAL_CLEANUP_DB_PASSWORD:-not-configured}
+      PGCONNECT_TIMEOUT: 5
+      PGOPTIONS: -c statement_timeout=60000 -c lock_timeout=2000
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 32
+    mem_limit: 64m
+    restart: unless-stopped
+    stop_grace_period: 5s
+    logging:
+      driver: json-file
+      options: { max-size: 1m, max-file: "2" }
+    healthcheck:
+      test: [CMD-SHELL, "psql -X -qAt -c 'select private.local_retention_healthy()' 2>/dev/null | grep -qx t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 volumes:
   auth-data:
