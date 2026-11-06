@@ -123,7 +123,23 @@ PYTHONPATH=ml/src ml/.venv/bin/python -m sherlock_ml.stress \
   --output artifacts/evaluations/stress-v1-20261106
 ```
 
-The explicit pin above identifies the evaluated v1 bundle; deliberately reproduced replacement bundles require their own verified pin. Keep output paths fresh. Exit code zero means evaluation completed; consult `operating_checks.passed` for the diagnostic outcome. Full generated rows and predictions stay ignored. [Published aggregate results](reports/stress-v1.md) show excess benign alerts under legitimate bursts and gaps on evasive attacks. The current model remains in shadow mode, with no retraining or automatic ML blocking. Any candidate selected using these findings needs a newly reserved evaluation set.
+The explicit pin above identifies the evaluated v1 bundle; deliberately reproduced replacement bundles require their own verified pin. Keep output paths fresh. Exit code zero means evaluation completed; consult `operating_checks.passed` for the diagnostic outcome. Full generated rows and predictions stay ignored. [Published aggregate results](reports/stress-v1.md) show excess benign alerts under legitimate bursts and gaps on evasive attacks. That stress run did not retrain the model. The active model remains in shadow mode, with no automatic ML blocking. Any candidate selected using these findings needs a newly reserved evaluation set.
+
+## Local-observation candidate v2
+
+The [candidate protocol](../docs/ML_CANDIDATE_PROTOCOL.md) reserves separate training, validation and final seeds before fitting. A new generator adds benign multiple-session activity, office waves, retry bursts and schedule changes. Training retains every measured row from the benign control workloads; labels never filter training rows. The unchanged 15-feature model uses the local-guard observation contract only. Calibration takes the maximum benign validation quantile across six workloads, with half-budgets for combined branches.
+
+Training and frozen final evaluation are separate commands:
+
+```sh
+PYTHONPATH=ml/src ml/.venv/bin/python -m sherlock_ml.candidate train \
+  --output artifacts/candidates/local-v2
+PYTHONPATH=ml/src ml/.venv/bin/python -m sherlock_ml.candidate evaluate --help
+```
+
+The evaluation command requires trusted local artifacts and explicit pins for both candidate and reference, checks generator/evaluator consistency, and cannot fit or calibrate. See the [full reproduction commands and results](reports/local-v2.md). Exit code zero indicates successful execution; acceptance is recorded separately in `operating_checks`.
+
+**Candidate v2 was rejected for activation.** Fresh holdout results reduced benign alert volume but missed more attacks, failing all three fast-guessing recall checks and two false-alert checks. The active model, Auth policy and roles were unchanged. Generated rows and weights remain ignored. The inspected final seeds are now development evidence, not a fresh test for another tuned candidate.
 
 ## Development checks
 
@@ -131,9 +147,10 @@ Install the separate hash-locked training/test environment:
 
 ```sh
 ml/.venv/bin/python -m pip install --require-hashes --only-binary=:all: -r ml/requirements-dev.lock
+ml/.venv/bin/python -m pip install --require-hashes --only-binary=:all: -r backend/requirements.lock
 ml/.venv/bin/ruff check ml
 ml/.venv/bin/ruff format --check ml
-PYTHONPATH=ml/src ml/.venv/bin/python -m pytest ml/tests -q
+PYTHONPATH=ml/src:backend/src ml/.venv/bin/python -m pytest ml/tests -q
 ```
 
 CI has a dedicated ML job covering the preparation checks plus actual fitting, ignored training/test labels, test-feature isolation, combined validation budgets, reproducible selection, artifact round trips, rejection before untrusted/incompatible loading, and frozen evaluation without fitting. Locks pin exact versions and official release hashes; use `pip-compile --generate-hashes` with the corresponding `.in` file when intentionally updating dependencies.

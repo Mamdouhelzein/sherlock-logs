@@ -72,6 +72,8 @@ Done when scenarios reproduce with a seed and tests detect future-data leakage.
 
 Done when results reproduce from commands without tuning on the test set.
 
+The [frozen stress benchmark](ml/reports/stress-v1.md) and [candidate-v2 experiment](ml/reports/local-v2.md) are complete. Candidate v2 reduced false alerts but failed recall and per-seed false-alert checks; it was not activated. Real labeled evidence, measured observation coverage, and another reserved evaluation set remain necessary for a model upgrade.
+
 ## 7. Background inference
 
 - [x] Claim pending events with expiring leases.
