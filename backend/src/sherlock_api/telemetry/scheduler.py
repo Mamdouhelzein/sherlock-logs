@@ -29,8 +29,17 @@ class CollectorSettings(Settings):
     @model_validator(mode="after")
     def validate_log_access(self):
         token = self.auth_logs_token.get_secret_value()
-        if self.self_hosted_guard and (token or self.supabase_url != "http://127.0.0.1:54421"):
-            raise ValueError("The local guard source requires the isolated local Auth realm")
+        if self.self_hosted_guard:
+            local = self.supabase_url == "http://127.0.0.1:54421"
+            # A public self-hosted realm is separate from hosted Supabase. Keep
+            # development's loopback restriction and never mix provider sources.
+            public = (
+                self.environment == "production"
+                and self.supabase_url.startswith("https://")
+                and not self.supabase_url.split("/")[2].split(":")[0].endswith(".supabase.co")
+            )
+            if token or self.auth_logs_project_ref or not (local or public):
+                raise ValueError("Guard collection requires an explicit self-hosted Auth realm")
         if bool(token) != bool(self.auth_logs_project_ref):
             raise ValueError("Set both Auth log settings, or neither")
         if token and (

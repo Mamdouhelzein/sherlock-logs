@@ -1,77 +1,161 @@
-# Live beta deployment preparation
+# Public beta deployment
 
-Status, 2026-11-09: **not publicly deployed**. The selected scope is real accounts
-and the existing protected authentication stack, with no recurring hosting charge.
-No cloud account, server, public hostname, SMTP sender or production credentials
-have been provisioned. This document records a proposed path, not a tested public
-deployment or a production-readiness claim.
+Status, 2026-11-10: **not publicly deployed**. The two-container package is
+implemented and the original synthetic v1 model is published as a pinned
+prerelease. Hosting signup, actual free resource availability, production email,
+public flow verification and restoration testing remain pending. A successful
+image build or GitHub release is not a working public service.
 
-## Proposed free hosting path
+## Target and cost boundary
 
-- **Compute:** an eligible Oracle Cloud Always Free VM, subject to account approval,
-  resource limits and regional capacity. Keep the account on its free tier and
-  use resources explicitly identified as Always Free; trial credit is temporary
-  and is not the same entitlement. Oracle requires card verification and may put
-  a temporary authorization hold on the card. The free tier has no uptime SLA.
-  See the [official FAQ](https://www.oracle.com/cloud/free/faq/) and
-  [resource limits](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm).
-- **Hostname:** a free DuckDNS subdomain, if available, pointed at the VM's public
-  address. This does not require buying a domain. See [DuckDNS](https://www.duckdns.org/about.jsp).
-- **Public HTTPS:** a TLS terminator such as Caddy, with persistent certificate
-  storage and the required DNS/ports. See [automatic HTTPS requirements](https://caddyserver.com/docs/automatic-https).
-- **Account email:** a separately approved free transactional SMTP account and
-  verified sender. Brevo is a candidate, not an activated integration. Its free
-  plan currently allows 300 sends/day; unauthenticated/free-email sender domains
-  can be rewritten to a provider-managed address. Actual confirmation and
-  recovery delivery must be tested before opening registration. See
-  [free-plan limits](https://help.brevo.com/hc/en-us/articles/208580669-FAQs-What-are-the-limits-of-the-Free-plan)
-  and [sender behavior](https://help.brevo.com/hc/en-us/articles/16045394674066-Troubleshooting-Domain-authentication).
+The target is **Northflank Sandbox**. Its [current pricing page](https://northflank.com/pricing)
+advertises no card, no sleeping, two services, two jobs, one database and up to
+$20/month in included resources. Confirm account eligibility, memory, storage
+and traffic in the dashboard before provisioning. Older provider billing docs
+still mention card verification; the actual resource-creation flow must settle
+that discrepancy. Do not upgrade, add a card, depend on trial credits, select
+BYOC or accept billable overages. Sandbox has no uptime SLA.
 
-Free-tier approval, capacity, sender acceptance and future availability are not
-guaranteed. If this combination is unavailable, select another concrete target
-and disclose its limits before changing the deployment architecture. Do not
-silently remove the account guard or expose a sleeping preview as a dependable
-always-on service.
+Northflank supplies a `code.run` HTTPS hostname; buying a domain is unnecessary.
+A separate transactional email account and verified sender are still required.
+[Brevo Free](https://help.brevo.com/hc/en-us/articles/208580669-FAQs-What-are-the-limits-of-the-Free-plan)
+is a candidate with 300 emails/day, subject to account and sender approval; it
+is not connected. Free-email senders may be
+[rewritten by the provider](https://help.brevo.com/hc/en-us/articles/16045394674066-Troubleshooting-Domain-authentication).
+Verify actual confirmation and recovery delivery before opening registration.
 
-## Application changes still needed after a target exists
+## Layout and security boundaries
 
-The existing Compose files and `tools/free_auth.py` are intentionally local-only.
-The gateway has an exact loopback origin and HTTP upstream scheme; the local
-operator refuses other realms. Production must have a separate configuration
-and new credentials, rather than copying `.env.free-auth.local` or weakening that
-operator's checks.
+| Resource | Contents | Exposure |
+| --- | --- | --- |
+| Portal | Existing React build, Nginx, GoTrue and PostgREST | Only port 8080 through Northflank public HTTPS ingress |
+| Runtime | FastAPI, 30-second collector, continuous pinned v1 worker | Port 8000 private to the project; portal proxies `/api/v1/` |
+| PostgreSQL 17 | New isolated accounts and event database with TLS | Private project network only |
+| Cleanup job | Existing bounded 30-day retention function | No listener; every minute, with hourly/backlog timing enforced by SQL |
 
-The deployment must run the API, collector, pinned v1 shadow worker, Auth,
-PostgREST and PostgreSQL with persistent database storage. Only the HTTPS edge
-should expose application traffic; Auth management, raw REST services and the
-database must remain private. Configure actual public origins, exact confirmation
-and recovery redirects, real SMTP, trusted source headers and verified TLS for
-database clients. The rejected v2 candidate remains inactive.
+Choose only Sandbox sizes that pass measured memory and latency checks. No
+Northflank resource size is verified yet. Scientific-library threads are limited
+to one. The API login is read-only; ingestion, audit reading, scoring and cleanup
+have separate roles and child environments. No running service receives a
+database owner credential. Sibling processes share a container and Unix user;
+filtering environments is not isolation from a compromised sibling. This is a
+constrained experimental beta, not an independently assessed security service.
 
-Provision a new realm with the existing migrations and restricted service roles.
-Existing local/hosted accounts and records are not automatically migrated, and
-public registration must not assign administrator access. Configure retention,
-private backups and a restoration procedure appropriate to the beta. Opening a
-public app is separate from allowing an administrator to read installation-wide
-investigations.
+Auth and REST bind to loopback inside the portal. Browser requests still use
+user JWTs and RLS; the public configuration key grants no admin rights. Auth
+management/metrics have no public route. Exact HTTPS callbacks, confirmation,
+refresh-token rotation and the existing five-failure/15-minute account cooldown
+remain enabled. Registration starts **disabled** until setup is verified.
 
-Before publishing the URL, verify an actual confirmation/recovery delivery,
-sign-in/session restoration, Member denial at administrator APIs, isolated test
-accounts, direct provider cooldown enforcement, collection/scoring health and
-restart persistence. Restrict sign-in tests to authorized disposable accounts.
-Report what was tested and any remaining limits; a successful landing-page
-response alone does not verify these flows.
+The gateway trusts only Northflank's overwritten `X-Envoy-External-Address`,
+replaces forwarded headers and rejects Auth requests if the header is absent.
+See the [provider's header contract](https://northflank.com/docs/v1/application/network/networking-on-northflank).
+Port 8080 must receive traffic only through public HTTP ingress. Do not add raw
+TCP exposure or an untrusted internal proxy that can forge this header.
 
-## Completed preparation checks
+## Operator sequence
 
-- The Docker build context now excludes private `.supabase` state and local
-  operational logs, in addition to environment files and generated artifacts.
-  An isolated Docker build verified that `.supabase`, `.env`,
-  `.env.free-auth.local`, model artifacts and frontend dependencies are absent.
-- Frontend Nginx request and request-error logging are disabled because account
-  callback URLs contain one-time credentials. An unprivileged, network-isolated
-  Nginx syntax check and fictional callback-route smoke test passed. Provider or
-  edge logging requires separate review once a hosting target is configured.
+This is a runbook, not a record of completed cloud deployment. Existing local
+and hosted accounts, role choices and histories are not migrated. Never copy
+either existing environment file into the new deployment.
 
-These checks changed no running account, model, permission or local database.
-They do not establish cloud deployment, SMTP delivery, public HTTPS or uptime.
+1. Complete the user's Northflank signup, select Sandbox and verify the entire
+   layout is available at zero cost without a card. Create a new project and an
+   **empty PostgreSQL 17 addon**, with TLS on and public database exposure off.
+2. Generate fresh private configuration from repository root:
+
+   ```sh
+   PYTHONPATH=backend/src backend/.venv/bin/python tools/cloud_beta.py init
+   ```
+
+   This exclusively creates ignored `.env.public-beta.local`, mode 0600, with
+   fresh signing/public keys and role passwords. It refuses an existing file.
+   Fill `ADMIN_DATABASE_URL` using the provider's supported private connection
+   or forwarding flow, with `sslmode=verify-full` and a CA path valid on the
+   operator's computer. Setup rejects local/hosted Supabase endpoints, existing
+   application tables and conflicting realm IDs. Keep this connection local.
+   Set `DATABASE_HOST` and `DATABASE_PORT` to the addon's actual private runtime
+   endpoint, independently of the operator's forwarding address and port.
+3. Prepare Auth/REST roles before GoTrue's first start:
+
+   ```sh
+   PYTHONPATH=backend/src backend/.venv/bin/python tools/cloud_beta.py roles
+   ```
+
+   Reserve the portal's HTTPS hostname and create the private runtime service.
+   Set `PUBLIC_ORIGIN` to that exact origin and `API_UPSTREAM` to the private
+   runtime hostname on port 8000. Build the portal with that same origin/public
+   key; runtime rejects a mismatched frontend build.
+4. Configure an approved SMTP account/sender and start the portal with
+   `REGISTRATION_ENABLED=false`. GoTrue initializes its provider schema.
+   Sign-in fails closed while the password hook is not yet installed.
+5. Apply application migrations and restricted service roles:
+
+   ```sh
+   PYTHONPATH=backend/src backend/.venv/bin/python tools/cloud_beta.py schema
+   ```
+
+   Migration digests are recorded atomically. Replay preserves accounts,
+   profiles and cooldowns; changed applied migrations are rejected. Runtime
+   connections use the images' Linux system CA bundle. Verify actual TLS
+   hostname matching. Accounts default to Member; setup does not grant admins.
+6. Start/restart the runtime and verify collection/scoring using a separately
+   authorized test administrator. The original
+   [synthetic shadow model v1](https://github.com/Mamdouhelzein/sherlock-logs/releases/tag/shadow-model-v1)
+   is downloaded at build time and hash checked before loading. Bundle pin:
+   `deafc493f2d8f5507885534f2bfc3ddb09f3ccd171104c0968deec7519f0ea7c`.
+   The rejected v2 stays inactive. ML does not block logins or send alerts.
+7. With disposable accounts, verify actual confirmation/recovery delivery,
+   PKCE, sign-in/session restoration/logout, two-account profile isolation,
+   Member denial at investigator APIs, role revocation, provider-enforced
+   cooldown, rejection collection/scoring and forged-header rejection.
+   Temporarily enabling signup for controlled tests is not a public launch.
+8. Configure private backups, rehearse restoration in another disposable DB,
+   verify restart persistence and measured free-tier resource use. Review edge
+   logging: application settings cannot control a provider's callback URL logs.
+9. Obtain approval for the cloud 30-day policy before activating cleanup;
+   installation leaves deletion disabled. After approval:
+
+   ```sh
+   PYTHONPATH=backend/src backend/.venv/bin/python tools/cloud_beta.py enable-cleanup
+   ```
+
+   Schedule `python /app/tools/beta_cleanup.py` using the runtime image and only
+   `CLEANUP_DATABASE_URL`. SQL controls hourly/backlog timing and bounded work.
+10. After required checks pass, set `REGISTRATION_ENABLED=true`, verify the
+    public pages from an independent browser and share the actual verified URL
+    as an experimental beta. Keep signup closed if a required flow fails.
+
+## Builds and secrets
+
+Build from repository root; only public settings enter the browser build:
+
+```sh
+docker build -f deploy/northflank/Portal.Dockerfile \
+  --build-arg PUBLIC_ORIGIN=https://YOUR-PORTAL.code.run \
+  --build-arg PUBLIC_KEY=YOUR_PUBLIC_CONFIGURATION_KEY -t sherlock-beta-portal .
+docker build -f deploy/northflank/Runtime.Dockerfile -t sherlock-beta-runtime .
+```
+
+| Destination | Settings |
+| --- | --- |
+| Portal runtime only | `PUBLIC_ORIGIN`, `PUBLIC_KEY`, `API_UPSTREAM`, `JWT_SECRET`, `AUTH_DATABASE_URL`, `REST_DATABASE_URL`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`, `REGISTRATION_ENABLED` |
+| Runtime service only | `PUBLIC_ORIGIN`, `PUBLIC_KEY`, `API_DATABASE_URL`, `INGEST_DATABASE_URL`, `AUDIT_DATABASE_URL`, `SCORING_DATABASE_URL` |
+| Cleanup job only | `CLEANUP_DATABASE_URL` |
+| Private local operator only | `ADMIN_DATABASE_URL`, `REALM_ID`, generated role passwords |
+
+Never link the entire local configuration as a cloud secret group. Inject only
+the destination's listed runtime values. The launcher rejects an injected owner
+URL. Private environments and operational state are excluded from Git/builds.
+Request logs/provider output are suppressed because callbacks carry credentials.
+Supervisor, collector, worker and cleanup output contains status/aggregate
+counts only. Provider edge logging requires separate review.
+
+## Verification limits
+
+Local checks cover configuration failure, credential/source separation,
+bootstrap replay and role restrictions, Linux v1 model compatibility and the
+rendered non-root gateway with fictional upstreams. The new `cloud-packaging`
+CI job complements the existing real-Auth integration suite. These checks do
+not establish real SMTP delivery, host quotas, cloud TLS, backup restoration,
+public uptime, tenant isolation or real-world model accuracy.

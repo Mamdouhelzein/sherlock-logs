@@ -1,0 +1,79 @@
+# This listener must be exposed ONLY through Northflank public HTTP ingress.
+# Its edge replaces X-Envoy-External-Address; never trust arbitrary X-Forwarded-For.
+pid /tmp/nginx.pid;
+error_log /dev/null;
+worker_processes 1;
+events { worker_connections 256; }
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+    access_log off;
+    server_tokens off;
+    client_body_temp_path /tmp/client_body;
+    proxy_temp_path /tmp/proxy;
+    fastcgi_temp_path /tmp/fastcgi;
+    uwsgi_temp_path /tmp/uwsgi;
+    scgi_temp_path /tmp/scgi;
+    map_hash_bucket_size 128;
+    map $http_apikey $valid_api_key {
+        default 0;
+        "@@PUBLIC_KEY@@" 1;
+    }
+    map $http_authorization $session_authorization {
+        default $http_authorization;
+        "Bearer @@PUBLIC_KEY@@" "";
+    }
+    map $http_x_envoy_external_address $client_ip {
+        default "";
+        ~^[0-9a-fA-F:.]+$ $http_x_envoy_external_address;
+    }
+    server {
+        listen 8080;
+        root /usr/share/nginx/html;
+        client_max_body_size 16k;
+        add_header Cache-Control "no-store" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "no-referrer" always;
+        add_header X-Frame-Options "DENY" always;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host "";
+        proxy_set_header X-Real-IP $client_ip;
+        proxy_set_header X-Forwarded-For $client_ip;
+        proxy_hide_header Access-Control-Allow-Origin;
+        proxy_hide_header Access-Control-Allow-Headers;
+        proxy_hide_header Access-Control-Allow-Methods;
+        proxy_connect_timeout 3s;
+        proxy_read_timeout 15s;
+
+        location = /healthz { proxy_pass http://127.0.0.1:9999/health; }
+        location ~* ^/auth/v1/(admin|metrics)(/|$) { return 404; }
+        location = /auth/v1 { return 404; }
+        location /auth/v1/ {
+            if ($client_ip = "") { return 400; }
+            set $auth_access $valid_api_key;
+            if ($uri = /auth/v1/verify) { set $auth_access 1; }
+            if ($auth_access = 0) { return 401; }
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto https;
+            proxy_set_header X-Forwarded-Host "";
+            proxy_set_header X-Real-IP $client_ip;
+            proxy_set_header X-Forwarded-For $client_ip;
+            proxy_set_header Authorization $session_authorization;
+            proxy_pass http://127.0.0.1:9999/;
+        }
+        location /rest/v1/ {
+            if ($valid_api_key = 0) { return 401; }
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto https;
+            proxy_set_header X-Forwarded-Host "";
+            proxy_set_header X-Real-IP $client_ip;
+            proxy_set_header X-Forwarded-For $client_ip;
+            proxy_set_header Authorization $session_authorization;
+            proxy_pass http://127.0.0.1:3000/;
+        }
+        location /api/v1/ { proxy_pass @@API_UPSTREAM@@; }
+        location /assets/ { try_files $uri =404; }
+        location / { try_files $uri $uri/ /index.html; }
+    }
+}

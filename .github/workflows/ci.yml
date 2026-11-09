@@ -6,6 +6,49 @@ permissions:
   contents: read
 
 jobs:
+  cloud-packaging:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: sherlock_cloud_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install --require-hashes -r backend/requirements-dev.lock
+      - name: Verify fresh cloud bootstrap, replay safety and restricted roles
+        run: pytest backend/tests/test_cloud_beta_postgres.py -q
+        env:
+          PYTHONPATH: backend/src
+          TEST_CLOUD_BETA_DATABASE_URL: postgresql://postgres:ci-only-password@127.0.0.1:5432/sherlock_cloud_test
+      - name: Build the two public-beta images with fictional public configuration
+        run: |
+          docker build -f deploy/northflank/Portal.Dockerfile --build-arg PUBLIC_ORIGIN=https://sherlock.example.test --build-arg PUBLIC_KEY=sb_publishable_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa -t sherlock-beta-portal:ci .
+          docker build -f deploy/northflank/Runtime.Dockerfile -t sherlock-beta-runtime:ci .
+      - name: Verify safe startup and pinned Linux model loading
+        run: |
+          docker run --rm --network none --entrypoint python sherlock-beta-portal:ci -c '
+          from sherlock_api.deployment import main
+          assert main(["portal"]) == 2
+          '
+          docker run --rm --network none --entrypoint python sherlock-beta-runtime:ci -c '
+          from pathlib import Path
+          from sherlock_api.deployment import main, MODEL_VERSION
+          from sherlock_api.detection.runtime import ModelRuntime
+          assert main(["runtime"]) == 2
+          runtime = ModelRuntime(Path("/models"), MODEL_VERSION, trusted=True)
+          assert runtime.version == MODEL_VERSION
+          '
+      - name: Check actual non-root gateway routing and forged-header rejection
+        run: docker run --rm --network none --mount "type=bind,source=$PWD/tools/check_beta_portal.py,target=/tmp/check_beta_portal.py,readonly" --entrypoint python sherlock-beta-portal:ci /tmp/check_beta_portal.py
   database:
     runs-on: ubuntu-latest
     services:

@@ -32,7 +32,7 @@ Steps 5–6 include a reproducible dataset generator, 15 chronological features,
 - [Automatic collection](docs/AUTOMATIC_COLLECTION.md): scheduled collection, operational monitoring, and approved physical retention.
 - [Per-account protection](docs/BRUTE_FORCE_PROTECTION.md): enforcement boundary, cooldown policy and acceptance checks.
 - [Free self-hosted Auth](docs/FREE_AUTH.md): separate local Auth realm with an atomic account guard, private credentials, real-provider tests and a cutover checklist. The existing hosted realm is not migrated yet.
-- [Public deployment preparation](docs/PUBLIC_DEPLOYMENT.md): proposed zero-recurring-cost live beta, required hosting/email setup and completed package checks. The app is not publicly deployed yet.
+- [Public deployment preparation](docs/PUBLIC_DEPLOYMENT.md): two-container Northflank beta package, fresh-realm setup, pinned synthetic model release and verification limits. The app is not publicly deployed yet.
 
 ## Repository layout
 
