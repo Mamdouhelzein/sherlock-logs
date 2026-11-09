@@ -1,4 +1,8 @@
 .git
+.supabase
+supabase/.temp
+supabase/.branches
+**/*.log
 **/node_modules
 **/.venv
 **/__pycache__
