@@ -2,18 +2,21 @@
 
 Status, 2026-11-10: **not publicly deployed**. The two-container package is
 implemented and the original synthetic v1 model is published as a pinned
-prerelease. Hosting signup, actual free resource availability, production email,
-public flow verification and restoration testing remain pending. A successful
+prerelease. The Northflank account is created, but its actual database and service
+creation forms both require card verification. This blocks provisioning under
+the user's no-card requirement; no application service or database was created.
+Production email, public flow verification and restoration testing remain pending. A successful
 image build or GitHub release is not a working public service.
 
 ## Target and cost boundary
 
-The target is **Northflank Sandbox**. Its [current pricing page](https://northflank.com/pricing)
+The initial target was **Northflank Sandbox**, now **blocked by card verification**.
+Its [current pricing page](https://northflank.com/pricing)
 advertises no card, no sleeping, two services, two jobs, one database and up to
 $20/month in included resources. Confirm account eligibility, memory, storage
-and traffic in the dashboard before provisioning. Older provider billing docs
-still mention card verification; the actual resource-creation flow must settle
-that discrepancy. Do not upgrade, add a card, depend on trial credits, select
+and traffic before any future provisioning. The signed-in resource-creation
+forms explicitly say a card is required for both services and database addons,
+despite the pricing page's no-card claim. Do not upgrade, add a card, depend on trial credits, select
 BYOC or accept billable overages. Sandbox has no uptime SLA.
 
 Northflank supplies a `code.run` HTTPS hostname; buying a domain is unnecessary.
@@ -58,6 +61,9 @@ TCP exposure or an untrusted internal proxy that can forge this header.
 This is a runbook, not a record of completed cloud deployment. Existing local
 and hosted accounts, role choices and histories are not migrated. Never copy
 either existing environment file into the new deployment.
+The Northflank provisioning steps below remain unusable while the no-card
+requirement is in place. Do not retry account creation or ask for a card as if
+that requirement had changed. No replacement host has been verified yet.
 
 1. Complete the user's Northflank signup, select Sandbox and verify the entire
    layout is available at zero cost without a card. Create a new project and an
